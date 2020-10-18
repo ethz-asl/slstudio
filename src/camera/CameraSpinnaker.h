@@ -13,7 +13,7 @@ class CameraSpinnaker : public Camera {
   static vector<CameraInfo> getCameraList();
   static vector<CameraInfo> getCameraListFromSingleInterface(
       Spinnaker::InterfacePtr interface_ptr);
-  static int PrintDeviceInfo(CameraPtr pCam);
+  static int PrintDeviceInfo(Spinnaker::CameraPtr pCam);
   // Interface function
   CameraSpinnaker(unsigned int camNum, CameraTriggerMode triggerMode);
   CameraSettings getCameraSettings();
@@ -24,10 +24,11 @@ class CameraSpinnaker : public Camera {
   size_t getFrameSizeBytes();
   size_t getFrameWidth();
   size_t getFrameHeight();
-  ~CameraPointGrey();
+  ~CameraSpinnaker();
 
  private:
   Spinnaker::CameraPtr m_cam_ptr;
+  Spinnaker::SystemPtr m_sys_ptr;
   Spinnaker::CameraPtr retrieveCameraPtrWithCamNum(unsigned int camNum);
 };
 

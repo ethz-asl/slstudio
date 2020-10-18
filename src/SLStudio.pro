@@ -73,8 +73,6 @@ HEADERS  += SLStudio.h \
         tracker/TrackerPCL.h \
         tracker/PoseFilter.h \
         cvtools.h \
-    camera/CameraSpinnaker.h
-
 
 SOURCES += main.cpp \
         SLStudio.cpp \
@@ -123,7 +121,6 @@ SOURCES += main.cpp \
         tracker/CorrRejectOrgBoundFast.cpp \
         tracker/TrackerPCL.cpp \
         tracker/PoseFilter.cpp \
-    camera/CameraSpinnaker.cpp
 
 INCLUDEPATH += camera/ projector/ codec/ triangulator/ calibrator/ tracker/
 
@@ -357,7 +354,7 @@ contains(DEFINES, WITH_CAMERAPOINTGREY) {
 unix:!macx:exists(/usr/include/spinnaker/Spinnaker.h){
     INCLUDEPATH += /usr/include/spinnaker
     DEFINES += WITH_CAMERASPINNAKER
-    LIBS += -lflycapture
+    LIBS += -lSpinnaker
 }
 
 contains(DEFINES, WITH_CAMERASPINNAKER) {

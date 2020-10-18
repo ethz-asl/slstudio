@@ -38,7 +38,7 @@ DISTNAME      = SLStudio1.0.0
 DISTDIR = /home/ltf/slstudio/src/.tmp/SLStudio1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) -lvtkViewsQt-6.3 -lvtkRenderingQt-6.3 -lvtkGUISupportQt-6.3 -lvtkRenderingCore-6.3 -lvtkCommonExecutionModel-6.3 -lvtkCommonDataModel-6.3 -lvtkCommonMath-6.3 -lvtkCommonCore-6.3 -lvtkIOImage-6.3 -lvtkCommonColor-6.3 -lvtkFiltersCore-6.3 -lvtkFiltersGeometry-6.3 -lboost_system -lXxf86vm -ldc1394 -lflycapture -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_datasets -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hdf -lopencv_line_descriptor -lopencv_optflow -lopencv_video -lopencv_plot -lopencv_reg -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd -lopencv_viz -lopencv_surface_matching -lopencv_text -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core -lpcl_visualization -lpcl_surface -lpcl_tracking -lpcl_features -lpcl_io -lOpenNI -lOpenNI2 -lpcl_filters -lpcl_sample_consensus -lpcl_search -lpcl_kdtree -lpcl_octree -lpcl_common -lflann -lflann_cpp -lGLEW -lGLU -lX11 -lusb-1.0 -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Core -lpthread -lGL 
+LIBS          = $(SUBLIBS) -lvtkViewsQt-6.3 -lvtkRenderingQt-6.3 -lvtkGUISupportQt-6.3 -lvtkRenderingCore-6.3 -lvtkCommonExecutionModel-6.3 -lvtkCommonDataModel-6.3 -lvtkCommonMath-6.3 -lvtkCommonCore-6.3 -lvtkIOImage-6.3 -lvtkCommonColor-6.3 -lvtkFiltersCore-6.3 -lvtkFiltersGeometry-6.3 -lboost_system -lXxf86vm -ldc1394 -lflycapture -lSpinnaker -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_datasets -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hdf -lopencv_line_descriptor -lopencv_optflow -lopencv_video -lopencv_plot -lopencv_reg -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd -lopencv_viz -lopencv_surface_matching -lopencv_text -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core -lpcl_visualization -lpcl_surface -lpcl_tracking -lpcl_features -lpcl_io -lOpenNI -lOpenNI2 -lpcl_filters -lpcl_sample_consensus -lpcl_search -lpcl_kdtree -lpcl_octree -lpcl_common -lflann -lflann_cpp -lGLEW -lGLU -lX11 -lusb-1.0 -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Core -lpthread -lGL 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -97,7 +97,6 @@ SOURCES       = main.cpp \
 		tracker/CorrRejectOrgBoundFast.cpp \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
-		camera/CameraSpinnaker.cpp \
 		projector/OpenGLContext.Unix.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -175,7 +174,6 @@ OBJECTS       = main.o \
 		CorrRejectOrgBoundFast.o \
 		TrackerPCL.o \
 		PoseFilter.o \
-		CameraSpinnaker.o \
 		OpenGLContext.Unix.o \
 		CameraIIDC.o \
 		CameraPointGrey.o \
@@ -351,7 +349,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/TrackerPCL.h \
 		tracker/PoseFilter.h \
 		cvtools.h \
-		camera/CameraSpinnaker.h \
 		camera/CameraIIDC.h \
 		camera/CameraPointGrey.h \
 		camera/CameraSpinnaker.h \
@@ -402,7 +399,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/CorrRejectOrgBoundFast.cpp \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
-		camera/CameraSpinnaker.cpp \
 		projector/OpenGLContext.Unix.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -635,8 +631,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents SLResources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h camera/CameraSpinnaker.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp camera/CameraSpinnaker.cpp projector/OpenGLContext.Unix.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/hid.Libusb.c $(DISTDIR)/
+	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/OpenGLContext.Unix.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/hid.Libusb.c $(DISTDIR)/
 	$(COPY_FILE) --parents SLStudio.ui SLPreferenceDialog.ui SLCalibrationDialog.ui SLVideoDialog.ui SLAboutDialog.ui SLTrackerDialog.ui $(DISTDIR)/
 
 
@@ -1065,7 +1061,8 @@ Camera.o: camera/Camera.cpp camera/Camera.h \
 		camera/CameraIIDC.h \
 		camera/CameraXIMEA.h \
 		camera/CameraIDSImaging.h \
-		camera/CameraPointGrey.h
+		camera/CameraPointGrey.h \
+		camera/CameraSpinnaker.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Camera.o camera/Camera.cpp
 
 ProjectorOpenGL.o: projector/ProjectorOpenGL.cpp projector/ProjectorOpenGL.h \
@@ -1216,10 +1213,6 @@ TrackerPCL.o: tracker/TrackerPCL.cpp tracker/TrackerPCL.h \
 PoseFilter.o: tracker/PoseFilter.cpp tracker/PoseFilter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o PoseFilter.o tracker/PoseFilter.cpp
 
-CameraSpinnaker.o: camera/CameraSpinnaker.cpp camera/CameraPointGrey.h \
-		camera/Camera.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CameraSpinnaker.o camera/CameraSpinnaker.cpp
-
 OpenGLContext.Unix.o: projector/OpenGLContext.Unix.cpp projector/OpenGLContext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o OpenGLContext.Unix.o projector/OpenGLContext.Unix.cpp
 
@@ -1231,7 +1224,7 @@ CameraPointGrey.o: camera/CameraPointGrey.cpp camera/CameraPointGrey.h \
 		camera/Camera.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CameraPointGrey.o camera/CameraPointGrey.cpp
 
-CameraSpinnaker.o: camera/CameraSpinnaker.cpp camera/CameraPointGrey.h \
+CameraSpinnaker.o: camera/CameraSpinnaker.cpp camera/CameraSpinnaker.h \
 		camera/Camera.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CameraSpinnaker.o camera/CameraSpinnaker.cpp
 

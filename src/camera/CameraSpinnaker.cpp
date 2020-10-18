@@ -1,8 +1,6 @@
 ﻿#include "CameraSpinnaker.h"
 #include <cstring>
 
-void PrintError(FlyCapture2::Error error) { error.PrintErrorTrace(); }
-
 vector<CameraInfo> CameraSpinnaker::getCameraList() {
   // Initialise vector to be returned
   vector<CameraInfo> ret = {};
@@ -41,31 +39,16 @@ vector<CameraInfo> CameraSpinnaker::getCameraList() {
 CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
                                  CameraTriggerMode triggerMode)
     : Camera(triggerMode) {
+  // Initialise System pointer
+  m_sys_ptr = Spinnaker::System::GetInstance();
+
   // Get CameraPtr
   m_cam_ptr = this->retrieveCameraPtrWithCamNum(camNum);
 
   if (m_cam_ptr == nullptr) {
-    cout << "Warning: Camera not found!" << endl;
+    cout << "Warning: Camera not found! Aborting..." << endl;
     throw;
   }
-
-  // Configure camera
-  m_cam_ptr->PixelFormat = Spinnaker::PixelFormatInfoSelector_B8;
-  // m_cam_ptr->Width = 3376;
-  // m_cam_ptr->Height = 2704;
-  // m_cam_ptr->BinningHorizontal = 2;
-  // m_cam_ptr->BinningVertical = 2;
-  m_cam_ptr->OffsetX = 0;
-  m_cam_ptr->OffsetY = 0;
-
-  // Configure Width
-  // Configure Height
-  // Configure OffsetX
-  // Configure OffsetY
-  // Disable Auto exposure
-  // Set gamma to 1.0
-
-  // Turn off auto exposure, set gamma to 1.0
 
   try {
     // Initialise camera
@@ -77,9 +60,9 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     // Apply mono 8 pixel format
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
-      m_cam_ptr->PixelFormat.SetValue(PixelFormat_Mono8);
+      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Mono8);
       cout << "Pixel format set to "
-           << pCam->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
+           << m_cam_ptr->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
            << endl;
     } else {
       cout << "Pixel format not available..." << endl;
@@ -90,7 +73,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetX) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetX)) {
       m_cam_ptr->OffsetX.SetValue(0);
-      cout << "Offset X set to " << pCam->OffsetX.GetValue() << "..." << endl;
+      cout << "Offset X set to " << m_cam_ptr->OffsetX.GetValue() << "..."
+           << endl;
     } else {
       cout << "Offset X not available..." << endl;
       // throw;
@@ -100,7 +84,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetY) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetY)) {
       m_cam_ptr->OffsetY.SetValue(0);
-      cout << "Offset Y set to " << pCam->OffsetY.GetValue() << "..." << endl;
+      cout << "Offset Y set to " << m_cam_ptr->OffsetY.GetValue() << "..."
+           << endl;
     } else {
       cout << "Offset Y not available..." << endl;
       // throw;
@@ -141,9 +126,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     // Disable Gamma
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GammaEnable)) {
-      Spinnaker::GenApi::IBoolean boolean = false;
-      m_cam_ptr->GammaEnable.SetValue(boolean);
-      cout << "Set GammaEnable to " << boolean << endl;
+      m_cam_ptr->GammaEnable.SetValue(false);
+      cout << "Set GammaEnable to " << false << endl;
     } else {
       cout << "Unable to disable Gamma" << endl;
     }
@@ -151,9 +135,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     // Disable Autogain
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GainAuto) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GainAuto)) {
-      Spinnaker::GenApi::IBoolean boolean = false;
-      m_cam_ptr->GainAuto.SetValue(boolean);
-      cout << "Set GainAuto to " << boolean << endl;
+      m_cam_ptr->GainAuto.SetValue(Spinnaker::GainAuto_Off);
+      cout << "Set GainAuto to " << false << endl;
     } else {
       cout << "Unable to disable Auto-gain" << endl;
     }
@@ -173,8 +156,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 }
 
 CameraSettings CameraSpinnaker::getCameraSettings() {
-  FlyCapture2::Property property;
-
   // Get settings:
   CameraSettings settings;
 
@@ -200,65 +181,111 @@ CameraSettings CameraSpinnaker::getCameraSettings() {
 }
 
 void CameraSpinnaker::setCameraSettings(CameraSettings settings) {
-  FlyCapture2::Property property;
-  property.onOff = true;
-  property.absControl = true;
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureTime) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->ExposureTime)) {
+      m_cam_ptr->ExposureTime.SetValue(settings.shutter);
+      cout << "Set exposure time to: " << m_cam_ptr->ExposureTime.GetValue()
+           << endl;
+    } else {
+      cout << "Could not set exposure time" << endl;
+    }
 
-  property.type = FlyCapture2::SHUTTER;
-  property.absValue = settings.shutter;
-  cam.SetProperty(&property);
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gain) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->Gain)) {
+      m_cam_ptr->Gain.SetValue(settings.gain);
+      cout << "Set gain to: " << m_cam_ptr->Gain.GetValue() << endl;
+    } else {
+      cout << "Could not set gain" << endl;
+    }
 
-  property.type = FlyCapture2::GAIN;
-  property.absValue = settings.gain;
-  cam.SetProperty(&property);
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 }
 
 void CameraSpinnaker::startCapture() {
-  FlyCapture2::Error error;
+  cout << "Starting capture" << endl;
 
+  // Print camera settings
   CameraSettings settings = this->getCameraSettings();
   std::cout << "\tShutter: " << settings.shutter << "ms" << std::endl;
   std::cout << "\tGain: " << settings.gain << "dB" << std::endl;
 
-  if (triggerMode == triggerModeHardware) {
-    // Configure for hardware trigger
-    FlyCapture2::TriggerMode triggerMode;
-    triggerMode.onOff = true;
-    triggerMode.polarity = 0;
-    triggerMode.source = 0;
-    triggerMode.mode = 14;
-    error = cam.SetTriggerMode(&triggerMode);
-    if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-
-    error = cam.StartCapture();
-    if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-
-  } else if (triggerMode == triggerModeSoftware) {
-    // Configure software trigger
-    FlyCapture2::TriggerMode triggerMode;
-    triggerMode.onOff = true;
-    triggerMode.polarity = 0;
-    triggerMode.source = 7;  // software
-    triggerMode.mode = 0;
-    error = cam.SetTriggerMode(&triggerMode);
-    if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  // Make sure trigger mode is disabled before we configure it
+  try {
+    if (m_cam_ptr->TriggerMode.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to disable trigger mode. Aborting..." << endl;
+      throw;
+    }
+    m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_Off);
+    cout << "Trigger mode disabled..." << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
   }
 
-  // Set the trigger timeout to 1000 ms
-  FlyCapture2::FC2Config config;
-  config.grabTimeout = 1000;
-  error = cam.SetConfiguration(&config);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  if (triggerMode == triggerModeHardware) {
+    // Configure for hardware trigger
+    try {
+      // Set the trigger source to hardware (using 'Line0')
+      if (m_cam_ptr->TriggerSource == NULL ||
+          m_cam_ptr->TriggerSource.GetAccessMode() != Spinnaker::GenApi::RW) {
+        cout << "Unable to set trigger mode (node retrieval). Aborting..."
+             << endl;
+        throw;
+      }
+      m_cam_ptr->TriggerSource.SetValue(Spinnaker::TriggerSource_Line0);
+      cout << "Trigger source set to hardware (line 0)..." << endl;
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
+  } else if (triggerMode == triggerModeSoftware) {
+    // Set the trigger source to software
+    try {
+      if (m_cam_ptr->TriggerSource == NULL ||
+          m_cam_ptr->TriggerSource.GetAccessMode() != Spinnaker::GenApi::RW) {
+        cout << "Unable to set trigger mode (node retrieval). Aborting..."
+             << endl;
+        throw;
+      }
+      m_cam_ptr->TriggerSource.SetValue(Spinnaker::TriggerSource_Software);
+      cout << "Trigger source set to software..." << endl;
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
+  }
 
-  error = cam.StartCapture();
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  // Turn trigger mode back on
+  try {
+    if (m_cam_ptr->TriggerSource == NULL ||
+        m_cam_ptr->TriggerSource.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to set trigger mode (node retrieval). Aborting..."
+           << endl;
+      throw;
+    }
+    m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_On);
+    cout << "Trigger mode turned back on..." << endl << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
   capturing = true;
 }
 
 void CameraSpinnaker::stopCapture() {
   try {
+    // Stop getting images
     m_cam_ptr->EndAcquisition();
+
+    // Set trigger to be disabled
+    if (m_cam_ptr->TriggerMode == NULL ||
+        m_cam_ptr->TriggerMode.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to disable trigger mode. Aborting..." << endl;
+      throw;
+    }
+    m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_Off);
+    cout << "Trigger mode disabled..." << endl;
+
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
@@ -267,73 +294,91 @@ void CameraSpinnaker::stopCapture() {
 }
 
 CameraFrame CameraSpinnaker::getFrame() {
-  FlyCapture2::Error error;
+  cout << "Getting frame..." << endl;
 
+  Spinnaker::ImagePtr image_ptr;
+
+  // Activate software trigger
   if (triggerMode == triggerModeSoftware) {
-    // Fire software trigger
-    // broadcasting not supported on some platforms
-    cam.FireSoftwareTrigger(false);
+    try {
+      if (m_cam_ptr->TriggerSoftware == NULL ||
+          m_cam_ptr->TriggerSoftware.GetAccessMode() != Spinnaker::GenApi::WO) {
+        cout << "Unable to execute trigger..." << endl;
+      }
+      cout << "Executed software trigger" << endl;
+      m_cam_ptr->TriggerSoftware.Execute();
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
   }
 
-  // Retrieve the image
-  FlyCapture2::Image rawImage;
-  error = cam.RetrieveBuffer(&rawImage);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  // For trigger modes, we use GetNextImage() to get image
+  try {
+    image_ptr = m_cam_ptr->GetNextImage();
+    cout << "Received image" << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
+  // Write data to CameraFrame struct
   CameraFrame frame;
 
-  frame.timeStamp = rawImage.GetTimeStamp().cycleCount;
-  frame.height = rawImage.GetRows();
-  frame.width = rawImage.GetCols();
-  frame.memory = rawImage.GetData();
+  if (!image_ptr->IsIncomplete()) {
+    frame.timeStamp = image_ptr->GetTimeStamp();
+    frame.height = image_ptr->GetHeight();
+    frame.width = image_ptr->GetWidth();
+    frame.memory = (unsigned char*)image_ptr->GetData();
+  }
 
   return frame;
 }
 
 size_t CameraSpinnaker::getFrameSizeBytes() {
-  FlyCapture2::Format7ImageSettings format7Settings;
-  unsigned int dummy1;
-  float dummy2;
-  FlyCapture2::Error error =
-      cam.GetFormat7Configuration(&format7Settings, &dummy1, &dummy2);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-
-  return format7Settings.width * format7Settings.height;
+  return getFrameWidth() * getFrameHeight();
 }
 
 size_t CameraSpinnaker::getFrameWidth() {
-  FlyCapture2::Format7ImageSettings format7Settings;
-  unsigned int dummy1;
-  float dummy2;
-  FlyCapture2::Error error =
-      cam.GetFormat7Configuration(&format7Settings, &dummy1, &dummy2);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-
-  return format7Settings.width;
+  size_t answer;
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Width)) {
+      answer = (size_t)m_cam_ptr->WidthMax.GetValue();
+    } else {
+      cout << "Unable to read width" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+  return answer;
 }
 
 size_t CameraSpinnaker::getFrameHeight() {
-  FlyCapture2::Format7ImageSettings format7Settings;
-  unsigned int dummy1;
-  float dummy2;
-  FlyCapture2::Error error =
-      cam.GetFormat7Configuration(&format7Settings, &dummy1, &dummy2);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-
-  return format7Settings.height;
+  size_t answer;
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Height)) {
+      answer = (size_t)m_cam_ptr->Height.GetValue();
+    } else {
+      cout << "Unable to read height" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+  return answer;
 }
 
 CameraSpinnaker::~CameraSpinnaker() {
   if (capturing && triggerMode == triggerModeHardware) {
     // Stop camera transmission
-    this->StopCapture();
+    this->stopCapture();
   }
 
   // Gracefully destruct the camera
   m_cam_ptr->DeInit();
+
+  // Clear system pointer
+  m_sys_ptr->ReleaseInstance();
 }
 
-static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
+vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
     Spinnaker::InterfacePtr interface_ptr) {
   vector<CameraInfo> result = {};
 
@@ -375,7 +420,7 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
       CameraInfo camera_info;
 
       // Select camera
-      Spinnaker::CameraPtr pCam = camList.GetByIndex(i);
+      Spinnaker::CameraPtr m_cam_ptr = camList.GetByIndex(i);
 
       // Tentatively interpret the index as the busID
       camera_info.busID = (unsigned int)i;
@@ -383,7 +428,8 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
 
       // Retrieve TL device nodemap; please see NodeMapInfo example for
       // additional comments on transport layer nodemaps
-      Spinnaker::GenApi::INodeMap& nodeMapTLDevice = pCam->GetTLDeviceNodeMap();
+      Spinnaker::GenApi::INodeMap& nodeMapTLDevice =
+          m_cam_ptr->GetTLDeviceNodeMap();
 
       // *** NOTES ***
       // Grabbing node information requires first retrieving the node and
@@ -444,16 +490,13 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
 Spinnaker::CameraPtr CameraSpinnaker::retrieveCameraPtrWithCamNum(
     unsigned int camNum) {
   // Initialse return ptr
-  Spinnaker::CameraPtr = nullptr;
+  Spinnaker::CameraPtr ret;
 
   // Vector that stores #cameras for each interface
   vector<int> cams_per_interface = {};
 
-  // Create system ptr
-  Spinnaker::SystemPtr system_ptr = Spinnaker::System::GetInstance();
-
   // Retrieve list of interfaces from the system
-  Spinnaker::InterfaceList interfaceList = system_ptr->GetInterfaces();
+  Spinnaker::InterfaceList interfaceList = m_sys_ptr->GetInterfaces();
   unsigned int numInterfaces = interfaceList.GetSize();
 
   // Go through interfaces to fill up
@@ -486,29 +529,27 @@ Spinnaker::CameraPtr CameraSpinnaker::retrieveCameraPtrWithCamNum(
     }
   }
 
-  if (interface_indice > 0 && camera_indice > 0) {
+  if (interface_indice >= 0 && camera_indice >= 0) {
     // We retrieve camera ptr
     ret = interfaceList.GetByIndex(interface_indice)
               ->GetCameras()
               .GetByIndex(camera_indice);
+    cout << "Received camera pointer" << endl;
   } else {
-    cout << "Warning: Invalid Camera Number: " << canNum << endl;
+    cout << "Warning: Invalid Camera Number: " << camNum << endl;
   }
 
   // Clear interface list
   interfaceList.Clear();
 
-  // Release system ptr
-  system_ptr->ReleaseInstance();
-
   return ret;
 }
 
-int CameraSpinnaker::PrintDeviceInfo(CameraPtr pCam) {
+int CameraSpinnaker::PrintDeviceInfo(Spinnaker::CameraPtr m_cam_ptr) {
   int result = 0;
   cout << endl << "*** DEVICE INFORMATION ***" << endl << endl;
   try {
-    Spinnaker::GenApi::INodeMap& nodeMap = pCam->GetTLDeviceNodeMap();
+    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetTLDeviceNodeMap();
     Spinnaker::GenApi::FeatureList_t features;
     Spinnaker::GenApi::CCategoryPtr category =
         nodeMap.GetNode("DeviceInformation");
@@ -518,7 +559,8 @@ int CameraSpinnaker::PrintDeviceInfo(CameraPtr pCam) {
       for (it = features.begin(); it != features.end(); ++it) {
         Spinnaker::GenApi::CNodePtr pfeatureNode = *it;
         cout << pfeatureNode->GetName() << " : ";
-        Spinnaker::GenApi::CValuePtr pValue = (CValuePtr)pfeatureNode;
+        Spinnaker::GenApi::CValuePtr pValue =
+            (Spinnaker::GenApi::CValuePtr)pfeatureNode;
         cout << (Spinnaker::GenApi::IsReadable(pValue) ? pValue->ToString()
                                                        : "Node not readable");
         cout << endl;
