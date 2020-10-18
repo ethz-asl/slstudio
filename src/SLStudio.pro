@@ -72,7 +72,8 @@ HEADERS  += SLStudio.h \
         tracker/CorrEstKdTreeFast.h \
         tracker/TrackerPCL.h \
         tracker/PoseFilter.h \
-        cvtools.h
+        cvtools.h \
+    camera/CameraSpinnaker.h
 
 
 SOURCES += main.cpp \
@@ -133,9 +134,9 @@ RESOURCES += \
 unix:!macx {
     CONFIG += link_pkgconfig
     # Link VTK (no pkg-config, only cmake files, hence we link manually for now)
-    INCLUDEPATH += /usr/include/vtk-6.2/
-    LIBS += -lvtkViewsQt-6.2 -lvtkRenderingQt-6.2 -lvtkGUISupportQt-6.2 -lvtkRenderingCore-6.2 -lvtkCommonExecutionModel-6.2 \
-            -lvtkCommonDataModel-6.2 -lvtkCommonMath-6.2 -lvtkCommonCore-6.2 -lvtkIOImage-6.2 -lvtkCommonColor-6.2 -lvtkFiltersCore-6.2 -lvtkFiltersGeometry-6.2
+    INCLUDEPATH += /usr/include/vtk-6.3/
+    LIBS += -lvtkViewsQt-6.3 -lvtkRenderingQt-6.3 -lvtkGUISupportQt-6.3 -lvtkRenderingCore-6.3 -lvtkCommonExecutionModel-6.3 \
+            -lvtkCommonDataModel-6.3 -lvtkCommonMath-6.3 -lvtkCommonCore-6.3 -lvtkIOImage-6.3 -lvtkCommonColor-6.3 -lvtkFiltersCore-6.3 -lvtkFiltersGeometry-6.3
     # PCL pkg-config workaround
     LIBS += -lboost_system -lpcl_visualization -lpcl_common -lpcl_io -lpcl_search -lpcl_surface
     # PKG-config libs
