@@ -123,11 +123,22 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       // throw;
     }
 
+    /**
     // Disable Gamma
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GammaEnable)) {
       m_cam_ptr->GammaEnable.SetValue(false);
       cout << "Set GammaEnable to " << false << endl;
+    } else {
+      cout << "Unable to disable Gamma" << endl;
+    }
+    **/
+
+    // Set gamma value to 1.0
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gamma) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->Gamma)) {
+      m_cam_ptr->Gamma.SetValue(1.0f);
+      cout << "Set Gamma to " << 1.0f << endl;
     } else {
       cout << "Unable to disable Gamma" << endl;
     }
@@ -162,7 +173,8 @@ CameraSettings CameraSpinnaker::getCameraSettings() {
   try {
     // Note: In Spinnaker, Shutter is referred to as Exposure Time
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureTime)) {
-      settings.shutter = m_cam_ptr->ExposureTime.GetValue();
+      // Convert exposure time in microseconds to shutter which is in ms
+      settings.shutter = m_cam_ptr->ExposureTime.GetValue() / 1000.0;
     } else {
       cout << "Unable to read exposure time" << endl;
     }
@@ -184,9 +196,11 @@ void CameraSpinnaker::setCameraSettings(CameraSettings settings) {
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureTime) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->ExposureTime)) {
-      m_cam_ptr->ExposureTime.SetValue(settings.shutter);
-      cout << "Set exposure time to: " << m_cam_ptr->ExposureTime.GetValue()
-           << endl;
+      // Note exposure time is in micro-seconds
+      // In settings, shutter is in ms so we need to perform a conversion
+      m_cam_ptr->ExposureTime.SetValue(settings.shutter * 1000.0f);
+      cout << "Set exposure time to [micro s]: "
+           << m_cam_ptr->ExposureTime.GetValue() << endl;
     } else {
       cout << "Could not set exposure time" << endl;
     }
@@ -207,10 +221,32 @@ void CameraSpinnaker::setCameraSettings(CameraSettings settings) {
 void CameraSpinnaker::startCapture() {
   cout << "Starting capture" << endl;
 
+  // Set acquisition mode to continuous
+  try {
+    if (m_cam_ptr->AcquisitionMode == NULL ||
+        m_cam_ptr->AcquisitionMode.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to set acquisition mode to continuous. Aborting..."
+           << endl;
+      throw;
+    }
+    m_cam_ptr->AcquisitionMode.SetValue(Spinnaker::AcquisitionMode_Continuous);
+    cout << "Acquisition mode set to continuous..." << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Begin acquiring images
+  try {
+    m_cam_ptr->BeginAcquisition();
+    cout << "Acquiring images..." << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   // Print camera settings
   CameraSettings settings = this->getCameraSettings();
-  std::cout << "\tShutter: " << settings.shutter << "ms" << std::endl;
-  std::cout << "\tGain: " << settings.gain << "dB" << std::endl;
+  std::cout << "\tShutter: " << settings.shutter << " ms" << std::endl;
+  std::cout << "\tGain: " << settings.gain << " dB" << std::endl;
 
   // Make sure trigger mode is disabled before we configure it
   try {
@@ -274,8 +310,11 @@ void CameraSpinnaker::startCapture() {
 
 void CameraSpinnaker::stopCapture() {
   try {
+    cout << "Stopping capture" << endl;
+
     // Stop getting images
     m_cam_ptr->EndAcquisition();
+    cout << "End Acquisition" << endl;
 
     // Set trigger to be disabled
     if (m_cam_ptr->TriggerMode == NULL ||
@@ -294,7 +333,7 @@ void CameraSpinnaker::stopCapture() {
 }
 
 CameraFrame CameraSpinnaker::getFrame() {
-  cout << "Getting frame..." << endl;
+  // cout << "Getting frame..." << endl;
 
   Spinnaker::ImagePtr image_ptr;
 
@@ -303,9 +342,9 @@ CameraFrame CameraSpinnaker::getFrame() {
     try {
       if (m_cam_ptr->TriggerSoftware == NULL ||
           m_cam_ptr->TriggerSoftware.GetAccessMode() != Spinnaker::GenApi::WO) {
-        cout << "Unable to execute trigger..." << endl;
+        // cout << "Unable to execute trigger..." << endl;
       }
-      cout << "Executed software trigger" << endl;
+      // cout << "Executed software trigger" << endl;
       m_cam_ptr->TriggerSoftware.Execute();
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
@@ -315,7 +354,7 @@ CameraFrame CameraSpinnaker::getFrame() {
   // For trigger modes, we use GetNextImage() to get image
   try {
     image_ptr = m_cam_ptr->GetNextImage();
-    cout << "Received image" << endl;
+    // cout << "Received image" << endl;
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
@@ -338,7 +377,7 @@ size_t CameraSpinnaker::getFrameSizeBytes() {
 }
 
 size_t CameraSpinnaker::getFrameWidth() {
-  size_t answer;
+  size_t answer = 0;
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Width)) {
       answer = (size_t)m_cam_ptr->WidthMax.GetValue();
@@ -352,7 +391,7 @@ size_t CameraSpinnaker::getFrameWidth() {
 }
 
 size_t CameraSpinnaker::getFrameHeight() {
-  size_t answer;
+  size_t answer = 0;
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Height)) {
       answer = (size_t)m_cam_ptr->Height.GetValue();
@@ -366,16 +405,21 @@ size_t CameraSpinnaker::getFrameHeight() {
 }
 
 CameraSpinnaker::~CameraSpinnaker() {
-  if (capturing && triggerMode == triggerModeHardware) {
+  if (capturing) {
     // Stop camera transmission
     this->stopCapture();
   }
 
   // Gracefully destruct the camera
   m_cam_ptr->DeInit();
+  m_cam_ptr = nullptr;  // Need to add this or else will have the error Can't
+                        // clear a camera because something still holds a
+                        // reference to the camera [-1004]
+  cout << "Deinitialised camera" << endl;
 
   // Clear system pointer
   m_sys_ptr->ReleaseInstance();
+  cout << "Release system pointer" << endl;
 }
 
 vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
