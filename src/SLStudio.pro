@@ -122,7 +122,8 @@ SOURCES += main.cpp \
         tracker/TrackerNDT.cpp \
         tracker/CorrRejectOrgBoundFast.cpp \
         tracker/TrackerPCL.cpp \
-        tracker/PoseFilter.cpp
+        tracker/PoseFilter.cpp \
+    camera/CameraSpinnaker.cpp
 
 INCLUDEPATH += camera/ projector/ codec/ triangulator/ calibrator/ tracker/
 
@@ -352,6 +353,17 @@ contains(DEFINES, WITH_CAMERAPOINTGREY) {
     SOURCES += camera/CameraPointGrey.cpp
 }
 
+# Spinnaker (Only for Ubuntu)
+unix:!macx:exists(/usr/include/spinnaker/Spinnaker.h){
+    INCLUDEPATH += /usr/include/spinnaker
+    DEFINES += WITH_CAMERASPINNAKER
+    LIBS += -lflycapture
+}
+
+contains(DEFINES, WITH_CAMERASPINNAKER) {
+    HEADERS += camera/CameraSpinnaker.h
+    SOURCES += camera/CameraSpinnaker.cpp
+}
 
 # Compile with direct projector APIs
 # LC3000 Api
