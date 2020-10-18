@@ -1,11 +1,13 @@
-#include "CameraSpinnaker.h"
+﻿#include "CameraSpinnaker.h"
 #include <cstring>
 
 void PrintError(FlyCapture2::Error error) { error.PrintErrorTrace(); }
 
 vector<CameraInfo> CameraSpinnaker::getCameraList() {
+  // Initialise vector to be returned
   vector<CameraInfo> ret = {};
 
+  // Create system ptr
   Spinnaker::SystemPtr system_ptr = Spinnaker::System::GetInstance();
 
   // Retrieve list of interfaces from the system
@@ -27,66 +29,138 @@ vector<CameraInfo> CameraSpinnaker::getCameraList() {
                camerainfo_in_interface.end());
   }
 
+  // Clear interface list
+  interfaceList.Clear();
+
+  // Release system ptr
+  system_ptr->ReleaseInstance();
+
   return ret;
 }
 
 CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
                                  CameraTriggerMode triggerMode)
     : Camera(triggerMode) {
-  FlyCapture2::Error error;
+  // Get CameraPtr
+  m_cam_ptr = this->retrieveCameraPtrWithCamNum(camNum);
 
-  // Connect to camera
-  FlyCapture2::BusManager busManager;
-  FlyCapture2::PGRGuid camGuid;
-  busManager.GetCameraFromIndex(camNum, &camGuid);
-  error = cam.Connect(&camGuid);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  if (m_cam_ptr == nullptr) {
+    cout << "Warning: Camera not found!" << endl;
+    throw;
+  }
 
-  //    // Configure video mode and frame rate (legacy modes)
-  //    FlyCapture2::VideoMode videoMode = FlyCapture2::VIDEOMODE_640x480Y8;
-  //    FlyCapture2::FrameRate frameRate = FlyCapture2::FRAMERATE_30;
-  //    cam.SetVideoModeAndFrameRate(videoMode, frameRate);
+  // Configure camera
+  m_cam_ptr->PixelFormat = Spinnaker::PixelFormatInfoSelector_B8;
+  // m_cam_ptr->Width = 3376;
+  // m_cam_ptr->Height = 2704;
+  // m_cam_ptr->BinningHorizontal = 2;
+  // m_cam_ptr->BinningVertical = 2;
+  m_cam_ptr->OffsetX = 0;
+  m_cam_ptr->OffsetY = 0;
 
-  // Configure Format7 mode (2x2 binning)
-  FlyCapture2::Format7ImageSettings format7Settings;
-  format7Settings.mode = FlyCapture2::MODE_4;
-  format7Settings.pixelFormat = FlyCapture2::PIXEL_FORMAT_MONO8;
-  format7Settings.width = 3376 / 2;
-  format7Settings.height = 2704 / 2;
-  format7Settings.offsetX = 0;
-  format7Settings.offsetY = 0;
+  // Configure Width
+  // Configure Height
+  // Configure OffsetX
+  // Configure OffsetY
+  // Disable Auto exposure
+  // Set gamma to 1.0
 
-  // Validate and set mode
-  FlyCapture2::Format7PacketInfo packetInfo;
-  bool valid;
-  error = cam.ValidateFormat7Settings(&format7Settings, &valid, &packetInfo);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
-  // packetsize configures maximum frame rate
-  error = cam.SetFormat7Configuration(&format7Settings,
-                                      packetInfo.recommendedBytesPerPacket);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  // Turn off auto exposure, set gamma to 1.0
 
-  // Turn off gamma
-  FlyCapture2::Property property;
-  property.type = FlyCapture2::AUTO_EXPOSURE;
-  property.onOff = false;
-  error = cam.SetProperty(&property);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  try {
+    // Initialise camera
+    m_cam_ptr->Init();
 
-  property.type = FlyCapture2::GAMMA;
-  property.onOff = true;
-  property.absControl = true;
-  property.absValue = 1.0;
-  error = cam.SetProperty(&property);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+    // Print device info
+    PrintDeviceInfo(m_cam_ptr);
 
-  // Get the camera information
-  FlyCapture2::CameraInfo camInfo;
-  error = cam.GetCameraInfo(&camInfo);
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+    // Apply mono 8 pixel format
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
+      m_cam_ptr->PixelFormat.SetValue(PixelFormat_Mono8);
+      cout << "Pixel format set to "
+           << pCam->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
+           << endl;
+    } else {
+      cout << "Pixel format not available..." << endl;
+      // throw;
+    }
 
-  std::cout << camInfo.vendorName << "  " << camInfo.modelName << "  "
-            << camInfo.serialNumber << std::endl;
+    // Set Offset X
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetX) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetX)) {
+      m_cam_ptr->OffsetX.SetValue(0);
+      cout << "Offset X set to " << pCam->OffsetX.GetValue() << "..." << endl;
+    } else {
+      cout << "Offset X not available..." << endl;
+      // throw;
+    }
+
+    // Set Offset Y
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetY) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetY)) {
+      m_cam_ptr->OffsetY.SetValue(0);
+      cout << "Offset Y set to " << pCam->OffsetY.GetValue() << "..." << endl;
+    } else {
+      cout << "Offset Y not available..." << endl;
+      // throw;
+    }
+
+    // Set Width
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Width) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->Width) &&
+        m_cam_ptr->Width.GetInc() != 0 && m_cam_ptr->Width.GetMax() != 0) {
+      m_cam_ptr->Width.SetValue(m_cam_ptr->Width.GetMax());
+      cout << "Width set to " << m_cam_ptr->Width.GetValue() << "..." << endl;
+    } else {
+      cout << "Width not available..." << endl;
+      // throw;
+    }
+
+    // Set Height
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Height) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->Height) &&
+        m_cam_ptr->Height.GetInc() != 0 && m_cam_ptr->Height.GetMax() != 0) {
+      m_cam_ptr->Height.SetValue(m_cam_ptr->Height.GetMax());
+      cout << "Height set to " << m_cam_ptr->Height.GetValue() << "..." << endl;
+    } else {
+      cout << "Height not available..." << endl;
+      // throw;
+    }
+
+    // Disable Auto exposure
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureAuto) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->ExposureAuto)) {
+      m_cam_ptr->ExposureAuto.SetValue(Spinnaker::ExposureAuto_Off);
+      cout << "Automatic exposure disabled..." << endl;
+    } else {
+      cout << "Unable to disable automatic exposure." << endl << endl;
+      // throw;
+    }
+
+    // Disable Gamma
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->GammaEnable)) {
+      Spinnaker::GenApi::IBoolean boolean = false;
+      m_cam_ptr->GammaEnable.SetValue(boolean);
+      cout << "Set GammaEnable to " << boolean << endl;
+    } else {
+      cout << "Unable to disable Gamma" << endl;
+    }
+
+    // Disable Autogain
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GainAuto) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->GainAuto)) {
+      Spinnaker::GenApi::IBoolean boolean = false;
+      m_cam_ptr->GainAuto.SetValue(boolean);
+      cout << "Set GainAuto to " << boolean << endl;
+    } else {
+      cout << "Unable to disable Auto-gain" << endl;
+    }
+
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
   // Set reasonable default settings
   CameraSettings settings;
@@ -104,13 +178,23 @@ CameraSettings CameraSpinnaker::getCameraSettings() {
   // Get settings:
   CameraSettings settings;
 
-  property.type = FlyCapture2::SHUTTER;
-  cam.GetProperty(&property);
-  settings.shutter = property.absValue;
+  try {
+    // Note: In Spinnaker, Shutter is referred to as Exposure Time
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureTime)) {
+      settings.shutter = m_cam_ptr->ExposureTime.GetValue();
+    } else {
+      cout << "Unable to read exposure time" << endl;
+    }
 
-  property.type = FlyCapture2::GAIN;
-  cam.GetProperty(&property);
-  settings.gain = property.absValue;
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gain)) {
+      settings.gain = m_cam_ptr->Gain.GetValue();
+    } else {
+      cout << "Unable to read gain value" << endl;
+    }
+
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
   return settings;
 }
@@ -173,8 +257,11 @@ void CameraSpinnaker::startCapture() {
 }
 
 void CameraSpinnaker::stopCapture() {
-  FlyCapture2::Error error = cam.StopCapture();
-  if (error != FlyCapture2::PGRERROR_OK) PrintError(error);
+  try {
+    m_cam_ptr->EndAcquisition();
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
   capturing = false;
 }
@@ -239,11 +326,11 @@ size_t CameraSpinnaker::getFrameHeight() {
 CameraSpinnaker::~CameraSpinnaker() {
   if (capturing && triggerMode == triggerModeHardware) {
     // Stop camera transmission
-    cam.StopCapture();
+    this->StopCapture();
   }
 
-  // Gracefulle destruct the camera
-  cam.Disconnect();
+  // Gracefully destruct the camera
+  m_cam_ptr->DeInit();
 }
 
 static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
@@ -259,7 +346,7 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
     Spinnaker::GenApi::CStringPtr ptrInterfaceDisplayName =
         nodeMapInterface.GetNode("InterfaceDisplayName");
     if (IsAvailable(ptrInterfaceDisplayName) &&
-        IsReadable(ptrInterfaceDisplayName)) {
+        Spinnaker::GenApi::IsReadable(ptrInterfaceDisplayName)) {
       Spinnaker::GenICam::gcstring interfaceDisplayName =
           ptrInterfaceDisplayName->GetValue();
       cout << interfaceDisplayName << endl;
@@ -310,7 +397,8 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
       // Extract Vendor name
       Spinnaker::GenApi::CStringPtr ptrDeviceVendorName =
           nodeMapTLDevice.GetNode("DeviceVendorName");
-      if (IsAvailable(ptrDeviceVendorName) && IsReadable(ptrDeviceVendorName)) {
+      if (IsAvailable(ptrDeviceVendorName) &&
+          Spinnaker::GenApi::IsReadable(ptrDeviceVendorName)) {
         Spinnaker::GenICam::gcstring deviceVendorName =
             ptrDeviceVendorName->ToString();
 
@@ -322,7 +410,8 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
       // Extract Device Model
       Spinnaker::GenApi::CStringPtr ptrDeviceModelName =
           nodeMapTLDevice.GetNode("DeviceModelName");
-      if (IsAvailable(ptrDeviceModelName) && IsReadable(ptrDeviceModelName)) {
+      if (IsAvailable(ptrDeviceModelName) &&
+          Spinnaker::GenApi::IsReadable(ptrDeviceModelName)) {
         Spinnaker::GenICam::gcstring deviceModelName =
             ptrDeviceModelName->ToString();
 
@@ -349,5 +438,97 @@ static vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
     cout << "Error: " << e.what() << endl;
   }
 
+  return result;
+}
+
+Spinnaker::CameraPtr CameraSpinnaker::retrieveCameraPtrWithCamNum(
+    unsigned int camNum) {
+  // Initialse return ptr
+  Spinnaker::CameraPtr = nullptr;
+
+  // Vector that stores #cameras for each interface
+  vector<int> cams_per_interface = {};
+
+  // Create system ptr
+  Spinnaker::SystemPtr system_ptr = Spinnaker::System::GetInstance();
+
+  // Retrieve list of interfaces from the system
+  Spinnaker::InterfaceList interfaceList = system_ptr->GetInterfaces();
+  unsigned int numInterfaces = interfaceList.GetSize();
+
+  // Go through interfaces to fill up
+  for (unsigned int i = 0; i < numInterfaces; i++) {
+    // Select interface
+    auto interfacePtr = interfaceList.GetByIndex(i);
+
+    // Check number of cameras in interface and append to cams_per_interface
+    auto caminfo_vec = getCameraListFromSingleInterface(interfacePtr);
+    cams_per_interface.push_back(caminfo_vec.size());
+  }
+
+  // We now find out which interface index and camera index does camNum
+  // corresponds to
+
+  int temp = (int)camNum + 1;
+
+  int interface_indice = -1;
+  int camera_indice = -1;
+
+  for (unsigned int i = 0; i < numInterfaces; i++) {
+    // If camera is in the interface
+    if (temp <= cams_per_interface[i]) {
+      interface_indice = i;
+      camera_indice = temp - 1;
+
+    } else {  // If camera is not in this interface, we update temp
+      temp -= cams_per_interface[i];  // This will definitely be a positive,
+                                      // non-zero number
+    }
+  }
+
+  if (interface_indice > 0 && camera_indice > 0) {
+    // We retrieve camera ptr
+    ret = interfaceList.GetByIndex(interface_indice)
+              ->GetCameras()
+              .GetByIndex(camera_indice);
+  } else {
+    cout << "Warning: Invalid Camera Number: " << canNum << endl;
+  }
+
+  // Clear interface list
+  interfaceList.Clear();
+
+  // Release system ptr
+  system_ptr->ReleaseInstance();
+
+  return ret;
+}
+
+int CameraSpinnaker::PrintDeviceInfo(CameraPtr pCam) {
+  int result = 0;
+  cout << endl << "*** DEVICE INFORMATION ***" << endl << endl;
+  try {
+    Spinnaker::GenApi::INodeMap& nodeMap = pCam->GetTLDeviceNodeMap();
+    Spinnaker::GenApi::FeatureList_t features;
+    Spinnaker::GenApi::CCategoryPtr category =
+        nodeMap.GetNode("DeviceInformation");
+    if (IsAvailable(category) && Spinnaker::GenApi::IsReadable(category)) {
+      category->GetFeatures(features);
+      Spinnaker::GenApi::FeatureList_t::const_iterator it;
+      for (it = features.begin(); it != features.end(); ++it) {
+        Spinnaker::GenApi::CNodePtr pfeatureNode = *it;
+        cout << pfeatureNode->GetName() << " : ";
+        Spinnaker::GenApi::CValuePtr pValue = (CValuePtr)pfeatureNode;
+        cout << (Spinnaker::GenApi::IsReadable(pValue) ? pValue->ToString()
+                                                       : "Node not readable");
+        cout << endl;
+      }
+    } else {
+      cout << "Device control information not available." << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+    result = -1;
+  }
   return result;
 }
