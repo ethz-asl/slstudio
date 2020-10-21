@@ -12,6 +12,7 @@ if ismac
     DEFINES = {'-DWITH_CAMERAIIDC'};
     srcFilesCamera = {'Camera.cpp', 'CameraIIDC.cpp'};
 elseif isunix
+   
     CXXFLAGS = {'-I/usr/local/lib/', '-I/usr/include/spinnaker'};
     LDFLAGS = {'-lSpinnaker'};
     DEFINES = {'-DWITH_CAMERASPINNAKER'};

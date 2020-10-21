@@ -1,5 +1,7 @@
 ﻿#include "CameraSpinnaker.h"
+#include <chrono>
 #include <cstring>
+#include <thread>
 
 vector<CameraInfo> CameraSpinnaker::getCameraList() {
   // Initialise vector to be returned
@@ -164,7 +166,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
-  /**
   // Disable Gamma
   cout << "Disabling camera gamma" << endl;
   try {
@@ -178,8 +179,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-  **/
 
+  /**
   // Set gamma value to 1.0
   try {
     cout << "Setting gamma value to 1.0..." << endl;
@@ -193,6 +194,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
+  **/
 
   // Disable Autogain
   try {
@@ -211,7 +213,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   // Set reasonable default settings
   CameraSettings settings;
   settings.shutter = 16.667;
-  // settings.shutter = 33.33;
+  // settings.shutter = 33.333;
   settings.gain = 0.0;
   this->setCameraSettings(settings);
   return;
@@ -343,6 +345,35 @@ void CameraSpinnaker::startCapture() {
     }
   }
 
+  // Set trigger selector
+  try {
+    if (m_cam_ptr->TriggerSelector == NULL ||
+        m_cam_ptr->TriggerSelector.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to set trigger selector. Aborting..." << endl;
+      throw;
+    }
+    m_cam_ptr->TriggerSelector.SetValue(
+        Spinnaker::TriggerSelectorEnums::TriggerSelector_FrameStart);
+    cout << "Set Trigger Selector to FrameStart" << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  /** Set trigger activation
+  try {
+    if (m_cam_ptr->TriggerActivation == NULL ||
+        m_cam_ptr->TriggerActivation.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to set trigger activation. Aborting..." << endl;
+      throw;
+    }
+    m_cam_ptr->TriggerActivation.SetValue(
+        Spinnaker::TriggerActivationEnums::TriggerActivation_RisingEdge);
+    cout << "Set Trigger Activation to Rising Edge" << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+  **/
+
   // Turn trigger mode back on
   try {
     if (m_cam_ptr->TriggerSource == NULL ||
@@ -353,6 +384,12 @@ void CameraSpinnaker::startCapture() {
     }
     m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_On);
     cout << "Trigger mode turned back on..." << endl << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  try {
+    auto img_ptr = m_cam_ptr->GetNextImage();
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
@@ -396,8 +433,13 @@ CameraFrame CameraSpinnaker::getFrame() {
           m_cam_ptr->TriggerSoftware.GetAccessMode() != Spinnaker::GenApi::WO) {
         // cout << "Unable to execute trigger..." << endl;
       }
-      // cout << "Executed software trigger" << endl;
       m_cam_ptr->TriggerSoftware.Execute();
+      cout << "Executed software trigger" << endl;
+
+      // Blackfly and Flea3 GEV cameras need 2 second delay after software
+      // trigger, so we sleep for 3 seconds before proceeding
+      // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
     }
