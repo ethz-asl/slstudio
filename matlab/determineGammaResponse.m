@@ -2,8 +2,8 @@ clc;
 clear('all');
 %close('all');
 
-p = Projector(1);
-c = Camera(1,0);
+p = Projector(1); % Type in screen number
+c = Camera(0,0); % Need to change indice based on camera number (see camera class)
 c.startCapture();
 
 response = zeros(256, 1);

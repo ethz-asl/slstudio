@@ -12,10 +12,10 @@ if ismac
     DEFINES = {'-DWITH_CAMERAIIDC'};
     srcFilesCamera = {'Camera.cpp', 'CameraIIDC.cpp'};
 elseif isunix
-    CXXFLAGS = {'-I/usr/local/lib/', '-I/opt/XIMEA/include'};
-    LDFLAGS = {'-ldc1394', '-lm3api'};
-    DEFINES = {'-DWITH_CAMERAIIDC', '-DWITH_CAMERAXIMEA'};
-    srcFilesCamera = {'Camera.cpp', 'CameraIIDC.cpp', 'CameraXIMEA.cpp'};
+    CXXFLAGS = {'-I/usr/local/lib/', '-I/usr/include/spinnaker'};
+    LDFLAGS = {'-lSpinnaker'};
+    DEFINES = {'-DWITH_CAMERASPINNAKER'};
+    srcFilesCamera = {'Camera.cpp', 'CameraSpinnaker.cpp'};
 elseif ispc
 % 	CXXFLAGS = {'-IC:/Program Files/IDS/uEye/Develop/include/'};
 %   LDFLAGS = 'C:\Program Files\IDS\uEye\Develop\Lib\uEye_api_64.lib';
@@ -40,10 +40,14 @@ if ismac
     DEFINES = {};
     LDFLAGS = {'LDFLAGS = "\$LDFLAGS -framework Cocoa -framework OpenGL"'};
 elseif isunix
-    srcFilesProjector = [srcFilesProjector 'OpenGLContext.Unix.cpp'];
+    srcFilesProjector = [srcFilesProjector 'OpenGLContext.GLFW.cpp'];
     CXXFLAGS = {'CXXFLAGS=$CXXFLAGS'};
     DEFINES = {};
-    LDFLAGS = {'-lGL', '-lGLU', '-lX11', '-lXxf86vm', '-lGLEW'};
+    LDFLAGS = {'-lGL', '-lGLU', '-lXxf86vm', '-lGLEW', '-lglfw', '-lXi'};
+%     srcFilesProjector = [srcFilesProjector 'OpenGLContext.Unix.cpp'];
+%     CXXFLAGS = {'CXXFLAGS=$CXXFLAGS'};
+%     DEFINES = {};
+%     LDFLAGS = {'-lGL', '-lGLU', '-lX11', '-lXxf86vm', '-lGLEW'};
 elseif ispc
     srcFilesProjector = [srcFilesProjector 'OpenGLContext.Win.cpp'];
 	CXXFLAGS = {'-IC:\Program Files\glew-1.13.0\include'};
@@ -55,4 +59,3 @@ srcFilesProjector = strcat(srcDirProjector, srcFilesProjector);
 srcFilesProjector = ['ProjectorMex.cpp' srcFilesProjector];
 
 mex('-v', ['-I' srcDirProjector], srcFilesProjector{:}, CXXFLAGS{:}, DEFINES{:}, LDFLAGS{:});
-

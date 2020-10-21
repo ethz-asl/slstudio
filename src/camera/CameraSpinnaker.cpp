@@ -50,17 +50,30 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     throw;
   }
 
+  // Initialise camera
   try {
-    // Initialise camera
     m_cam_ptr->Init();
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Print device info
+  // Print device info
+  cout << endl << "***** Print device info start *****" << endl;
+
+  try {
     PrintDeviceInfo(m_cam_ptr);
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Apply mono 8 pixel format
+  cout << "***** Print device info end *****" << endl << endl;
+
+  // Apply raw 8 pixel format (Might not be able to be changed)
+  try {
+    cout << "Applying pixel format..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
-      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Mono8);
+      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Raw8);
       cout << "Pixel format set to "
            << m_cam_ptr->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
            << endl;
@@ -68,8 +81,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Pixel format not available..." << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Set Offset X
+  // Set Offset X
+  try {
+    cout << "Applying offset X..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetX) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetX)) {
       m_cam_ptr->OffsetX.SetValue(0);
@@ -79,8 +97,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Offset X not available..." << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Set Offset Y
+  // Set Offset Y
+  try {
+    cout << "Applying offset Y..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetY) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetY)) {
       m_cam_ptr->OffsetY.SetValue(0);
@@ -90,8 +113,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Offset Y not available..." << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Set Width
+  // Set Width (Might not be able to be changed)
+  try {
+    cout << "Applying width..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Width) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Width) &&
         m_cam_ptr->Width.GetInc() != 0 && m_cam_ptr->Width.GetMax() != 0) {
@@ -101,8 +129,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Width not available..." << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Set Height
+  // Set Height (Might not be able to be changed)
+  try {
+    cout << "Applying height..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Height) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Height) &&
         m_cam_ptr->Height.GetInc() != 0 && m_cam_ptr->Height.GetMax() != 0) {
@@ -112,8 +145,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Height not available..." << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Disable Auto exposure
+  // Disable Auto exposure
+  try {
+    cout << "Disabling auto-exposure..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureAuto) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->ExposureAuto)) {
       m_cam_ptr->ExposureAuto.SetValue(Spinnaker::ExposureAuto_Off);
@@ -122,9 +160,14 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Unable to disable automatic exposure." << endl << endl;
       // throw;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    /**
-    // Disable Gamma
+  /**
+  // Disable Gamma
+  cout << "Disabling camera gamma" << endl;
+  try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GammaEnable)) {
       m_cam_ptr->GammaEnable.SetValue(false);
@@ -132,9 +175,14 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     } else {
       cout << "Unable to disable Gamma" << endl;
     }
-    **/
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+  **/
 
-    // Set gamma value to 1.0
+  // Set gamma value to 1.0
+  try {
+    cout << "Setting gamma value to 1.0..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gamma) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Gamma)) {
       m_cam_ptr->Gamma.SetValue(1.0f);
@@ -142,8 +190,13 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     } else {
       cout << "Unable to disable Gamma" << endl;
     }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
-    // Disable Autogain
+  // Disable Autogain
+  try {
+    cout << "Disabling auto-gain..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GainAuto) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GainAuto)) {
       m_cam_ptr->GainAuto.SetValue(Spinnaker::GainAuto_Off);
@@ -151,18 +204,16 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     } else {
       cout << "Unable to disable Auto-gain" << endl;
     }
-
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
 
   // Set reasonable default settings
   CameraSettings settings;
-  // settings.shutter = 8.33;
-  settings.shutter = 33.33;
+  settings.shutter = 16.667;
+  // settings.shutter = 33.33;
   settings.gain = 0.0;
   this->setCameraSettings(settings);
-
   return;
 }
 
@@ -208,6 +259,7 @@ void CameraSpinnaker::setCameraSettings(CameraSettings settings) {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gain) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Gain)) {
       m_cam_ptr->Gain.SetValue(settings.gain);
+      // m_cam_ptr->Gain.SetValue(-10.0f);
       cout << "Set gain to: " << m_cam_ptr->Gain.GetValue() << endl;
     } else {
       cout << "Could not set gain" << endl;

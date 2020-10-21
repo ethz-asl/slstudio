@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<Kc type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>f</dt>
+  <data>
+    1. 0. 0. 0. 1. 0. 0. 0. 1.</data></Kc>
+<kc type_id="opencv-matrix">
+  <rows>5</rows>
+  <cols>1</cols>
+  <dt>f</dt>
+  <data>
+    0. 0. 0. 0. 0.</data></kc>
+<Kp type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>f</dt>
+  <data>
+    1. 0. 0. 0. 1. 0. 0. 0. 1.</data></Kp>
+<kp type_id="opencv-matrix">
+  <rows>5</rows>
+  <cols>1</cols>
+  <dt>f</dt>
+  <data>
+    0. 0. 0. 0. 0.</data></kp>
+<Rp type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>f</dt>
+  <data>
+    1. 0. 0. 0. 1. 0. 0. 0. 1.</data></Rp>
+<Tp type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>1</cols>
+  <dt>f</dt>
+  <data>
+    0. 0. 0.</data></Tp>
+<cam_error>0.</cam_error>
+<proj_error>0.</proj_error>
+<stereo_error>0.</stereo_error>
+<frameWidth>720</frameWidth>
+<frameHeight>540</frameHeight>
+<screenResX>1280</screenResX>
+<screenResY>800</screenResY>
+</opencv_storage>

@@ -265,11 +265,16 @@ macx {
 
 # Compile with system dependent OpenGL Context code
 unix:!macx{
-    SOURCES += projector/OpenGLContext.Unix.cpp
-    LIBS += -lXxf86vm
-    PKGCONFIG += gl glu glew x11 #xrandr
-#    SOURCES += projector/OpenGLContext.GLFW.cpp
-#    LIBS += -lglfw3 -lXxf86vm -lXi
+    #X Screen
+    #SOURCES += projector/OpenGLContext.Unix.cpp
+    #LIBS += -lXxf86vm
+    #PKGCONFIG += gl glu glew x11
+
+    #xrandr
+    INCLUDEPATH += /usr/include/GLFW/glfw3.h
+    SOURCES += projector/OpenGLContext.GLFW.cpp
+    LIBS += -lglfw -lXxf86vm
+    PKGCONFIG += gl glu glew x11
 }
 win32{
     SOURCES += projector/OpenGLContext.Win.cpp
