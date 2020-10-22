@@ -444,9 +444,6 @@ void CameraSpinnaker::stopCapture() {
 }
 
 CameraFrame CameraSpinnaker::getFrame() {
-  // cout << "Getting frame..." << endl;
-  std::unique_ptr<Img_handler> handler_ptr = std::make_unique<Img_handler>();
-
   // Set acquisition mode to continuous
   try {
     if (m_cam_ptr->AcquisitionMode == NULL ||
@@ -461,8 +458,6 @@ CameraFrame CameraSpinnaker::getFrame() {
     cout << "Error: " << e.what() << endl;
   }
 
-  m_cam_ptr->RegisterEventHandler(*handler_ptr);
-
   CameraFrame frame;
 
   // Begin acquiring images
@@ -473,55 +468,44 @@ CameraFrame CameraSpinnaker::getFrame() {
     cout << "Error: " << e.what() << endl;
   }
 
-  do {
-    // Activate software trigger
-    if (triggerMode == triggerModeSoftware) {
-      try {
-        if (m_cam_ptr->TriggerSoftware == NULL ||
-            m_cam_ptr->TriggerSoftware.GetAccessMode() !=
-                Spinnaker::GenApi::WO) {
-          cout << "Unable to execute trigger..." << endl;
-        }
-        m_cam_ptr->TriggerSoftware.Execute();
-        cout << "Executed software trigger" << endl;
-
-        // Blackfly and Flea3 GEV cameras need 2 second delay after software
-        // trigger, so we sleep for 3 seconds before proceeding
-        // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-
-      } catch (Spinnaker::Exception& e) {
-        cout << "Error: " << e.what() << endl;
+  // Activate software trigger
+  if (triggerMode == triggerModeSoftware) {
+    try {
+      if (m_cam_ptr->TriggerSoftware == NULL ||
+          m_cam_ptr->TriggerSoftware.GetAccessMode() != Spinnaker::GenApi::WO) {
+        cout << "Unable to execute trigger..." << endl;
       }
+      m_cam_ptr->TriggerSoftware.Execute();
+      cout << "Executed software trigger" << endl;
+
+      // Blackfly and Flea3 GEV cameras need 2 second delay after software
+      // trigger, so we sleep for 3 seconds before proceeding
+      std::this_thread::sleep_for(
+          std::chrono::microseconds((uint32_t)(50 * m_exposure_time_micro_s)));
+
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
     }
-
-    // Wait for a bit
-    std::this_thread::sleep_for(
-        std::chrono::microseconds((uint32_t)(20 * m_exposure_time_micro_s)));
-
-    cout << "Sleep finished" << endl;
-  } while (!handler_ptr->successfully_retrieved_image(m_img_ptr));
-
-  cout << "Frame retreived" << endl;
+  }
 
   // Fill in frame
-  frame.timeStamp = m_img_ptr->GetTimeStamp();
-  frame.height = m_img_ptr->GetHeight();
-  frame.width = m_img_ptr->GetWidth();
-  frame.memory = new unsigned char[m_img_ptr->GetBufferSize()];
-  *frame.memory = *(unsigned char*)m_img_ptr->GetData();
+  auto img_ptr = m_cam_ptr->GetNextImage();
 
-  m_cam_ptr->UnregisterEventHandler(*handler_ptr);
+  if (!img_ptr->IsIncomplete()) {
+    frame.timeStamp = img_ptr->GetTimeStamp();
+    frame.height = img_ptr->GetHeight();
+    frame.width = img_ptr->GetWidth();
+    frame.memory = (unsigned char*)img_ptr->GetData();
+    frame.sizeBytes = img_ptr->GetBufferSize();
+  }
 
   // Stop getting images
-
   try {
     m_cam_ptr->EndAcquisition();
     cout << "End acquisition" << endl;
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-
-  m_img_ptr = nullptr;
 
   return frame;
 }

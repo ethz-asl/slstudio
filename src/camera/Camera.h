@@ -18,11 +18,6 @@ struct CameraFrame {
         sizeBytes(0),
         timeStamp(0),
         flags(0) {}
-  ~CameraFrame() {
-    // Prevent memory leak
-    if (memory) delete[] memory;
-    memory = nullptr;
-  }
 };
 
 struct CameraSettings {

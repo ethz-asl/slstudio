@@ -29,7 +29,6 @@ class CameraSpinnaker : public Camera {
  private:
   Spinnaker::CameraPtr m_cam_ptr = nullptr;
   Spinnaker::SystemPtr m_sys_ptr = nullptr;
-  Spinnaker::ImagePtr m_img_ptr;
   Spinnaker::CameraPtr retrieveCameraPtrWithCamNum(unsigned int camNum);
   float m_exposure_time_micro_s = 0.0;
 };
