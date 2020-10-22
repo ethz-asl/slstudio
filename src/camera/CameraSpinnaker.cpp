@@ -5,57 +5,6 @@
 #include <mutex>
 #include <thread>
 
-// We will use this class to handle when an image is retrieved
-// Tentatively fix image format to be Mono8
-class Img_handler : public Spinnaker::ImageEventHandler {
- public:
-  Img_handler() {}
-
-  ~Img_handler() override {}
-
-  void OnImageEvent(Spinnaker::ImagePtr image_ptr) override {
-    cout << "Image Event Running!" << endl;
-
-    if (image_ptr->IsIncomplete()) {
-      std::cerr << "Image incomplete: "
-                << Spinnaker::Image::GetImageStatusDescription(
-                       image_ptr->GetImageStatus())
-                << "..." << std::endl;
-    } else {
-      // Lock to prevent m_image_ptr from being accessed when this is
-      // being run
-      cout << "Image is complete!" << endl;
-      std::lock_guard<std::mutex> lock(m_mutex);
-
-      cout << image_ptr->GetImageSize() << endl;
-
-      m_image_ptr = image_ptr->Convert(Spinnaker::PixelFormat_Mono8);
-
-      cout << m_image_ptr->GetImageSize() << endl;
-
-      m_finish = true;
-    }
-    cout << "Image Event Completed!" << endl;
-  }
-
-  bool successfully_retrieved_image(Spinnaker::ImagePtr& image_ptr) {
-    if (m_finish) {
-      std::lock_guard<std::mutex> lock(m_mutex);
-      image_ptr = m_image_ptr;
-      cout << image_ptr->GetImageSize() << endl;
-
-    } else {
-      cout << "Have not received image!" << endl;
-    }
-    return m_finish;
-  }
-
- private:
-  Spinnaker::ImagePtr m_image_ptr = nullptr;
-  bool m_finish = false;
-  std::mutex m_mutex;
-};
-
 vector<CameraInfo> CameraSpinnaker::getCameraList() {
   // Initialise vector to be returned
   vector<CameraInfo> ret = {};
