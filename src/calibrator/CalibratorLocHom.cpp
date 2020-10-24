@@ -64,6 +64,8 @@ CalibrationData CalibratorLocHom::calibrate() {
       Qi.push_back(cv::Point3f(checkerSize * w, checkerSize * h, 0.0));
 
   // Find calibration point coordinates for camera and projector
+  std::vector<int> sequence_mapping =
+      {};  // Record down how Q indices map to Frame number in scroll table
   vector<vector<cv::Point2f> > qc, qp;
   vector<vector<cv::Point3f> > Q;
   for (unsigned int i = 0; i < nFrameSeq; i++) {
@@ -161,6 +163,9 @@ CalibrationData CalibratorLocHom::calibrate() {
 
         // Store world corner coordinates
         Q.push_back(Qi_a);
+
+        // Store frame number for this image
+        sequence_mapping.push_back(i);
       }
     }
   }
@@ -242,9 +247,13 @@ CalibrationData CalibratorLocHom::calibrate() {
     }
     proj_error_per_view[i] = (float)err / n;
 
-    std::cout << "Seq error " << i + 1 << " cam:" << cam_error_per_view[i]
+    std::cout << "Error " << i + 1 << ") Sequence " << sequence_mapping[i]
+              << "):\n\tcam:" << cam_error_per_view[i]
               << " proj:" << proj_error_per_view[i] << std::endl;
   }
+
+  // Print Stereo Error
+  std::cout << "Stereo Error: " << stereo_error << std::endl;
 
   return calData;
 }
