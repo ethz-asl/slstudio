@@ -72,11 +72,12 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   cout << "***** Print device info end *****" << endl << endl;
 
-  /** Apply raw 8 pixel format (Cannot be changed for Blackfly which is fixed to
-  be Mono8) try { cout << "Applying pixel format..." << endl; if
-  (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
+  // Set pixel format to be Mono8
+  try {
+    cout << "Applying pixel format..." << endl;
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
-      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Raw8);
+      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Mono8);
       cout << "Pixel format set to "
            << m_cam_ptr->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
            << endl;
@@ -87,7 +88,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-  **/
 
   // Set Offset X
   try {
@@ -207,6 +207,38 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Set GainAuto to " << false << endl;
     } else {
       cout << "Unable to disable Auto-gain" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Set stream buffer count mode to Manual
+  try {
+    if (Spinnaker::GenApi::IsReadable(
+            m_cam_ptr->TLStream.StreamBufferCountMode) &&
+        Spinnaker::GenApi::IsWritable(
+            m_cam_ptr->TLStream.StreamBufferCountMode)) {
+      m_cam_ptr->TLStream.StreamBufferCountMode.SetValue(
+          Spinnaker::StreamBufferCountMode_Manual);
+      cout << "Set Stream Buffer Count Mode to Manual" << endl;
+    } else {
+      cout << "Unable set Stream Buffer Count Mode to Manual" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Set to retrieve only the newest image
+  try {
+    if (Spinnaker::GenApi::IsReadable(
+            m_cam_ptr->TLStream.StreamBufferHandlingMode) &&
+        Spinnaker::GenApi::IsWritable(
+            m_cam_ptr->TLStream.StreamBufferHandlingMode)) {
+      m_cam_ptr->TLStream.StreamBufferHandlingMode.SetValue(
+          Spinnaker::StreamBufferHandlingMode_NewestOnly);
+      cout << "Set only show newest image" << endl;
+    } else {
+      cout << "Unable to set to only show newest image" << endl;
     }
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
@@ -343,9 +375,8 @@ void CameraSpinnaker::startCapture() {
   /** Set trigger activation
   try {
     if (m_cam_ptr->TriggerActivation == NULL ||
-        m_cam_ptr->TriggerActivation.GetAccessMode() != Spinnaker::GenApi::RW) {
-      cout << "Unable to set trigger activation. Aborting..." << endl;
-      throw;
+        m_cam_ptr->TriggerActivation.GetAccessMode() != Spinnaker::GenApi::RW)
+  { cout << "Unable to set trigger activation. Aborting..." << endl; throw;
     }
     m_cam_ptr->TriggerActivation.SetValue(
         Spinnaker::TriggerActivationEnums::TriggerActivation_RisingEdge);
@@ -365,6 +396,14 @@ void CameraSpinnaker::startCapture() {
     }
     m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_On);
     cout << "Trigger mode turned back on..." << endl << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Begin acquiring images
+  try {
+    m_cam_ptr->BeginAcquisition();
+    cout << "Acquisition start" << endl;
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
@@ -389,6 +428,14 @@ void CameraSpinnaker::stopCapture() {
     cout << "Error: " << e.what() << endl;
   }
 
+  // Stop getting images
+  try {
+    m_cam_ptr->EndAcquisition();
+    cout << "End acquisition" << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   capturing = false;
 }
 
@@ -409,14 +456,6 @@ CameraFrame CameraSpinnaker::getFrame() {
 
   CameraFrame frame;
 
-  // Begin acquiring images
-  try {
-    m_cam_ptr->BeginAcquisition();
-    cout << "Acquisition start" << endl;
-  } catch (Spinnaker::Exception& e) {
-    cout << "Error: " << e.what() << endl;
-  }
-
   // Activate software trigger
   if (triggerMode == triggerModeSoftware) {
     try {
@@ -427,33 +466,43 @@ CameraFrame CameraSpinnaker::getFrame() {
       m_cam_ptr->TriggerSoftware.Execute();
       cout << "Executed software trigger" << endl;
 
-      // Blackfly and Flea3 GEV cameras need 2 second delay after software
-      // trigger, so we sleep for 3 seconds before proceeding
-      std::this_thread::sleep_for(
-          std::chrono::microseconds((uint32_t)(50 * m_exposure_time_micro_s)));
-
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
     }
   }
 
   // Fill in frame
-  auto img_ptr = m_cam_ptr->GetNextImage();
+  Spinnaker::ImagePtr img_ptr = nullptr;
 
-  if (!img_ptr->IsIncomplete()) {
-    frame.timeStamp = img_ptr->GetTimeStamp();
-    frame.height = img_ptr->GetHeight();
-    frame.width = img_ptr->GetWidth();
-    frame.memory = (unsigned char*)img_ptr->GetData();
-    frame.sizeBytes = img_ptr->GetBufferSize();
-  }
+  int attempts = 100;
 
-  // Stop getting images
-  try {
-    m_cam_ptr->EndAcquisition();
-    cout << "End acquisition" << endl;
-  } catch (Spinnaker::Exception& e) {
-    cout << "Error: " << e.what() << endl;
+  for (int i = 0; i < attempts; i++) {
+    try {
+      img_ptr = m_cam_ptr->GetNextImage();
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
+
+    std::this_thread::sleep_for(
+        std::chrono::microseconds((uint32_t)(3 * m_exposure_time_micro_s)));
+
+    try {
+      if (img_ptr != nullptr &&
+          img_ptr->GetImageStatus() == Spinnaker::IMAGE_NO_ERROR &&
+          !img_ptr->IsIncomplete()) {
+        cout << "Image Acquisition Successful!" << endl;
+        frame.timeStamp = img_ptr->GetTimeStamp();
+        frame.height = img_ptr->GetHeight();
+        frame.width = img_ptr->GetWidth();
+        frame.memory = (unsigned char*)img_ptr->GetData();
+        frame.sizeBytes = img_ptr->GetBufferSize();
+        break;
+      } else {
+        cout << "Image Acquisition Failed!" << endl;
+      }
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
   }
 
   return frame;
@@ -577,7 +626,7 @@ vector<CameraInfo> CameraSpinnaker::getCameraListFromSingleInterface(
       if (IsAvailable(ptrDeviceVendorName) &&
           Spinnaker::GenApi::IsReadable(ptrDeviceVendorName)) {
         Spinnaker::GenICam::gcstring deviceVendorName =
-            ptrDeviceVendorName->ToString();
+            ptrDeviceVendorName->ToString() + " (Spinnaker)";
 
         camera_info.vendor = deviceVendorName.c_str();
 

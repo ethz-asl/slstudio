@@ -15,64 +15,25 @@ p.GetScreenInfo();
 
 response = zeros(256, 1);
 
-i=255
-tex = repmat(uint8(i), [1 1 3]);
-p.displayTexture(tex);
-disp("Texture displayed!");
-pause(10);
-disp("Wait is over!");
-tic
-I = c.getFrame();
-toc
-disp("Acquired frame!");
-response(i+1) = mean(I(:));
+
+
+for i=0:255
+    tex = repmat(uint8(i), [1 1 3]);
+    p.displayTexture(tex);
+    pause(0.5);
+    I = c.getFrame();
+    
+%     imshow(I);
+%     close('all');
+    
+    mean(I(:))
+    response(i+1) = mean(I(:));
+end
+
 figure;
-imshow(I);
-
-i=0
-tex = repmat(uint8(i), [1 1 3]);
-p.displayTexture(tex);
-disp("Texture displayed!");
-pause(10);
-disp("Wait is over!");
-tic
-I = c.getFrame();
-toc
-disp("Acquired frame!");
-response(i+1) = mean(I(:));
-figure;
-imshow(I);
-
-i=255
-tex = repmat(uint8(i), [1 1 3]);
-p.displayTexture(tex);
-disp("Texture displayed!");
-pause(10);
-disp("Wait is over!");
-tic
-I = c.getFrame();
-toc
-disp("Acquired frame!");
-response(i+1) = mean(I(:));
-figure;
-imshow(I);
-
-
-
-
-
-% for i=0:10:255
-%     tex = repmat(uint8(i), [1 1 3]);
-%     p.displayTexture(tex);
-%     pause(0.1);
-%     I = c.getFrame();
-%     response(i+1) = mean(I(:));
-% end
-% 
-% figure;
-% plot(response);
-% xlabel('Input intensity');
-% ylabel('Output intensity');
+plot(response);
+xlabel('Input intensity');
+ylabel('Output intensity');
 
 %% Clean up
 c.stopCapture();
