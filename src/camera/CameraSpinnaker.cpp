@@ -72,9 +72,22 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   cout << "***** Print device info end *****" << endl << endl;
 
+  // Set no pixel color filter
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelColorFilter) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelColorFilter)) {
+      m_cam_ptr->PixelColorFilter.SetValue(Spinnaker::PixelColorFilter_None);
+      cout << "Disabled all pixel color filters" << endl;
+    } else {
+      cout << "Failed to disable pixel color filters" << endl;
+      // throw;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   // Set pixel format to be Mono8
   try {
-    cout << "Applying pixel format..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
       m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_Mono8);
@@ -91,7 +104,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // Set Offset X
   try {
-    cout << "Applying offset X..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetX) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetX)) {
       m_cam_ptr->OffsetX.SetValue(0);
@@ -107,7 +119,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // Set Offset Y
   try {
-    cout << "Applying offset Y..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->OffsetY) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->OffsetY)) {
       m_cam_ptr->OffsetY.SetValue(0);
@@ -123,7 +134,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // Set Width (Might not be able to be changed)
   try {
-    cout << "Applying width..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Width) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Width) &&
         m_cam_ptr->Width.GetInc() != 0 && m_cam_ptr->Width.GetMax() != 0) {
@@ -139,7 +149,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // Set Height (Might not be able to be changed)
   try {
-    cout << "Applying height..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Height) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Height) &&
         m_cam_ptr->Height.GetInc() != 0 && m_cam_ptr->Height.GetMax() != 0) {
@@ -155,7 +164,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // Disable Auto exposure
   try {
-    cout << "Disabling auto-exposure..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->ExposureAuto) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->ExposureAuto)) {
       m_cam_ptr->ExposureAuto.SetValue(Spinnaker::ExposureAuto_Off);
@@ -169,7 +177,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   }
 
   // Disable Gamma
-  cout << "Disabling camera gamma" << endl;
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GammaEnable)) {
@@ -182,10 +189,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
-  /**
   // Set gamma value to 1.0
   try {
-    cout << "Setting gamma value to 1.0..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->Gamma) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->Gamma)) {
       m_cam_ptr->Gamma.SetValue(1.0f);
@@ -196,11 +201,9 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-  **/
 
   // Disable Autogain
   try {
-    cout << "Disabling auto-gain..." << endl;
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GainAuto) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->GainAuto)) {
       m_cam_ptr->GainAuto.SetValue(Spinnaker::GainAuto_Off);
@@ -265,6 +268,19 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Disable Auto-Sharpen" << endl;
     } else {
       cout << "Unable to disable Auto-Sharpen" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Disable Saturation Auto
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->SaturationEnable) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->SaturationEnable)) {
+      m_cam_ptr->SaturationEnable.SetValue(false);
+      cout << "Disable Auto-Saturation" << endl;
+    } else {
+      cout << "Unable to disable Auto-Saturation" << endl;
     }
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
