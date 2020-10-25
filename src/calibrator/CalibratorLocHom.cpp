@@ -247,7 +247,7 @@ CalibrationData CalibratorLocHom::calibrate() {
     }
     proj_error_per_view[i] = (float)err / n;
 
-    std::cout << "Error " << i + 1 << ") Sequence " << sequence_mapping[i]
+    std::cout << "Error " << i + 1 << ") Sequence " << sequence_mapping[i] + 1
               << "):\n\tcam:" << cam_error_per_view[i]
               << " proj:" << proj_error_per_view[i] << std::endl;
   }

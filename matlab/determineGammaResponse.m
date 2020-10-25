@@ -15,19 +15,28 @@ p.GetScreenInfo();
 
 response = zeros(256, 1);
 
+figure;
 
+num_samples = 1;
 
 for i=0:255
-    tex = repmat(uint8(i), [1 1 3]);
-    p.displayTexture(tex);
-    pause(0.5);
-    I = c.getFrame();
+    i
+    samples = zeros(1,10);
     
-%     imshow(I);
-%     close('all');
+    for j=1:1:num_samples
     
-    mean(I(:))
-    response(i+1) = mean(I(:));
+        tex = repmat(uint8(i), [1 1 3]);
+        p.displayTexture(tex);
+        pause(0.25);
+        I = c.getFrame();
+
+        imshow(I);
+
+        samples(j) = mean(I(:));
+    end
+    
+    mean(samples)
+    response(i+1) = mean(samples);
 end
 
 figure;

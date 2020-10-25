@@ -244,6 +244,45 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
+  // Disable Sharpness Correction
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->SharpeningEnable) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->SharpeningEnable)) {
+      m_cam_ptr->SharpeningEnable.SetValue(false);
+      cout << "Disable Sharpness Correction" << endl;
+    } else {
+      cout << "Unable to disable sharpness correction" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Disable Sharpness Auto
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->SharpeningAuto) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->SharpeningAuto)) {
+      m_cam_ptr->SharpeningAuto.SetValue(false);
+      cout << "Disable Auto-Sharpen" << endl;
+    } else {
+      cout << "Unable to disable Auto-Sharpen" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Set Black Level to Zero
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BlackLevel) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->BlackLevel)) {
+      m_cam_ptr->BlackLevel.SetValue(0.0f);
+      cout << "Set black level to " << m_cam_ptr->BlackLevel.GetValue() << endl;
+    } else {
+      cout << "Unable to set black value to zero" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   // Set reasonable default settings
   CameraSettings settings;
   settings.shutter = 16.667;
@@ -400,6 +439,20 @@ void CameraSpinnaker::startCapture() {
     cout << "Error: " << e.what() << endl;
   }
 
+  // Set acquisition mode to continuous
+  try {
+    if (m_cam_ptr->AcquisitionMode == NULL ||
+        m_cam_ptr->AcquisitionMode.GetAccessMode() != Spinnaker::GenApi::RW) {
+      cout << "Unable to set acquisition mode to continuous. Aborting..."
+           << endl;
+      throw;
+    }
+    m_cam_ptr->AcquisitionMode.SetValue(Spinnaker::AcquisitionMode_Continuous);
+    cout << "Acquisition mode set to continuous..." << endl;
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   // Begin acquiring images
   try {
     m_cam_ptr->BeginAcquisition();
@@ -440,20 +493,6 @@ void CameraSpinnaker::stopCapture() {
 }
 
 CameraFrame CameraSpinnaker::getFrame() {
-  // Set acquisition mode to continuous
-  try {
-    if (m_cam_ptr->AcquisitionMode == NULL ||
-        m_cam_ptr->AcquisitionMode.GetAccessMode() != Spinnaker::GenApi::RW) {
-      cout << "Unable to set acquisition mode to continuous. Aborting..."
-           << endl;
-      throw;
-    }
-    m_cam_ptr->AcquisitionMode.SetValue(Spinnaker::AcquisitionMode_Continuous);
-    cout << "Acquisition mode set to continuous..." << endl;
-  } catch (Spinnaker::Exception& e) {
-    cout << "Error: " << e.what() << endl;
-  }
-
   CameraFrame frame;
 
   // Activate software trigger
@@ -464,7 +503,7 @@ CameraFrame CameraSpinnaker::getFrame() {
         cout << "Unable to execute trigger..." << endl;
       }
       m_cam_ptr->TriggerSoftware.Execute();
-      cout << "Executed software trigger" << endl;
+      // cout << "Executed software trigger" << endl;
 
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
@@ -477,20 +516,20 @@ CameraFrame CameraSpinnaker::getFrame() {
   int attempts = 100;
 
   for (int i = 0; i < attempts; i++) {
+    std::this_thread::sleep_for(
+        std::chrono::microseconds((uint32_t)(10 * m_exposure_time_micro_s)));
+
     try {
       img_ptr = m_cam_ptr->GetNextImage();
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
     }
 
-    std::this_thread::sleep_for(
-        std::chrono::microseconds((uint32_t)(3 * m_exposure_time_micro_s)));
-
     try {
       if (img_ptr != nullptr &&
           img_ptr->GetImageStatus() == Spinnaker::IMAGE_NO_ERROR &&
           !img_ptr->IsIncomplete()) {
-        cout << "Image Acquisition Successful!" << endl;
+        // cout << "Image Acquisition Successful!" << endl;
         frame.timeStamp = img_ptr->GetTimeStamp();
         frame.height = img_ptr->GetHeight();
         frame.width = img_ptr->GetWidth();
@@ -498,7 +537,8 @@ CameraFrame CameraSpinnaker::getFrame() {
         frame.sizeBytes = img_ptr->GetBufferSize();
         break;
       } else {
-        cout << "Image Acquisition Failed!" << endl;
+        cout << "Image Acquisition Failed! Attempt " << i << "/" << attempts
+             << endl;
       }
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
