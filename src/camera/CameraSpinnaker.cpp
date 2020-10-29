@@ -377,7 +377,7 @@ void CameraSpinnaker::startCapture() {
       throw;
     }
     m_cam_ptr->TriggerMode.SetValue(Spinnaker::TriggerMode_Off);
-    cout << "Trigger mode disabled..." << endl;
+    cout << "Trigger mode disabled temporarily..." << endl;
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }

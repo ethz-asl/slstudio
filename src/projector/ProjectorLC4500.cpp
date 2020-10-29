@@ -25,11 +25,11 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
   if (!DLPC350_USB_IsConnected()) {
     showError("Could not connect.");
   }
-  //    unsigned char HWStatus, SysStatus, MainStatus;
-  //    while(DLPC350_GetStatus(&HWStatus, &SysStatus, &MainStatus) != 0){
-  //        std::cout << ".";
-  //        continue;
-  //    }
+  unsigned char HWStatus, SysStatus, MainStatus;
+  while (DLPC350_GetStatus(&HWStatus, &SysStatus, &MainStatus) != 0) {
+    std::cout << ".";
+    continue;
+  }
 
   // Make sure LC is not in standby
   bool isStandby;
@@ -79,13 +79,13 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
   //    //int DLPC350_AddToPatLut(int TrigType, int PatNum,int BitDepth,int
   //    LEDSelect,bool InvertPat, bool InsertBlack,bool BufSwap, bool
   //    trigOutPrev) DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect,
-  //    invertPattern, false, true, false); DLPC350_AddToPatLut(3, 1, bitDepth,
-  //    ledSelect, invertPattern, true, false, true); DLPC350_AddToPatLut(0, 0,
-  //    bitDepth, ledSelect, invertPattern, false, false, false);
-  //    DLPC350_AddToPatLut(3, 0, bitDepth, ledSelect, invertPattern, true,
-  //    false, true); DLPC350_AddToPatLut(0, 2, bitDepth, ledSelect,
-  //    invertPattern, false, false, false); DLPC350_AddToPatLut(3, 2, bitDepth,
-  //    ledSelect, invertPattern, true, false, true);
+  //    invertPattern, false, true, false); DLPC350_AddToPatLut(3, 1,
+  //    bitDepth, ledSelect, invertPattern, true, false, true);
+  //    DLPC350_AddToPatLut(0, 0, bitDepth, ledSelect, invertPattern, false,
+  //    false, false); DLPC350_AddToPatLut(3, 0, bitDepth, ledSelect,
+  //    invertPattern, true, false, true); DLPC350_AddToPatLut(0, 2, bitDepth,
+  //    ledSelect, invertPattern, false, false, false); DLPC350_AddToPatLut(3,
+  //    2, bitDepth, ledSelect, invertPattern, true, false, true);
 
   //    DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect, invertPattern, false,
   //    true, false); DLPC350_AddToPatLut(3, 1, bitDepth, ledSelect,
@@ -129,7 +129,7 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
   }
 
   //    // Set trigger signal configuration
-  //    DLPC350_SetTrigOutConfig(1, false, 0, 0);
+  DLPC350_SetTrigOutConfig(1, false, 0, 0);
 }
 
 void ProjectorLC4500::setPattern(unsigned int patternNumber,

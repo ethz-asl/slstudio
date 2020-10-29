@@ -73,6 +73,7 @@ HEADERS  += SLStudio.h \
         tracker/TrackerPCL.h \
         tracker/PoseFilter.h \
         cvtools.h \
+        projector/ProjectorLC4500_versavis.h
 
 SOURCES += main.cpp \
         SLStudio.cpp \
@@ -121,6 +122,7 @@ SOURCES += main.cpp \
         tracker/CorrRejectOrgBoundFast.cpp \
         tracker/TrackerPCL.cpp \
         tracker/PoseFilter.cpp \
+        projector/ProjectorLC4500_versavis.cpp
 
 INCLUDEPATH += camera/ projector/ codec/ triangulator/ calibrator/ tracker/
 
@@ -394,3 +396,14 @@ win32{
     LIBS += -lsetupapi
 }
 
+## LC4500 Versavis API
+unix:!macx
+{
+    DEFINES += WITH_LC4500_VERSAVIS_API
+    INCLUDEPATH += /opt/ros/melodic/include/
+    CONFIG += link_pkgconfig
+    PKGCONFIG += roscpp
+
+    # Versavis custom messages
+    INCLUDEPATH += /home/ltf/catkin_ws/devel/include/
+}

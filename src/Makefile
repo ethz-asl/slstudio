@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_LC3000API -DWITH_LC4500API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
+DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_LC3000API -DWITH_LC4500API -DWITH_LC4500_VERSAVIS_API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
 CFLAGS        = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I. -Icamera -Iprojector -Icodec -Itriangulator -Icalibrator -Itracker -isystem /usr/include/vtk-6.3 -isystem /usr/include/pcl-1.8 -isystem /usr/include/eigen3 -isystem /usr/include/GLFW/glfw3.h -isystem /usr/include/flycapture -isystem /usr/include/spinnaker -isystem /usr/include/opencv -isystem /usr/include/ni -isystem /usr/include/openni2 -isystem /usr/include/eigen3 -isystem /usr/include/libdrm -isystem /usr/include/libusb-1.0 -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtTest -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I. -Icamera -Iprojector -Icodec -Itriangulator -Icalibrator -Itracker -isystem /usr/include/vtk-6.3 -isystem /usr/include/pcl-1.8 -isystem /usr/include/eigen3 -isystem /usr/include/GLFW/glfw3.h -isystem /usr/include/flycapture -isystem /usr/include/spinnaker -I/opt/ros/melodic/include -I../../catkin_ws/devel/include -isystem /usr/include/opencv -isystem /usr/include/ni -isystem /usr/include/openni2 -isystem /usr/include/eigen3 -isystem /usr/include/libdrm -isystem /usr/include/libusb-1.0 -I/opt/ros/melodic/include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtTest -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = SLStudio1.0.0
 DISTDIR = /home/ltf/slstudio/src/.tmp/SLStudio1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) -lvtkViewsQt-6.3 -lvtkRenderingQt-6.3 -lvtkGUISupportQt-6.3 -lvtkRenderingCore-6.3 -lvtkCommonExecutionModel-6.3 -lvtkCommonDataModel-6.3 -lvtkCommonMath-6.3 -lvtkCommonCore-6.3 -lvtkIOImage-6.3 -lvtkCommonColor-6.3 -lvtkFiltersCore-6.3 -lvtkFiltersGeometry-6.3 -lboost_system -lglfw -lXxf86vm -ldc1394 -lflycapture -lSpinnaker -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_datasets -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hdf -lopencv_line_descriptor -lopencv_optflow -lopencv_video -lopencv_plot -lopencv_reg -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd -lopencv_viz -lopencv_surface_matching -lopencv_text -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core -lpcl_visualization -lpcl_surface -lpcl_tracking -lpcl_features -lpcl_io -lOpenNI -lOpenNI2 -lpcl_filters -lpcl_sample_consensus -lpcl_search -lpcl_kdtree -lpcl_octree -lpcl_common -lflann -lflann_cpp -lGLEW -lGLU -lX11 -lusb-1.0 -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Core -lpthread -lGL 
+LIBS          = $(SUBLIBS) -lvtkViewsQt-6.3 -lvtkRenderingQt-6.3 -lvtkGUISupportQt-6.3 -lvtkRenderingCore-6.3 -lvtkCommonExecutionModel-6.3 -lvtkCommonDataModel-6.3 -lvtkCommonMath-6.3 -lvtkCommonCore-6.3 -lvtkIOImage-6.3 -lvtkCommonColor-6.3 -lvtkFiltersCore-6.3 -lvtkFiltersGeometry-6.3 -lboost_system -lglfw -lXxf86vm -ldc1394 -lflycapture -lSpinnaker -lopencv_shape -lopencv_stitching -lopencv_superres -lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired -lopencv_ccalib -lopencv_datasets -lopencv_dpm -lopencv_face -lopencv_freetype -lopencv_fuzzy -lopencv_hdf -lopencv_line_descriptor -lopencv_optflow -lopencv_video -lopencv_plot -lopencv_reg -lopencv_saliency -lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd -lopencv_viz -lopencv_surface_matching -lopencv_text -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann -lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui -lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core -lpcl_visualization -lpcl_surface -lpcl_tracking -lpcl_features -lpcl_io -lOpenNI -lOpenNI2 -lpcl_filters -lpcl_sample_consensus -lpcl_search -lpcl_kdtree -lpcl_octree -lpcl_common -lflann -lflann_cpp -lGLEW -lGLU -lX11 -lusb-1.0 -L/opt/ros/melodic/lib -lroscpp /usr/lib/x86_64-linux-gnu/libboost_chrono.so /usr/lib/x86_64-linux-gnu/libboost_filesystem.so /usr/lib/x86_64-linux-gnu/libboost_system.so -lrosconsole -lrosconsole_log4cxx -lrosconsole_backend_interface /usr/lib/x86_64-linux-gnu/liblog4cxx.so /usr/lib/x86_64-linux-gnu/libboost_regex.so /usr/lib/x86_64-linux-gnu/libboost_thread.so /usr/lib/x86_64-linux-gnu/libboost_date_time.so /usr/lib/x86_64-linux-gnu/libboost_atomic.so /usr/lib/x86_64-linux-gnu/libpthread.so -lroscpp_serialization -lxmlrpcpp -lrostime -lcpp_common /usr/lib/x86_64-linux-gnu/libconsole_bridge.so.0.4 -lQt5OpenGL -lQt5Widgets -lQt5Gui -lQt5Test -lQt5Core -lpthread -lGL 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -97,6 +97,7 @@ SOURCES       = main.cpp \
 		tracker/CorrRejectOrgBoundFast.cpp \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
+		projector/ProjectorLC4500_versavis.cpp \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -174,6 +175,7 @@ OBJECTS       = main.o \
 		CorrRejectOrgBoundFast.o \
 		TrackerPCL.o \
 		PoseFilter.o \
+		ProjectorLC4500_versavis.o \
 		OpenGLContext.GLFW.o \
 		CameraIIDC.o \
 		CameraPointGrey.o \
@@ -349,6 +351,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/TrackerPCL.h \
 		tracker/PoseFilter.h \
 		cvtools.h \
+		projector/ProjectorLC4500_versavis.h \
 		camera/CameraIIDC.h \
 		camera/CameraPointGrey.h \
 		camera/CameraSpinnaker.h \
@@ -399,6 +402,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/CorrRejectOrgBoundFast.cpp \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
+		projector/ProjectorLC4500_versavis.cpp \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -631,8 +635,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents SLResources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/hid.Libusb.c $(DISTDIR)/
+	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h projector/ProjectorLC4500_versavis.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/ProjectorLC4500_versavis.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/hid.Libusb.c $(DISTDIR)/
 	$(COPY_FILE) --parents SLStudio.ui SLPreferenceDialog.ui SLCalibrationDialog.ui SLVideoDialog.ui SLAboutDialog.ui SLTrackerDialog.ui $(DISTDIR)/
 
 
@@ -691,18 +695,18 @@ moc_SLStudio.cpp: SLScanWorker.h \
 		SLStudio.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLStudio.h -o moc_SLStudio.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLStudio.h -o moc_SLStudio.cpp
 
 moc_SLVideoWidget.cpp: camera/Camera.h \
 		SLVideoWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLVideoWidget.h -o moc_SLVideoWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLVideoWidget.h -o moc_SLVideoWidget.cpp
 
 moc_SLPreferenceDialog.cpp: SLPreferenceDialog.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPreferenceDialog.h -o moc_SLPreferenceDialog.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPreferenceDialog.h -o moc_SLPreferenceDialog.cpp
 
 moc_SLCalibrationDialog.cpp: camera/Camera.h \
 		projector/Projector.h \
@@ -722,7 +726,7 @@ moc_SLCalibrationDialog.cpp: camera/Camera.h \
 		SLCalibrationDialog.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLCalibrationDialog.h -o moc_SLCalibrationDialog.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLCalibrationDialog.h -o moc_SLCalibrationDialog.cpp
 
 moc_SLScanWorker.cpp: camera/Camera.h \
 		projector/Projector.h \
@@ -735,46 +739,46 @@ moc_SLScanWorker.cpp: camera/Camera.h \
 		SLScanWorker.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLScanWorker.h -o moc_SLScanWorker.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLScanWorker.h -o moc_SLScanWorker.cpp
 
 moc_SLDecoderWorker.cpp: codec/Codec.h \
 		SLDecoderWorker.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLDecoderWorker.h -o moc_SLDecoderWorker.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLDecoderWorker.h -o moc_SLDecoderWorker.cpp
 
 moc_SLTrackerWorker.cpp: tracker/Tracker.h \
 		SLTrackerWorker.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTrackerWorker.h -o moc_SLTrackerWorker.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTrackerWorker.h -o moc_SLTrackerWorker.cpp
 
 moc_SLVideoDialog.cpp: SLVideoDialog.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLVideoDialog.h -o moc_SLVideoDialog.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLVideoDialog.h -o moc_SLVideoDialog.cpp
 
 moc_SLAboutDialog.cpp: SLAboutDialog.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLAboutDialog.h -o moc_SLAboutDialog.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLAboutDialog.h -o moc_SLAboutDialog.cpp
 
 moc_SLPoseWidget.cpp: SLPoseWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPoseWidget.h -o moc_SLPoseWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPoseWidget.h -o moc_SLPoseWidget.cpp
 
 moc_SLPointCloudWidget.cpp: SLPointCloudWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPointCloudWidget.h -o moc_SLPointCloudWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLPointCloudWidget.h -o moc_SLPointCloudWidget.cpp
 
 moc_SLTrackerDialog.cpp: SLTrackerWorker.h \
 		tracker/Tracker.h \
 		SLTrackerDialog.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTrackerDialog.h -o moc_SLTrackerDialog.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTrackerDialog.h -o moc_SLTrackerDialog.cpp
 
 moc_SLTriangulatorWorker.cpp: calibrator/CalibrationData.h \
 		triangulator/Triangulator.h \
@@ -782,18 +786,18 @@ moc_SLTriangulatorWorker.cpp: calibrator/CalibrationData.h \
 		SLTriangulatorWorker.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTriangulatorWorker.h -o moc_SLTriangulatorWorker.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTriangulatorWorker.h -o moc_SLTriangulatorWorker.cpp
 
 moc_SLTraceWidget.cpp: SLTraceWidget.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTraceWidget.h -o moc_SLTraceWidget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include SLTraceWidget.h -o moc_SLTraceWidget.cpp
 
 moc_Calibrator.cpp: calibrator/CalibrationData.h \
 		calibrator/Calibrator.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/Calibrator.h -o moc_Calibrator.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/Calibrator.h -o moc_Calibrator.cpp
 
 moc_CalibratorLocHom.cpp: calibrator/Calibrator.h \
 		calibrator/CalibrationData.h \
@@ -801,7 +805,7 @@ moc_CalibratorLocHom.cpp: calibrator/Calibrator.h \
 		calibrator/CalibratorLocHom.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/CalibratorLocHom.h -o moc_CalibratorLocHom.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/CalibratorLocHom.h -o moc_CalibratorLocHom.cpp
 
 moc_CalibratorRBF.cpp: calibrator/Calibrator.h \
 		calibrator/CalibrationData.h \
@@ -809,12 +813,12 @@ moc_CalibratorRBF.cpp: calibrator/Calibrator.h \
 		calibrator/CalibratorRBF.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/CalibratorRBF.h -o moc_CalibratorRBF.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include calibrator/CalibratorRBF.h -o moc_CalibratorRBF.cpp
 
 moc_PoseFilter.cpp: tracker/PoseFilter.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include tracker/PoseFilter.h -o moc_PoseFilter.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/ltf/slstudio/src -I/home/ltf/slstudio/src/camera -I/home/ltf/slstudio/src/projector -I/home/ltf/slstudio/src/codec -I/home/ltf/slstudio/src/triangulator -I/home/ltf/slstudio/src/calibrator -I/home/ltf/slstudio/src/tracker -I/usr/include/vtk-6.3 -I/usr/include/pcl-1.8 -I/usr/include/eigen3 -I/usr/include/GLFW/glfw3.h -I/usr/include/flycapture -I/usr/include/spinnaker -I/opt/ros/melodic/include -I/home/ltf/catkin_ws/devel/include -I/usr/include/opencv -I/usr/include/ni -I/usr/include/openni2 -I/usr/include/eigen3 -I/usr/include/libdrm -I/usr/include/libusb-1.0 -I/opt/ros/melodic/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtOpenGL -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include tracker/PoseFilter.h -o moc_PoseFilter.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -911,27 +915,87 @@ SLScanWorker.o: SLScanWorker.cpp SLScanWorker.h \
 		triangulator/Triangulator.h \
 		SLPointCloudWidget.h \
 		cvtools.h \
-		codec/CodecPhaseShift3.h \
-		codec/CodecPhaseShift3Unwrap.h \
-		codec/CodecPhaseShift4.h \
-		codec/CodecPhaseShift2x3.h \
-		codec/CodecPhaseShiftNStep.h \
-		codec/CodecPhaseShift3FastWrap.h \
-		codec/CodecPhaseShift2p1.h \
-		codec/CodecPhaseShiftDescatter.h \
-		codec/CodecPhaseShiftModulated.h \
-		codec/CodecPhaseShiftMicro.h \
 		codec/CodecFastRatio.h \
 		codec/CodecGrayCode.h \
-		projector/ProjectorOpenGL.h \
-		projector/OpenGLContext.h \
+		codec/CodecPhaseShift2p1.h \
+		codec/CodecPhaseShift2x3.h \
+		codec/CodecPhaseShift3.h \
+		codec/CodecPhaseShift3FastWrap.h \
+		codec/CodecPhaseShift3Unwrap.h \
+		codec/CodecPhaseShift4.h \
+		codec/CodecPhaseShiftDescatter.h \
+		codec/CodecPhaseShiftMicro.h \
+		codec/CodecPhaseShiftModulated.h \
+		codec/CodecPhaseShiftNStep.h \
 		projector/ProjectorLC3000.h \
 		projector/LC3000API/lcr_cmd.h \
 		projector/LC3000API/common.h \
 		projector/LC3000API/error.h \
 		projector/ProjectorLC4500.h \
-		SLProjectorVirtual.h \
-		SLCameraVirtual.h
+		projector/ProjectorLC4500_versavis.h \
+		/opt/ros/melodic/include/ros/ros.h \
+		/opt/ros/melodic/include/ros/time.h \
+		/opt/ros/melodic/include/ros/platform.h \
+		/opt/ros/melodic/include/ros/exception.h \
+		/opt/ros/melodic/include/ros/duration.h \
+		/opt/ros/melodic/include/ros/rostime_decl.h \
+		/opt/ros/melodic/include/ros/macros.h \
+		/opt/ros/melodic/include/ros/rate.h \
+		/opt/ros/melodic/include/ros/console.h \
+		/opt/ros/melodic/include/ros/console_backend.h \
+		/opt/ros/melodic/include/rosconsole/macros_generated.h \
+		/opt/ros/melodic/include/ros/assert.h \
+		/opt/ros/melodic/include/ros/static_assert.h \
+		/opt/ros/melodic/include/ros/common.h \
+		/opt/ros/melodic/include/ros/forwards.h \
+		/opt/ros/melodic/include/ros/exceptions.h \
+		/opt/ros/melodic/include/ros/datatypes.h \
+		/opt/ros/melodic/include/ros/serialized_message.h \
+		/opt/ros/melodic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/melodic/include/ros/types.h \
+		/opt/ros/melodic/include/ros/node_handle.h \
+		/opt/ros/melodic/include/ros/publisher.h \
+		/opt/ros/melodic/include/ros/message.h \
+		/opt/ros/melodic/include/ros/serialization.h \
+		/opt/ros/melodic/include/ros/message_traits.h \
+		/opt/ros/melodic/include/ros/message_forward.h \
+		/opt/ros/melodic/include/ros/builtin_message_traits.h \
+		/opt/ros/melodic/include/ros/subscriber.h \
+		/opt/ros/melodic/include/ros/subscription_callback_helper.h \
+		/opt/ros/melodic/include/ros/parameter_adapter.h \
+		/opt/ros/melodic/include/ros/message_event.h \
+		/opt/ros/melodic/include/ros/service_server.h \
+		/opt/ros/melodic/include/ros/service_client.h \
+		/opt/ros/melodic/include/ros/service_traits.h \
+		/opt/ros/melodic/include/ros/timer.h \
+		/opt/ros/melodic/include/ros/timer_options.h \
+		/opt/ros/melodic/include/ros/wall_timer.h \
+		/opt/ros/melodic/include/ros/wall_timer_options.h \
+		/opt/ros/melodic/include/ros/steady_timer.h \
+		/opt/ros/melodic/include/ros/steady_timer_options.h \
+		/opt/ros/melodic/include/ros/advertise_options.h \
+		/opt/ros/melodic/include/ros/advertise_service_options.h \
+		/opt/ros/melodic/include/ros/service_callback_helper.h \
+		/opt/ros/melodic/include/ros/subscribe_options.h \
+		/opt/ros/melodic/include/ros/transport_hints.h \
+		/opt/ros/melodic/include/ros/service_client_options.h \
+		/opt/ros/melodic/include/ros/spinner.h \
+		/opt/ros/melodic/include/ros/init.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h \
+		/opt/ros/melodic/include/ros/single_subscriber_publisher.h \
+		/opt/ros/melodic/include/ros/service.h \
+		/opt/ros/melodic/include/ros/names.h \
+		/opt/ros/melodic/include/ros/master.h \
+		/opt/ros/melodic/include/ros/this_node.h \
+		/opt/ros/melodic/include/ros/param.h \
+		/opt/ros/melodic/include/ros/topic.h \
+		../../catkin_ws/devel/include/versavis/TimeNumbered.h \
+		/opt/ros/melodic/include/ros/message_operations.h \
+		projector/ProjectorOpenGL.h \
+		projector/OpenGLContext.h \
+		SLCameraVirtual.h \
+		SLProjectorVirtual.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SLScanWorker.o SLScanWorker.cpp
 
 SLDecoderWorker.o: SLDecoderWorker.cpp SLDecoderWorker.h \
@@ -969,9 +1033,9 @@ SLVideoWidget.o: SLVideoWidget.cpp SLVideoWidget.h \
 
 SLPreferenceDialog.o: SLPreferenceDialog.cpp SLPreferenceDialog.h \
 		ui_SLPreferenceDialog.h \
-		projector/OpenGLContext.h \
 		camera/Camera.h \
-		codec/Codec.h
+		codec/Codec.h \
+		projector/OpenGLContext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SLPreferenceDialog.o SLPreferenceDialog.cpp
 
 SLCalibrationDialog.o: SLCalibrationDialog.cpp SLCalibrationDialog.h \
@@ -992,13 +1056,13 @@ SLCalibrationDialog.o: SLCalibrationDialog.cpp SLCalibrationDialog.h \
 		SLTrackerDialog.h \
 		ui_SLCalibrationDialog.h \
 		SLVideoWidget.h \
-		projector/ProjectorOpenGL.h \
-		projector/OpenGLContext.h \
 		projector/ProjectorLC3000.h \
 		projector/LC3000API/lcr_cmd.h \
 		projector/LC3000API/common.h \
 		projector/LC3000API/error.h \
 		projector/ProjectorLC4500.h \
+		projector/ProjectorOpenGL.h \
+		projector/OpenGLContext.h \
 		SLProjectorVirtual.h \
 		calibrator/CalibratorLocHom.h \
 		calibrator/CalibratorRBF.h \
@@ -1178,8 +1242,8 @@ CalibratorRBF.o: calibrator/CalibratorRBF.cpp calibrator/CalibratorRBF.h \
 		calibrator/CalibrationData.h \
 		codec/Codec.h \
 		codec/CodecCalibration.h \
-		cvtools.h \
-		calibrator/RBFInterpolator.h
+		calibrator/RBFInterpolator.h \
+		cvtools.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CalibratorRBF.o calibrator/CalibratorRBF.cpp
 
 CThinPlateSpline.o: calibrator/CThinPlateSpline.cpp calibrator/CThinPlateSpline.h
@@ -1212,6 +1276,73 @@ TrackerPCL.o: tracker/TrackerPCL.cpp tracker/TrackerPCL.h \
 
 PoseFilter.o: tracker/PoseFilter.cpp tracker/PoseFilter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o PoseFilter.o tracker/PoseFilter.cpp
+
+ProjectorLC4500_versavis.o: projector/ProjectorLC4500_versavis.cpp projector/ProjectorLC4500_versavis.h \
+		/opt/ros/melodic/include/ros/ros.h \
+		/opt/ros/melodic/include/ros/time.h \
+		/opt/ros/melodic/include/ros/platform.h \
+		/opt/ros/melodic/include/ros/exception.h \
+		/opt/ros/melodic/include/ros/duration.h \
+		/opt/ros/melodic/include/ros/rostime_decl.h \
+		/opt/ros/melodic/include/ros/macros.h \
+		/opt/ros/melodic/include/ros/rate.h \
+		/opt/ros/melodic/include/ros/console.h \
+		/opt/ros/melodic/include/ros/console_backend.h \
+		/opt/ros/melodic/include/rosconsole/macros_generated.h \
+		/opt/ros/melodic/include/ros/assert.h \
+		/opt/ros/melodic/include/ros/static_assert.h \
+		/opt/ros/melodic/include/ros/common.h \
+		/opt/ros/melodic/include/ros/forwards.h \
+		/opt/ros/melodic/include/ros/exceptions.h \
+		/opt/ros/melodic/include/ros/datatypes.h \
+		/opt/ros/melodic/include/ros/serialized_message.h \
+		/opt/ros/melodic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/melodic/include/ros/types.h \
+		/opt/ros/melodic/include/ros/node_handle.h \
+		/opt/ros/melodic/include/ros/publisher.h \
+		/opt/ros/melodic/include/ros/message.h \
+		/opt/ros/melodic/include/ros/serialization.h \
+		/opt/ros/melodic/include/ros/message_traits.h \
+		/opt/ros/melodic/include/ros/message_forward.h \
+		/opt/ros/melodic/include/ros/builtin_message_traits.h \
+		/opt/ros/melodic/include/ros/subscriber.h \
+		projector/LC3000API/common.h \
+		/opt/ros/melodic/include/ros/subscription_callback_helper.h \
+		/opt/ros/melodic/include/ros/parameter_adapter.h \
+		/opt/ros/melodic/include/ros/message_event.h \
+		/opt/ros/melodic/include/ros/service_server.h \
+		/opt/ros/melodic/include/ros/service_client.h \
+		/opt/ros/melodic/include/ros/service_traits.h \
+		/opt/ros/melodic/include/ros/timer.h \
+		/opt/ros/melodic/include/ros/timer_options.h \
+		/opt/ros/melodic/include/ros/wall_timer.h \
+		/opt/ros/melodic/include/ros/wall_timer_options.h \
+		/opt/ros/melodic/include/ros/steady_timer.h \
+		/opt/ros/melodic/include/ros/steady_timer_options.h \
+		/opt/ros/melodic/include/ros/advertise_options.h \
+		/opt/ros/melodic/include/ros/advertise_service_options.h \
+		/opt/ros/melodic/include/ros/service_callback_helper.h \
+		/opt/ros/melodic/include/ros/subscribe_options.h \
+		/opt/ros/melodic/include/ros/transport_hints.h \
+		/opt/ros/melodic/include/ros/service_client_options.h \
+		/opt/ros/melodic/include/ros/spinner.h \
+		/opt/ros/melodic/include/ros/init.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h \
+		/opt/ros/melodic/include/ros/single_subscriber_publisher.h \
+		/opt/ros/melodic/include/ros/service.h \
+		/opt/ros/melodic/include/ros/names.h \
+		/opt/ros/melodic/include/ros/master.h \
+		/opt/ros/melodic/include/ros/this_node.h \
+		/opt/ros/melodic/include/ros/param.h \
+		/opt/ros/melodic/include/ros/topic.h \
+		../../catkin_ws/devel/include/versavis/TimeNumbered.h \
+		/opt/ros/melodic/include/ros/message_operations.h \
+		projector/Projector.h \
+		projector/LC4500API/dlpc350_api.h \
+		projector/LC4500API/dlpc350_common.h \
+		projector/LC4500API/dlpc350_usb.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ProjectorLC4500_versavis.o projector/ProjectorLC4500_versavis.cpp
 
 OpenGLContext.GLFW.o: projector/OpenGLContext.GLFW.cpp projector/OpenGLContext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o OpenGLContext.GLFW.o projector/OpenGLContext.GLFW.cpp
