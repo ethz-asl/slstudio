@@ -380,15 +380,20 @@ SOURCES += projector/ProjectorLC3000.cpp \
 
 ## LC4500 Api
 DEFINES += WITH_LC4500API
+INCLUDEPATH += projector/LC4500API/
 SOURCES += projector/ProjectorLC4500.cpp \
         projector/LC4500API/dlpc350_api.cpp \
-        projector/LC4500API/dlpc350_usb.cpp
+        projector/LC4500API/dlpc350_usb.cpp \
+        projector/LC4500API/dlpc350_common.cpp \
+        projector/LC4500API/dlpc350_firmware.cpp \
+        projector/LC4500API/dlpc350_BMPParser.cpp
 macx:SOURCES += projector/LC4500API/hid.Mac.c
 unix:!macx{
     #SOURCES += projector/LC4500API/hid.Unix.c
-    SOURCES += projector/LC4500API/hid.Libusb.c
+    #SOURCES += projector/LC4500API/hid.Libusb.c
+    SOURCES += projector/LC4500API/hid.c
     CONFIG += link_pkgconfig
-    #PKGCONFIG += libudev
+    PKGCONFIG += libudev
     PKGCONFIG += libusb-1.0
 }
 win32{

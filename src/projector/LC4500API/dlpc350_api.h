@@ -40,6 +40,7 @@
 #ifndef DLPC350_API_H
 #define DLPC350_API_H
 
+// Needed to add this or else qmake throws erro
 #include "dlpc350_common.h"
 
 typedef struct _hidmessageStruct
@@ -299,4 +300,5 @@ int  DLPC350_GetFirmwareTagInfo(unsigned char *pFwTagInfo);
 int  DLPC350_I2C0WriteData(bool is7Bit,unsigned int sclClk, unsigned int devAddr, unsigned int numWriteBytes, unsigned char *pWdata);
 int  DLPC350_I2C0ReadData(bool is7Bit, unsigned int sclClk, unsigned int devAddr, unsigned int numWriteBytes, unsigned int numReadBytes, unsigned char *pWData, unsigned char *pRdata);
 int  DLPC350_I2C0TranStat(unsigned char *pStat);
+bool DLPC350_isSourceLocked(VideoSigStatus VidSig);
 #endif // API_H
