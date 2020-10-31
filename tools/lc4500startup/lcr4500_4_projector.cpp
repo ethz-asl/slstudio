@@ -271,8 +271,6 @@ int Lcr4500_4_projector::send_pattern_sequence(unsigned int exposure_period_us,
   return validate_pattern();
 }
 
-int change_led_currents();
-
 void Lcr4500_4_projector::print_projector_info() {
   char version_str[255];
   unsigned int API_ver, App_ver, SWConfig_ver, SeqConfig_ver;
@@ -514,4 +512,27 @@ int Lcr4500_4_projector::validate_pattern() {
   }
 
   return 0;
+}
+
+int Lcr4500_4_projector::set_led_currents(unsigned char r, unsigned char g,
+                                          unsigned char b) {
+  // r,g and b values are the ones displayed on the GUI
+  return DLPC350_SetLedCurrents(255 - r, 255 - g, 255 - b);
+}
+
+int Lcr4500_4_projector::get_led_currents(unsigned char& r, unsigned char& g,
+                                          unsigned char& b) {
+  unsigned char red_current, green_current, blue_current;
+
+  int status =
+      DLPC350_GetLedCurrents(&red_current, &green_current, &blue_current);
+
+  if (status == 0) {
+    // Convert rgb values as displayed on the GUI
+    r = 255 - red_current;
+    g = 255 - green_current;
+    b = 255 - blue_current;
+  }
+
+  return status;
 }

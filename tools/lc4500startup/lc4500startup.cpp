@@ -23,6 +23,32 @@ int main() {
   // Print out basic projector information as a sanity check
   projector.print_projector_info();
 
+  // Set LED Currents
+  unsigned char old_r, old_g, old_b, new_r, new_g, new_b;
+  unsigned char target_r = 50;
+  unsigned char target_g = 50;
+  unsigned char target_b = 50;
+
+  if (projector.get_led_currents(old_r, old_g, old_b) < 0) {
+    cout << "Failed to read old current values" << endl;
+  }
+
+  cout << "Existing current values [RGB]: " << (unsigned int)old_r << " "
+       << (unsigned int)old_g << " " << (unsigned int)old_b << endl;
+
+  cout << "Setting target LED currents now" << endl;
+
+  if (projector.set_led_currents(target_r, target_g, target_b) < 0) {
+    cout << "Failed to set target current values" << endl;
+  }
+
+  if (projector.get_led_currents(new_r, new_g, new_b) < 0) {
+    cout << "Failed to read new current values" << endl;
+  }
+
+  cout << "New current values [RGB]: " << (unsigned int)new_r << " "
+       << (unsigned int)new_g << " " << (unsigned int)new_b << endl;
+
   single_pattern pattern_arr[6];
   // Refer to DLPC350_AddToPatLut in dlpc350_api.cpp for what each variable
   // does

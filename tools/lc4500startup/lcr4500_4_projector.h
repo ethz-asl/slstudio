@@ -26,7 +26,8 @@ class Lcr4500_4_projector {
   int clear_pattern_sequence();
   int send_pattern_sequence(unsigned int exposure_period_us,
                             unsigned int frame_period_us);
-  int change_led_currents();
+  int set_led_currents(unsigned char r, unsigned char g, unsigned char b);
+  int get_led_currents(unsigned char& r, unsigned char& g, unsigned char& b);
   void print_projector_info();
   int set_pattern_mode();
   int set_video_mode();
