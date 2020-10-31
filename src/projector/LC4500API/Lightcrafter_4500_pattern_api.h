@@ -1,5 +1,5 @@
-#ifndef LCR4500_4_PROJECTOR_H
-#define LCR4500_4_PROJECTOR_H
+#ifndef LIGHTCRAFTER_4500_PATTERN_API_H
+#define LIGHTCRAFTER_4500_PATTERN_API_H
 
 #include <string>
 #include <vector>
@@ -16,9 +16,9 @@ struct single_pattern {
   bool trigger_out_prev = false;
 };
 
-class Lcr4500_4_projector {
+class Lightcrafter_4500_pattern_api {
  public:
-  ~Lcr4500_4_projector();
+  ~Lightcrafter_4500_pattern_api();
   int init();
   int close();
   int append_pattern_sequence(const single_pattern& pattern);
@@ -36,13 +36,13 @@ class Lcr4500_4_projector {
   int set_pat_seq_stop();
   void sleep_ms(int ms);
 
-  Lcr4500_4_projector(Lcr4500_4_projector& other) = delete;
-  void operator=(const Lcr4500_4_projector&) = delete;
-  static Lcr4500_4_projector* get_instance();
+  Lightcrafter_4500_pattern_api(Lightcrafter_4500_pattern_api& other) = delete;
+  void operator=(const Lightcrafter_4500_pattern_api&) = delete;
+  static Lightcrafter_4500_pattern_api* get_instance();
 
  private:
-  Lcr4500_4_projector();
-  static Lcr4500_4_projector* m_singleton_ptr;
+  Lightcrafter_4500_pattern_api();
+  static Lightcrafter_4500_pattern_api* m_singleton_ptr;
 
   const int m_max_retries = 10;
   int set_pat_seq_mode(unsigned int desired_mode);
@@ -51,4 +51,4 @@ class Lcr4500_4_projector {
   int validate_pattern();
 };
 
-#endif  // LCR4500_4_PROJECTOR_H
+#endif  // LIGHTCRAFTER_4500_PATTERN_API_H

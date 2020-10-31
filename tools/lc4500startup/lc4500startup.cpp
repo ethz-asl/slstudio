@@ -2,7 +2,7 @@
 
 #include <chrono>
 #include <thread>
-#include "lcr4500_4_projector.h"
+#include "Lightcrafter_4500_pattern_api.h"
 
 using namespace std;
 
@@ -12,7 +12,8 @@ int main() {
   unsigned int exposure_period_us = 1000000;
   unsigned int frame_period_us = 1000000;
 
-  Lcr4500_4_projector* projector_ptr = Lcr4500_4_projector::get_instance();
+  Lightcrafter_4500_pattern_api* projector_ptr =
+      Lightcrafter_4500_pattern_api::get_instance();
 
   cout << "Initialising" << endl;
   if (projector_ptr->init() < 0) {
@@ -137,7 +138,7 @@ int main() {
   }
 
   // Let pattern play for 20 seconds
-  cout << "Playing patter for 20 seconds " << endl;
+  cout << "Playing pattern for 20 seconds " << endl;
   std::this_thread::sleep_for(std::chrono::microseconds(20000000));
 
   // Stop playing pattern

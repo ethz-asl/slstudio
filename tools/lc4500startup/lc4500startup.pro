@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += lc4500startup.cpp \
-    lcr4500_4_projector.cpp
+     ../../src/projector/LC4500API/Lightcrafter4500_pattern_api.cpp
 
 # LC4500 Api
 INCLUDEPATH += ../../src/projector/LC4500API/
@@ -28,4 +28,4 @@ win32 {
 }
 
 HEADERS += \
-    lcr4500_4_projector.h
+    ../../src/projector/LC4500API/Lightcrafter_4500_pattern_api.h

@@ -1,5 +1,5 @@
-#include "lcr4500_4_projector.h"
 #include <iostream>
+#include "Lightcrafter_4500_pattern_api.h"
 
 #include "dlpc350_api.h"
 #include "dlpc350_firmware.h"
@@ -10,24 +10,27 @@
 #include <thread>
 #include "usb.h"
 
-Lcr4500_4_projector* Lcr4500_4_projector::m_singleton_ptr = nullptr;
+Lightcrafter_4500_pattern_api* Lightcrafter_4500_pattern_api::m_singleton_ptr =
+    nullptr;
 
-Lcr4500_4_projector* Lcr4500_4_projector::get_instance() {
+Lightcrafter_4500_pattern_api* Lightcrafter_4500_pattern_api::get_instance() {
   if (m_singleton_ptr == nullptr) {
-    m_singleton_ptr = new Lcr4500_4_projector();
+    m_singleton_ptr = new Lightcrafter_4500_pattern_api();
   }
   return m_singleton_ptr;
 }
 
-Lcr4500_4_projector::Lcr4500_4_projector() {}
+Lightcrafter_4500_pattern_api::Lightcrafter_4500_pattern_api() {}
 
-Lcr4500_4_projector::~Lcr4500_4_projector() { this->close(); }
+Lightcrafter_4500_pattern_api::~Lightcrafter_4500_pattern_api() {
+  this->close();
+}
 
-void Lcr4500_4_projector::show_error(const std::string& err) {
+void Lightcrafter_4500_pattern_api::show_error(const std::string& err) {
   std::cerr << "Lightcrafter Error: " << err << std::endl;
 }
 
-int Lcr4500_4_projector::init() {
+int Lightcrafter_4500_pattern_api::init() {
   // Initialize usb connection
   if (DLPC350_USB_Init() < 0) {
     show_error("Could not init USB!");
@@ -69,7 +72,7 @@ int Lcr4500_4_projector::init() {
   return -1;
 }
 
-int Lcr4500_4_projector::close() {
+int Lightcrafter_4500_pattern_api::close() {
   if (DLPC350_USB_IsConnected()) {
     if (DLPC350_USB_Close() < 0) {
       show_error("Could not close!");
@@ -85,8 +88,8 @@ int Lcr4500_4_projector::close() {
   return 0;
 }
 
-int Lcr4500_4_projector::send_pattern_sequence(unsigned int exposure_period_us,
-                                               unsigned int frame_period_us) {
+int Lightcrafter_4500_pattern_api::send_pattern_sequence(
+    unsigned int exposure_period_us, unsigned int frame_period_us) {
   int i, num_lut_entries = 0;
   // unsigned int status;
   char error_str[256];
@@ -280,7 +283,7 @@ int Lcr4500_4_projector::send_pattern_sequence(unsigned int exposure_period_us,
   return validate_pattern();
 }
 
-void Lcr4500_4_projector::print_projector_info() {
+void Lightcrafter_4500_pattern_api::print_projector_info() {
   char version_str[255];
   unsigned int API_ver, App_ver, SWConfig_ver, SeqConfig_ver;
   unsigned int num_img_in_flash = 0;
@@ -310,7 +313,7 @@ void Lcr4500_4_projector::print_projector_info() {
   }
 }
 
-int Lcr4500_4_projector::set_pattern_mode() {
+int Lightcrafter_4500_pattern_api::set_pattern_mode() {
   int result = -1;
 
   // Check if it is in Pattern Mode
@@ -344,7 +347,7 @@ int Lcr4500_4_projector::set_pattern_mode() {
   return result;
 }
 
-int Lcr4500_4_projector::set_video_mode() {
+int Lightcrafter_4500_pattern_api::set_video_mode() {
   int result = -1;
 
   // Check if it is in Pattern Mode
@@ -384,17 +387,23 @@ int Lcr4500_4_projector::set_video_mode() {
   return result;
 }
 
-int Lcr4500_4_projector::set_pat_seq_start() { return set_pat_seq_mode(2); }
+int Lightcrafter_4500_pattern_api::set_pat_seq_start() {
+  return set_pat_seq_mode(2);
+}
 
-int Lcr4500_4_projector::set_pat_seq_pause() { return set_pat_seq_mode(1); }
+int Lightcrafter_4500_pattern_api::set_pat_seq_pause() {
+  return set_pat_seq_mode(1);
+}
 
-int Lcr4500_4_projector::set_pat_seq_stop() { return set_pat_seq_mode(0); }
+int Lightcrafter_4500_pattern_api::set_pat_seq_stop() {
+  return set_pat_seq_mode(0);
+}
 
-void Lcr4500_4_projector::sleep_ms(int ms) {
+void Lightcrafter_4500_pattern_api::sleep_ms(int ms) {
   std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-int Lcr4500_4_projector::set_pat_seq_mode(unsigned int desired_mode) {
+int Lightcrafter_4500_pattern_api::set_pat_seq_mode(unsigned int desired_mode) {
   int result = -1;
 
   unsigned int current_pat_mode;
@@ -418,18 +427,18 @@ int Lcr4500_4_projector::set_pat_seq_mode(unsigned int desired_mode) {
   return result;
 }
 
-int Lcr4500_4_projector::append_pattern_sequence(
+int Lightcrafter_4500_pattern_api::append_pattern_sequence(
     const single_pattern& pattern) {
   m_pattern_store.push_back(pattern);
   return 0;
 }
 
-int Lcr4500_4_projector::clear_pattern_sequence() {
+int Lightcrafter_4500_pattern_api::clear_pattern_sequence() {
   m_pattern_store.clear();
   return 0;
 }
 
-void Lcr4500_4_projector::check_and_fix_buffer_swaps() {
+void Lightcrafter_4500_pattern_api::check_and_fix_buffer_swaps() {
   int prev_img_indice =
       -1;  // Negative to ensure that first image indice is always differnt
 
@@ -448,7 +457,7 @@ void Lcr4500_4_projector::check_and_fix_buffer_swaps() {
   }
 }
 
-int Lcr4500_4_projector::validate_pattern() {
+int Lightcrafter_4500_pattern_api::validate_pattern() {
   int i = 0;
   unsigned int status;
   bool ready;
@@ -523,14 +532,16 @@ int Lcr4500_4_projector::validate_pattern() {
   return 0;
 }
 
-int Lcr4500_4_projector::set_led_currents(unsigned char r, unsigned char g,
-                                          unsigned char b) {
+int Lightcrafter_4500_pattern_api::set_led_currents(unsigned char r,
+                                                    unsigned char g,
+                                                    unsigned char b) {
   // r,g and b values are the ones displayed on the GUI
   return DLPC350_SetLedCurrents(255 - r, 255 - g, 255 - b);
 }
 
-int Lcr4500_4_projector::get_led_currents(unsigned char& r, unsigned char& g,
-                                          unsigned char& b) {
+int Lightcrafter_4500_pattern_api::get_led_currents(unsigned char& r,
+                                                    unsigned char& g,
+                                                    unsigned char& b) {
   unsigned char red_current, green_current, blue_current;
 
   int status =

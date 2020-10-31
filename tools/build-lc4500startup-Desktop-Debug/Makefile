@@ -51,7 +51,7 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../lc4500startup/lc4500startup.cpp \
-		../lc4500startup/lcr4500_4_projector.cpp \
+		../../src/projector/LC4500API/Lightcrafter4500_pattern_api.cpp \
 		../../src/projector/LC4500API/dlpc350_api.cpp \
 		../../src/projector/LC4500API/usb.cpp \
 		../../src/projector/LC4500API/dlpc350_usb.cpp \
@@ -60,7 +60,7 @@ SOURCES       = ../lc4500startup/lc4500startup.cpp \
 		../../src/projector/LC4500API/dlpc350_BMPParser.cpp \
 		../../src/projector/LC4500API/hid.Libusb.c 
 OBJECTS       = lc4500startup.o \
-		lcr4500_4_projector.o \
+		Lightcrafter4500_pattern_api.o \
 		dlpc350_api.o \
 		usb.o \
 		dlpc350_usb.o \
@@ -150,8 +150,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../lc4500startup/lc4500startup.pro lcr4500_4_projector.h ../lc4500startup/lc4500startup.cpp \
-		../lc4500startup/lcr4500_4_projector.cpp \
+		../lc4500startup/lc4500startup.pro ../../src/projector/LC4500API/Lightcrafter_4500_pattern_api.h ../lc4500startup/lc4500startup.cpp \
+		../../src/projector/LC4500API/Lightcrafter4500_pattern_api.cpp \
 		../../src/projector/LC4500API/dlpc350_api.cpp \
 		../../src/projector/LC4500API/usb.cpp \
 		../../src/projector/LC4500API/dlpc350_usb.cpp \
@@ -380,22 +380,17 @@ compiler_clean:
 
 ####### Compile
 
-lc4500startup.o: ../lc4500startup/lc4500startup.cpp ../../src/projector/LC4500API/dlpc350_api.h \
-		../../src/projector/LC4500API/dlpc350_common.h \
-		../../src/projector/LC4500API/dlpc350_firmware.h \
-		../../src/projector/LC4500API/dlpc350_usb.h \
-		../../src/projector/LC4500API/dlpc350_version.h \
-		../../src/projector/LC4500API/usb.h
+lc4500startup.o: ../lc4500startup/lc4500startup.cpp ../../src/projector/LC4500API/Lightcrafter_4500_pattern_api.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lc4500startup.o ../lc4500startup/lc4500startup.cpp
 
-lcr4500_4_projector.o: ../lc4500startup/lcr4500_4_projector.cpp ../lc4500startup/lcr4500_4_projector.h \
+Lightcrafter4500_pattern_api.o: ../../src/projector/LC4500API/Lightcrafter4500_pattern_api.cpp ../../src/projector/LC4500API/Lightcrafter_4500_pattern_api.h \
 		../../src/projector/LC4500API/dlpc350_api.h \
 		../../src/projector/LC4500API/dlpc350_common.h \
 		../../src/projector/LC4500API/dlpc350_firmware.h \
 		../../src/projector/LC4500API/dlpc350_usb.h \
 		../../src/projector/LC4500API/dlpc350_version.h \
 		../../src/projector/LC4500API/usb.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o lcr4500_4_projector.o ../lc4500startup/lcr4500_4_projector.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Lightcrafter4500_pattern_api.o ../../src/projector/LC4500API/Lightcrafter4500_pattern_api.cpp
 
 dlpc350_api.o: ../../src/projector/LC4500API/dlpc350_api.cpp ../../src/projector/LC4500API/dlpc350_api.h \
 		../../src/projector/LC4500API/dlpc350_common.h \
