@@ -12,16 +12,16 @@ int main() {
   unsigned int exposure_period_us = 1000000;
   unsigned int frame_period_us = 1000000;
 
-  Lcr4500_4_projector projector{};
+  Lcr4500_4_projector* projector_ptr = Lcr4500_4_projector::get_instance();
 
   cout << "Initialising" << endl;
-  if (projector.init() < 0) {
+  if (projector_ptr->init() < 0) {
     cout << "Failed to init" << endl;
     return -1;
   }
 
   // Print out basic projector information as a sanity check
-  projector.print_projector_info();
+  projector_ptr->print_projector_info();
 
   // Set LED Currents
   unsigned char old_r, old_g, old_b, new_r, new_g, new_b;
@@ -29,7 +29,7 @@ int main() {
   unsigned char target_g = 50;
   unsigned char target_b = 50;
 
-  if (projector.get_led_currents(old_r, old_g, old_b) < 0) {
+  if (projector_ptr->get_led_currents(old_r, old_g, old_b) < 0) {
     cout << "Failed to read old current values" << endl;
   }
 
@@ -38,11 +38,11 @@ int main() {
 
   cout << "Setting target LED currents now" << endl;
 
-  if (projector.set_led_currents(target_r, target_g, target_b) < 0) {
+  if (projector_ptr->set_led_currents(target_r, target_g, target_b) < 0) {
     cout << "Failed to set target current values" << endl;
   }
 
-  if (projector.get_led_currents(new_r, new_g, new_b) < 0) {
+  if (projector_ptr->get_led_currents(new_r, new_g, new_b) < 0) {
     cout << "Failed to read new current values" << endl;
   }
 
@@ -118,20 +118,20 @@ int main() {
   // Add patterns
   cout << "Adding patterns" << endl;
   for (auto const& pattern : pattern_arr) {
-    projector.append_pattern_sequence(pattern);
+    projector_ptr->append_pattern_sequence(pattern);
   }
 
   // Send patterns
   cout << "Sending patterns" << endl;
-  if (projector.send_pattern_sequence(exposure_period_us, frame_period_us) <
-      0) {
+  if (projector_ptr->send_pattern_sequence(exposure_period_us,
+                                           frame_period_us) < 0) {
     cout << "Failed to send pattern" << endl;
     return -1;
   }
 
   // Start playing pattern
   cout << "Start playing pattern" << endl;
-  if (projector.set_pat_seq_start() < 0) {
+  if (projector_ptr->set_pat_seq_start() < 0) {
     cout << "Failed to start playing pattern" << endl;
     return -1;
   }
@@ -142,14 +142,14 @@ int main() {
 
   // Stop playing pattern
   cout << "Stop playing pattern" << endl;
-  if (projector.set_pat_seq_stop() < 0) {
+  if (projector_ptr->set_pat_seq_stop() < 0) {
     cout << "Failed to stop playing pattern" << endl;
     return -1;
   }
 
   // Close Projector
   cout << "Closing" << endl;
-  if (projector.close() < 0) {
+  if (projector_ptr->close() < 0) {
     cout << "Failed to close" << endl;
     return -1;
   }

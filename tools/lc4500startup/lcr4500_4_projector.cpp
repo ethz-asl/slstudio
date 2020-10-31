@@ -10,6 +10,15 @@
 #include <thread>
 #include "usb.h"
 
+Lcr4500_4_projector* Lcr4500_4_projector::m_singleton_ptr = nullptr;
+
+Lcr4500_4_projector* Lcr4500_4_projector::get_instance() {
+  if (m_singleton_ptr == nullptr) {
+    m_singleton_ptr = new Lcr4500_4_projector();
+  }
+  return m_singleton_ptr;
+}
+
 Lcr4500_4_projector::Lcr4500_4_projector() {}
 
 Lcr4500_4_projector::~Lcr4500_4_projector() { this->close(); }

@@ -18,7 +18,6 @@ struct single_pattern {
 
 class Lcr4500_4_projector {
  public:
-  Lcr4500_4_projector();
   ~Lcr4500_4_projector();
   int init();
   int close();
@@ -37,7 +36,14 @@ class Lcr4500_4_projector {
   int set_pat_seq_stop();
   void sleep_ms(int ms);
 
+  Lcr4500_4_projector(Lcr4500_4_projector& other) = delete;
+  void operator=(const Lcr4500_4_projector&) = delete;
+  static Lcr4500_4_projector* get_instance();
+
  private:
+  Lcr4500_4_projector();
+  static Lcr4500_4_projector* m_singleton_ptr;
+
   const int m_max_retries = 10;
   int set_pat_seq_mode(unsigned int desired_mode);
   std::vector<single_pattern> m_pattern_store = {};
