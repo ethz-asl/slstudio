@@ -43,6 +43,10 @@ class ProjectorLC4500_versavis : public Projector {
   std::string m_projector_trigger_topic = "/versavis/projector/image_time";
   unsigned int m_counter;
   boost::mutex m_mutex;
+  void ros_init();
+  void lc4500_init();
+  void showError(std::string err);
+  std::string m_ros_node_name = "SLStudio";
 };
 
 #endif

@@ -3,12 +3,17 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += lc4500startup.cpp
+SOURCES += lc4500startup.cpp \
+    lcr4500_4_projector.cpp
 
 # LC4500 Api
 INCLUDEPATH += ../../src/projector/LC4500API/
-SOURCES += ../../src/projector/LC4500API/API.cpp \
-           ../../src/projector/LC4500API/usb.cpp
+SOURCES += ../../src/projector/LC4500API/dlpc350_api.cpp \
+           ../../src/projector/LC4500API/usb.cpp \
+        ../../src/projector/LC4500API/dlpc350_usb.cpp \
+        ../../src/projector/LC4500API/dlpc350_common.cpp \
+        ../../src/projector/LC4500API/dlpc350_firmware.cpp \
+        ../../src/projector/LC4500API/dlpc350_BMPParser.cpp
 macx:SOURCES += ../../src/projector/LC4500API/hid.Mac.c
 unix:!macx {
     SOURCES += ../../src/projector/LC4500API/hid.Libusb.c
@@ -21,3 +26,6 @@ win32 {
     SOURCES += ../../src/projector/LC4500API/hid.Win.c
     LIBS += -lsetupapi
 }
+
+HEADERS += \
+    lcr4500_4_projector.h

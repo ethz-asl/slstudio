@@ -42,12 +42,13 @@
 #ifdef Q_OS_WIN32
 #include <setupapi.h>
 #endif
+#include <cstring>
 #include "hidapi.h"
 
 //#include "mainwindow.h"
 //#include "ui_mainwindow.h"
-#include <QMessageBox>
-#include <QTimer>
+//#include <QMessageBox>
+//#include <QTimer>
 
 /***************************************************
  *                  GLOBAL VARIABLES

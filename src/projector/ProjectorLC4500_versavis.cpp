@@ -14,19 +14,9 @@ ProjectorLC4500_versavis::ProjectorLC4500_versavis(unsigned int)
   // We are just going to fix it to shining 6 patterns
   nPatterns = 6;
 
-  // Init ros node
-  ros::M_string empty_args = {};
-  ros::init(empty_args, "SLStudio");
-  m_nh_ptr = std::make_unique<ros::NodeHandle>();
+  lc4500_init();
 
-  // Set up subscriber
-  m_sub = m_nh_ptr->subscribe(m_projector_trigger_topic, 5,
-                              &ProjectorLC4500_versavis::sub_cb, this);
-
-  // We use an Asyncrhonous Spinner since we dont have access to the main loop
-  // Spinning is required or else subscriber will never receive messages
-  m_spinner_ptr = std::make_unique<ros::AsyncSpinner>(1);
-  m_spinner_ptr->start();
+  ros_init();
 }
 
 void ProjectorLC4500_versavis::setPattern(unsigned int patternNumber,
@@ -99,4 +89,69 @@ void ProjectorLC4500_versavis::sub_cb(
   m_counter = time_numbered_ptr->number;
 
   // std::cout << "Versavis counter: " << m_counter << std::endl;
+}
+
+void ProjectorLC4500_versavis::ros_init() {
+  // Init ros node
+  ros::M_string empty_args = {};
+  ros::init(empty_args, m_ros_node_name);
+  m_nh_ptr = std::make_unique<ros::NodeHandle>();
+
+  // Set up subscriber
+  m_sub = m_nh_ptr->subscribe(m_projector_trigger_topic, 5,
+                              &ProjectorLC4500_versavis::sub_cb, this);
+
+  // We use an Asyncrhonous Spinner since we dont have access to the main loop
+  // Spinning is required or else subscriber will never receive messages
+  m_spinner_ptr = std::make_unique<ros::AsyncSpinner>(1);
+  m_spinner_ptr->start();
+}
+
+void ProjectorLC4500_versavis::lc4500_init() {
+  std::cout << "ProjectorLC4500: preparing LightCrafter 4500 for duty... "
+            << std::endl;
+
+  // Initialize usb connection
+  if (DLPC350_USB_Init()) {
+    showError("Could not init USB!");
+  }
+  if (DLPC350_USB_Open()) {
+    showError("Could not connect!");
+  }
+  if (!DLPC350_USB_IsConnected()) {
+    showError("Could not connect.");
+  }
+  unsigned char HWStatus, SysStatus, MainStatus;
+  while (DLPC350_GetStatus(&HWStatus, &SysStatus, &MainStatus) != 0) {
+    std::cout << ".";
+    continue;
+  }
+
+  // Make sure LC is not in standby
+  bool isStandby;
+  DLPC350_GetPowerMode(&isStandby);
+  if (isStandby) {
+    DLPC350_SetPowerMode(0);
+    QThread::msleep(5000);
+  }
+  while (isStandby) {
+    QThread::msleep(50);
+    DLPC350_GetPowerMode(&isStandby);
+  }
+
+  //  Print out original Led currents
+  unsigned char original_red;
+  unsigned char original_green;
+  unsigned char original_blue;
+  DLPC350_GetLedCurrents(&original_red, &original_green, &original_blue);
+
+  std::cout << "Original LED currents [RGB]: " << (unsigned int)original_red
+            << " | " << (unsigned int)original_green << " | "
+            << (unsigned int)original_blue << std::endl;
+
+  throw;
+}
+
+void ProjectorLC4500_versavis::showError(std::string err) {
+  std::cerr << "lc4500startup: " << err.c_str() << std::endl;
 }

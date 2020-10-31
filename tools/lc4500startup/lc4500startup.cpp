@@ -1,152 +1,132 @@
 #include <iostream>
 
-#include "usb.h"
-#include "API.h"
+#include <chrono>
+#include <thread>
+#include "lcr4500_4_projector.h"
 
 using namespace std;
 
-void showError(std::string err){
-    std::cerr << "lc4500startup: " << err << std::endl;
+int main() {
+  cout << "lc4500startup: preparing LightCrafter 4500 for duty..." << endl;
+
+  unsigned int exposure_period_us = 1000000;
+  unsigned int frame_period_us = 1000000;
+
+  Lcr4500_4_projector projector{};
+
+  cout << "Initialising" << endl;
+  if (projector.init() < 0) {
+    cout << "Failed to init" << endl;
+    return -1;
+  }
+
+  // Print out basic projector information as a sanity check
+  projector.print_projector_info();
+
+  single_pattern pattern_arr[6];
+  // Refer to DLPC350_AddToPatLut in dlpc350_api.cpp for what each variable
+  // does
+  // 0 = Internal trigger, 1 = External positive, 2 = External negative, 3
+  // = No Input Trigger (Continue from previous)
+
+  pattern_arr[0].trigger_type = 0;
+  pattern_arr[0].pattern_number = 0;
+  pattern_arr[0].bit_depth = 8;
+  pattern_arr[0].led_select = 7;
+  pattern_arr[0].image_indice = 9;
+  pattern_arr[0].invert_pattern = false;
+  pattern_arr[0].insert_black_frame = true;
+  pattern_arr[0].buffer_swap = true;
+  pattern_arr[0].trigger_out_prev = false;
+
+  pattern_arr[1].trigger_type = 3;
+  pattern_arr[1].pattern_number = 1;
+  pattern_arr[1].bit_depth = 8;
+  pattern_arr[1].led_select = 7;
+  pattern_arr[1].image_indice = 9;
+  pattern_arr[1].invert_pattern = false;
+  pattern_arr[1].insert_black_frame = true;
+  pattern_arr[1].buffer_swap = false;
+  pattern_arr[1].trigger_out_prev = false;
+
+  pattern_arr[2].trigger_type = 3;
+  pattern_arr[2].pattern_number = 2;
+  pattern_arr[2].bit_depth = 8;
+  pattern_arr[2].led_select = 7;
+  pattern_arr[2].image_indice = 9;
+  pattern_arr[2].invert_pattern = false;
+  pattern_arr[2].insert_black_frame = true;
+  pattern_arr[2].buffer_swap = false;
+  pattern_arr[2].trigger_out_prev = false;
+
+  pattern_arr[3].trigger_type = 0;
+  pattern_arr[3].pattern_number = 0;
+  pattern_arr[3].bit_depth = 8;
+  pattern_arr[3].led_select = 7;
+  pattern_arr[3].image_indice = 10;
+  pattern_arr[3].invert_pattern = false;
+  pattern_arr[3].insert_black_frame = true;
+  pattern_arr[3].buffer_swap = true;
+  pattern_arr[3].trigger_out_prev = false;
+
+  pattern_arr[4].trigger_type = 3;
+  pattern_arr[4].pattern_number = 1;
+  pattern_arr[4].bit_depth = 8;
+  pattern_arr[4].led_select = 7;
+  pattern_arr[4].image_indice = 10;
+  pattern_arr[4].invert_pattern = false;
+  pattern_arr[4].insert_black_frame = true;
+  pattern_arr[4].buffer_swap = false;
+  pattern_arr[4].trigger_out_prev = false;
+
+  pattern_arr[5].trigger_type = 3;
+  pattern_arr[5].pattern_number = 2;
+  pattern_arr[5].bit_depth = 8;
+  pattern_arr[5].led_select = 7;
+  pattern_arr[5].image_indice = 10;
+  pattern_arr[5].invert_pattern = false;
+  pattern_arr[5].insert_black_frame = true;
+  pattern_arr[5].buffer_swap = false;
+  pattern_arr[5].trigger_out_prev = false;
+
+  // Add patterns
+  cout << "Adding patterns" << endl;
+  for (auto const& pattern : pattern_arr) {
+    projector.append_pattern_sequence(pattern);
+  }
+
+  // Send patterns
+  cout << "Sending patterns" << endl;
+  if (projector.send_pattern_sequence(exposure_period_us, frame_period_us) <
+      0) {
+    cout << "Failed to send pattern" << endl;
+    return -1;
+  }
+
+  // Start playing pattern
+  cout << "Start playing pattern" << endl;
+  if (projector.set_pat_seq_start() < 0) {
+    cout << "Failed to start playing pattern" << endl;
+    return -1;
+  }
+
+  // Let pattern play for 20 seconds
+  cout << "Playing patter for 20 seconds " << endl;
+  std::this_thread::sleep_for(std::chrono::microseconds(20000000));
+
+  // Stop playing pattern
+  cout << "Stop playing pattern" << endl;
+  if (projector.set_pat_seq_stop() < 0) {
+    cout << "Failed to stop playing pattern" << endl;
+    return -1;
+  }
+
+  // Close Projector
+  cout << "Closing" << endl;
+  if (projector.close() < 0) {
+    cout << "Failed to close" << endl;
+    return -1;
+  }
+
+  return 0;
 }
-
-int main()
-{
-    cout << "lc4500startup: preparing LightCrafter 4500 for duty... " << flush;
-
-    // Initialize usb connection
-    if(USB_Init()){
-        showError("Could not init USB!");
-        return -1;
-    }
-    if(USB_Open()){
-        showError("Could not connect!");
-        return -1;
-    }
-
-    // Make sure LC is not in standby
-    const bool standby = false;
-    if(!LCR_SetPowerMode(standby)){
-        showError("Error Setting Power Mode");
-        return -1;
-    }
-
-    // Set LED selection
-    const bool SeqCtrl  = false; // manual (false) or automatic (true)
-    const bool LEDRed  = true;
-    const bool LEDGreen  = false;
-    const bool LEDBlue  = false;
-    LCR_SetLedEnables(SeqCtrl, LEDRed, LEDGreen,  LEDBlue);
-
-    // Set LED currents
-    const unsigned char RedCurrent = 90;
-    const unsigned char GreenCurrent = 0;
-    const unsigned char BlueCurrent = 0;
-    LCR_SetLedCurrents(255-RedCurrent, 255-GreenCurrent, 255-BlueCurrent);
-
-    unsigned char Red;
-    unsigned char Green;
-    unsigned char Blue;
-    LCR_GetLedCurrents(&Red, &Green, &Blue);
-
-    // Set to pattern sequence mode
-    const bool patternSequenceMode = true;
-    if(!LCR_SetMode(patternSequenceMode)){
-        showError("Error Setting Mode");
-        return -1;
-    }
-
-    // Set to external (HDMI) pattern input
-    const bool external = true;
-    if(!LCR_SetPatternDisplayMode(external)){
-        showError("Error Setting Pattern Display Mode");
-        return -1;
-    }
-
-    // Clear the Pattern Sequence LUT
-    LCR_ClearPatLut();
-
-    // Add two patterns to LUT
-    const int TrigType = 1;
-    const int PatNum = 1;
-    const int BitDepth = 8;
-    const int LEDSelectRed = 1;
-    const bool InvertPat = false;
-    const bool InsertBlack = false;
-    const bool BufSwap = true;
-    const bool trigOutPrev = false;
-    if(LCR_AddToPatLut(TrigType, PatNum, BitDepth, LEDSelectRed, InvertPat, InsertBlack, BufSwap, trigOutPrev) == -1){
-        showError("Error Adding Pattern LUT");
-        return -1;
-    }
-    if(LCR_AddToPatLut(TrigType, PatNum, BitDepth, LEDSelectRed, InvertPat, InsertBlack, BufSwap, trigOutPrev) == -1){
-        showError("Error Adding Pattern LUT");
-        return -1;
-    }
-
-    unsigned char splashLut[64];
-    int numSplashLutEntries = 0;
-    const unsigned int frameIndexZero = 0;
-    splashLut[numSplashLutEntries++] = frameIndexZero;
-
-    // Configure pattern sequence mode
-    const unsigned int numLutEntries = 2;
-    const bool repeat = true;
-    const unsigned int numPatsForTrigOut2 = 2;
-    if(LCR_SetPatternConfig(numLutEntries, repeat, numPatsForTrigOut2, numSplashLutEntries) < 0){
-        showError("Error Sending Pattern Config");
-        return -1;
-    }
-
-    // Set exposure, frame period, etc.
-    const unsigned int exposurePeriod = 8333; //us
-    const unsigned int framePeriod = 8333; //us
-    if(LCR_SetExpsosure_FramePeriod(exposurePeriod, framePeriod) < 0){
-        showError("Error Sending Exposure period");
-        return -1;
-    }
-
-    // Set the pattern trigger mode
-    const bool vsyncPatternTriggerMode = false;
-    if(LCR_SetPatternTriggerMode(vsyncPatternTriggerMode) < 0){
-        showError("Error Sending trigger Mode");
-        return -1;
-    }
-
-    // Send LUT
-    if(LCR_SendPatLut() < 0){
-        showError("Error Sending Pattern LUT");
-        return -1;
-    }
-
-    // Send splash LUT
-    if(LCR_SendSplashLut(splashLut, numSplashLutEntries) < 0){
-        showError("Error Sending Splash LUT");
-        return -1;
-    }
-
-    // Validate LUT data
-    unsigned int status;
-    if(LCR_ValidatePatLutData(&status) < 0){
-        showError("Error validating LUT data");
-        return -1;
-    }
-
-    // Start pattern sequence
-    if(LCR_PatternDisplay(2) < 0){
-        //Start pattern display
-        showError("Error starting pattern display");
-        return -1;
-    }
-
-    USB_Close();
-
-    if(USB_Exit()){
-        showError("Could not exit!");
-        return -1;
-    }
-
-    cout << "done!" << endl;
-
-    return 0;
-}
-

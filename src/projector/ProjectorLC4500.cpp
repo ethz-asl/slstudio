@@ -1,4 +1,4 @@
-#include "ProjectorLC4500.h"
+﻿#include "ProjectorLC4500.h"
 
 #include <QThread>
 #include <iostream>
@@ -78,23 +78,33 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
   //    // 2 x 8.333 exposures of the 2x3 psp pattern
   //    //int DLPC350_AddToPatLut(int TrigType, int PatNum,int BitDepth,int
   //    LEDSelect,bool InvertPat, bool InsertBlack,bool BufSwap, bool
-  //    trigOutPrev) DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect,
-  //    invertPattern, false, true, false); DLPC350_AddToPatLut(3, 1,
-  //    bitDepth, ledSelect, invertPattern, true, false, true);
-  //    DLPC350_AddToPatLut(0, 0, bitDepth, ledSelect, invertPattern, false,
-  //    false, false); DLPC350_AddToPatLut(3, 0, bitDepth, ledSelect,
-  //    invertPattern, true, false, true); DLPC350_AddToPatLut(0, 2, bitDepth,
-  //    ledSelect, invertPattern, false, false, false); DLPC350_AddToPatLut(3,
-  //    2, bitDepth, ledSelect, invertPattern, true, false, true);
+  //    trigOutPrev)
 
-  //    DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect, invertPattern, false,
-  //    true, false); DLPC350_AddToPatLut(3, 1, bitDepth, ledSelect,
-  //    invertPattern, true, false, true); DLPC350_AddToPatLut(0, 0, bitDepth,
-  //    ledSelect, invertPattern, false, false, false); DLPC350_AddToPatLut(3,
-  //    0, bitDepth, ledSelect, invertPattern, true, false, true);
-  //    DLPC350_AddToPatLut(0, 2, bitDepth, ledSelect, invertPattern, false,
-  //    false, false); DLPC350_AddToPatLut(3, 2, bitDepth, ledSelect,
-  //    invertPattern, true, false, true);
+  DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect, invertPattern, false, true,
+                      false);
+  DLPC350_AddToPatLut(3, 1, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
+  DLPC350_AddToPatLut(0, 0, bitDepth, ledSelect, invertPattern, false, false,
+                      false);
+  DLPC350_AddToPatLut(3, 0, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
+  DLPC350_AddToPatLut(0, 2, bitDepth, ledSelect, invertPattern, false, false,
+                      false);
+  DLPC350_AddToPatLut(3, 2, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
+
+  DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect, invertPattern, false, true,
+                      false);
+  DLPC350_AddToPatLut(3, 1, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
+  DLPC350_AddToPatLut(0, 0, bitDepth, ledSelect, invertPattern, false, false,
+                      false);
+  DLPC350_AddToPatLut(3, 0, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
+  DLPC350_AddToPatLut(0, 2, bitDepth, ledSelect, invertPattern, false, false,
+                      false);
+  DLPC350_AddToPatLut(3, 2, bitDepth, ledSelect, invertPattern, true, false,
+                      true);
 
   //    // Set to internal flash source
   //    const bool patternDisplayMode = false;
