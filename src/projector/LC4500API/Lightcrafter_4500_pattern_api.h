@@ -1,6 +1,7 @@
 #ifndef LIGHTCRAFTER_4500_PATTERN_API_H
 #define LIGHTCRAFTER_4500_PATTERN_API_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -18,10 +19,16 @@ struct single_pattern {
 
 class Lightcrafter_4500_pattern_api {
  public:
+  Lightcrafter_4500_pattern_api();
   ~Lightcrafter_4500_pattern_api();
+
   int init();
   int close();
   int append_pattern_sequence(const single_pattern& pattern);
+  int set_pattern_sequence(const std::vector<single_pattern>& pattern_vec);
+  int play_pattern_sequence(const std::vector<single_pattern>& pattern_vec,
+                            unsigned int exposure_period_us,
+                            unsigned int frame_period_us);
   int clear_pattern_sequence();
   int send_pattern_sequence(unsigned int exposure_period_us,
                             unsigned int frame_period_us);
@@ -36,14 +43,7 @@ class Lightcrafter_4500_pattern_api {
   int set_pat_seq_stop();
   void sleep_ms(int ms);
 
-  Lightcrafter_4500_pattern_api(Lightcrafter_4500_pattern_api& other) = delete;
-  void operator=(const Lightcrafter_4500_pattern_api&) = delete;
-  static Lightcrafter_4500_pattern_api* get_instance();
-
  private:
-  Lightcrafter_4500_pattern_api();
-  static Lightcrafter_4500_pattern_api* m_singleton_ptr;
-
   const int m_max_retries = 10;
   int set_pat_seq_mode(unsigned int desired_mode);
   std::vector<single_pattern> m_pattern_store = {};

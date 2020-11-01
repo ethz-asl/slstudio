@@ -75,6 +75,19 @@ void SLScanWorker::setup() {
     std::cerr << "SLScanWorker: invalid projector id " << screenNum
               << std::endl;
 
+  auto is_hardware_triggered = std::make_shared<bool>(
+      (triggerMode == triggerModeHardware) ? true : false);
+  auto void_is_hardware_triggered =
+      std::static_pointer_cast<void>(is_hardware_triggered);
+  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
+
+  auto is_in_calibration_mode = std::make_shared<bool>(false);
+  auto void_is_in_calibration_mode =
+      std::static_pointer_cast<void>(is_in_calibration_mode);
+  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  projector->init();
+
   // Initialize encoder
   bool diamondPattern =
       settings.value("projector/diamondPattern", false).toBool();
@@ -151,7 +164,7 @@ void SLScanWorker::setup() {
 
     projector->setPattern(i, pattern.ptr(), pattern.cols, pattern.rows);
 
-    //        cv::imwrite(cv::format("pat_%d.bmp", i), pattern);
+    // cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
   }
 
   //    // Upload patterns to projector/GPU in compact resolution (texture)

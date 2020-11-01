@@ -80,6 +80,7 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
   //    LEDSelect,bool InvertPat, bool InsertBlack,bool BufSwap, bool
   //    trigOutPrev)
 
+  /**
   DLPC350_AddToPatLut(0, 1, bitDepth, ledSelect, invertPattern, false, true,
                       false);
   DLPC350_AddToPatLut(3, 1, bitDepth, ledSelect, invertPattern, true, false,
@@ -105,6 +106,7 @@ ProjectorLC4500::ProjectorLC4500(unsigned int)
                       false);
   DLPC350_AddToPatLut(3, 2, bitDepth, ledSelect, invertPattern, true, false,
                       true);
+  **/
 
   //    // Set to internal flash source
   //    const bool patternDisplayMode = false;

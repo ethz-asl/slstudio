@@ -10,13 +10,27 @@
 #include <thread>
 
 ProjectorLC4500_versavis::ProjectorLC4500_versavis(unsigned int)
-    : nPatterns(0), isRunning(false) {
-  // We are just going to fix it to shining 6 patterns
-  nPatterns = 6;
+    : nPatterns(0), isRunning(false), m_projector() {}
+
+void ProjectorLC4500_versavis::init() {
+  if (m_is_in_calibration_mode && m_is_hardware_triggered) {
+    show_error(
+        "Warning: Hardware trigger is enabled for calibration mode. This is "
+        "not a possible combination. Configuring to be software triggered");
+    m_is_hardware_triggered = false;
+  }
 
   lc4500_init();
 
-  ros_init();
+  if (m_is_hardware_triggered) {
+    // Ros initialisation
+    ros_init();
+
+    // Load entire pattern sequence instructions onto projector
+    m_projector.set_pattern_sequence(m_pattern_sequence);
+    m_projector.send_pattern_sequence(m_hardware_triggered_timings_us[0],
+                                      m_hardware_triggered_timings_us[1]);
+  }
 }
 
 void ProjectorLC4500_versavis::setPattern(unsigned int patternNumber,
@@ -25,9 +39,11 @@ void ProjectorLC4500_versavis::setPattern(unsigned int patternNumber,
                                           unsigned int texHeight) {}
 
 void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
-  // If it is the first pattern, we detect the start of the trigger before we
-  // end the function to ensure synchronisation
-  if (pattern_no == 0) {
+  // If it is the first pattern being triggered for the first time, we detect
+  // the start of the trigger before we end the function to ensure
+  // synchronisation
+  if (m_is_hardware_triggered && pattern_no == 0 &&
+      !m_first_time_hardware_triggered) {
     unsigned int current_count;
     unsigned int updated_count;
 
@@ -57,7 +73,22 @@ void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
     }
     std::cout << std::endl;
 
-    std::cout << "Start image sequence!" << std::endl;
+    std::cout << "Started playing image sequence (hardware triggered)!"
+              << std::endl;
+    m_projector.set_pat_seq_start();
+
+    m_first_time_hardware_triggered = true;
+  }
+
+  if (!m_is_hardware_triggered) {
+    // If not hardware triggered we upload pattern display instructions every
+    // time we display a new pattern
+
+    std::vector<single_pattern> temp_vec = {};
+    temp_vec.push_back(m_pattern_sequence[pattern_no]);
+    m_projector.play_pattern_sequence(temp_vec,
+                                      m_software_trigger_timings_us[0],
+                                      m_software_trigger_timings_us[1]);
   }
 }
 
@@ -108,50 +139,112 @@ void ProjectorLC4500_versavis::ros_init() {
 }
 
 void ProjectorLC4500_versavis::lc4500_init() {
-  std::cout << "ProjectorLC4500: preparing LightCrafter 4500 for duty... "
-            << std::endl;
-
-  // Initialize usb connection
-  if (DLPC350_USB_Init()) {
-    showError("Could not init USB!");
-  }
-  if (DLPC350_USB_Open()) {
-    showError("Could not connect!");
-  }
-  if (!DLPC350_USB_IsConnected()) {
-    showError("Could not connect.");
-  }
-  unsigned char HWStatus, SysStatus, MainStatus;
-  while (DLPC350_GetStatus(&HWStatus, &SysStatus, &MainStatus) != 0) {
-    std::cout << ".";
-    continue;
+  if (m_projector.init() < 0) {
+    std::cout << "Error, failed to initialise projector" << std::endl;
+    throw;
   }
 
-  // Make sure LC is not in standby
-  bool isStandby;
-  DLPC350_GetPowerMode(&isStandby);
-  if (isStandby) {
-    DLPC350_SetPowerMode(0);
-    QThread::msleep(5000);
-  }
-  while (isStandby) {
-    QThread::msleep(50);
-    DLPC350_GetPowerMode(&isStandby);
-  }
+  // Set LED Brightness
+  m_projector.set_led_currents(m_rgb_white[0], m_rgb_white[1], m_rgb_white[2]);
 
-  //  Print out original Led currents
-  unsigned char original_red;
-  unsigned char original_green;
-  unsigned char original_blue;
-  DLPC350_GetLedCurrents(&original_red, &original_green, &original_blue);
-
-  std::cout << "Original LED currents [RGB]: " << (unsigned int)original_red
-            << " | " << (unsigned int)original_green << " | "
-            << (unsigned int)original_blue << std::endl;
-
-  throw;
+  // Load which pattern sequence to display (calibration or scanning)
+  load_pattern_sequence();
 }
 
-void ProjectorLC4500_versavis::showError(std::string err) {
-  std::cerr << "lc4500startup: " << err.c_str() << std::endl;
+void ProjectorLC4500_versavis::show_error(const std::string &err) {
+  std::cerr << "Lightcrafter-Versavis Projectror: " << err.c_str() << std::endl;
+}
+
+void ProjectorLC4500_versavis::load_param(const std::string &param_name,
+                                          std::shared_ptr<void> param_ptr) {
+  if (param_name == "is_hardware_triggered") {
+    std::shared_ptr<bool> temp_ptr;
+    temp_ptr = std::static_pointer_cast<bool>(param_ptr);
+    m_is_hardware_triggered = *temp_ptr;
+    // std::cout << "m_is_hardware_triggered: " << m_is_hardware_triggered
+    //          << std::endl;
+  } else if (param_name == "is_in_calibration_mode") {
+    std::shared_ptr<bool> temp_ptr;
+    temp_ptr = std::static_pointer_cast<bool>(param_ptr);
+    m_is_in_calibration_mode = *temp_ptr;
+    // std::cout << "m_is_in_calibration_mode: " << m_is_in_calibration_mode
+    //          << std::endl;
+  }
+}
+
+std::vector<single_pattern>
+ProjectorLC4500_versavis::get_calibration_pattern_sequence() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  for (int i = 0; i < m_calibration_image_indices.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      single_pattern temp;
+      temp.trigger_type = 0;
+      temp.pattern_number = j;
+      temp.bit_depth = 8;
+      temp.led_select = 7;
+      temp.image_indice = m_calibration_image_indices[i];
+      temp.invert_pattern = false;
+      temp.insert_black_frame = false;
+      temp.buffer_swap = true;
+      temp.trigger_out_prev = false;
+      pattern_vec.push_back(temp);
+    }
+  }
+
+  return pattern_vec;
+}
+
+std::vector<single_pattern>
+ProjectorLC4500_versavis::get_scanning_pattern_sequence_software() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  for (int i = 0; i < m_scanning_image_indices.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      single_pattern temp;
+      temp.trigger_type = 0;
+      temp.pattern_number = j;
+      temp.bit_depth = 8;
+      temp.led_select = 7;
+      temp.image_indice = m_scanning_image_indices[i];
+      temp.invert_pattern = false;
+      temp.insert_black_frame = false;
+      temp.buffer_swap = true;
+      temp.trigger_out_prev = false;
+      pattern_vec.push_back(temp);
+    }
+  }
+
+  return pattern_vec;
+}
+
+std::vector<single_pattern>
+ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  for (int i = 0; i < m_scanning_image_indices.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      single_pattern temp;
+      temp.trigger_type = 0;
+      temp.pattern_number = j;
+      temp.bit_depth = 8;
+      temp.led_select = 7;
+      temp.image_indice = m_scanning_image_indices[i];
+      temp.invert_pattern = false;
+      temp.insert_black_frame = true;
+      temp.buffer_swap = (i == 0) ? true : false;
+      temp.trigger_out_prev = false;
+      pattern_vec.push_back(temp);
+    }
+  }
+
+  return pattern_vec;
+}
+
+void ProjectorLC4500_versavis::load_pattern_sequence() {
+  m_pattern_sequence = (m_is_in_calibration_mode)
+                           ? get_calibration_pattern_sequence()
+                           : (m_is_hardware_triggered)
+                                 ? get_scanning_pattern_sequence_hardware()
+                                 : get_scanning_pattern_sequence_software();
 }

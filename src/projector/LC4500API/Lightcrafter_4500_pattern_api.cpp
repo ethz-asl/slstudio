@@ -1,5 +1,5 @@
-#include <iostream>
 #include "Lightcrafter_4500_pattern_api.h"
+#include <iostream>
 
 #include "dlpc350_api.h"
 #include "dlpc350_firmware.h"
@@ -9,16 +9,6 @@
 #include <chrono>
 #include <thread>
 #include "usb.h"
-
-Lightcrafter_4500_pattern_api* Lightcrafter_4500_pattern_api::m_singleton_ptr =
-    nullptr;
-
-Lightcrafter_4500_pattern_api* Lightcrafter_4500_pattern_api::get_instance() {
-  if (m_singleton_ptr == nullptr) {
-    m_singleton_ptr = new Lightcrafter_4500_pattern_api();
-  }
-  return m_singleton_ptr;
-}
 
 Lightcrafter_4500_pattern_api::Lightcrafter_4500_pattern_api() {}
 
@@ -74,6 +64,14 @@ int Lightcrafter_4500_pattern_api::init() {
 
 int Lightcrafter_4500_pattern_api::close() {
   if (DLPC350_USB_IsConnected()) {
+    // Check if it is in Pattern Mode
+    // If it is, we stop pattern playing
+    bool is_in_pattern_mode;
+    DLPC350_GetMode(&is_in_pattern_mode);
+    if (is_in_pattern_mode) {
+      set_pat_seq_stop();
+    }
+
     if (DLPC350_USB_Close() < 0) {
       show_error("Could not close!");
       return -1;
@@ -137,7 +135,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
   // Go through all patterns, check exposure timings for patterns that share the
   // same exposure period
-  for (i = 0; i < m_pattern_store.size(); i++) {
+  for (i = 0; i < (int)m_pattern_store.size(); i++) {
     auto curr_pattern = m_pattern_store[i];
 
     // If first pattern, it is an invalid pattern sequence if it has no trigger
@@ -174,11 +172,12 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
       // Update worst case bit depth (largest bit depth used in the
       // sequence)
-      if (curr_pattern.bit_depth - 1 > worst_case_bit_depth) {
+      if ((int)curr_pattern.bit_depth - 1 > (int)worst_case_bit_depth) {
         worst_case_bit_depth = curr_pattern.bit_depth - 1;
       }
     }
 
+    /**
     std::cout << "Pattern "
               << "[" << i << "] "
               << "TrigType = " << curr_pattern.trigger_type << ","
@@ -189,6 +188,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
               << "Insert Black = " << curr_pattern.insert_black_frame << ","
               << "BufSwap = " << curr_pattern.buffer_swap << ","
               << "TrigOutPrev = " << curr_pattern.trigger_out_prev << std::endl;
+    **/
 
     // If everything checks out, add pattern
     if (DLPC350_AddToPatLut(
@@ -264,6 +264,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
     return -1;
   }
 
+  /**
   std::cout << "num_lut_entries: " << num_lut_entries << std::endl;
   std::cout << "num_patterns_trigout2: " << num_patterns_trigout2 << std::endl;
   std::cout << "num_splash_lut_entries: " << num_splash_lut_entries
@@ -273,6 +274,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
     std::cout << (unsigned int)splash << " ";
   }
   std::cout << std::endl;
+  **/
 
   // Send Image LUT
   if (DLPC350_SendImageLut(&splash_lut[0], num_splash_lut_entries) < 0) {
@@ -406,22 +408,33 @@ void Lightcrafter_4500_pattern_api::sleep_ms(int ms) {
 int Lightcrafter_4500_pattern_api::set_pat_seq_mode(unsigned int desired_mode) {
   int result = -1;
 
-  unsigned int current_pat_mode;
-  DLPC350_PatternDisplay(desired_mode);
-  sleep_ms(100);
+  // Check if it is in Pattern Mode
+  bool is_in_pattern_mode;
+  DLPC350_GetMode(&is_in_pattern_mode);
 
-  for (int i = 0; i < m_max_retries; i++) {
-    DLPC350_GetPatternDisplay(&current_pat_mode);
+  if (is_in_pattern_mode) {
+    unsigned int current_pat_mode;
+    DLPC350_PatternDisplay(desired_mode);
+    sleep_ms(100);
 
-    if (current_pat_mode == desired_mode) {
-      // Mode change successful
-      result = 0;
-      break;
-    } else {
-      // Else try change mode again
-      DLPC350_PatternDisplay(desired_mode);
-      sleep_ms(100);
+    for (int i = 0; i < m_max_retries; i++) {
+      DLPC350_GetPatternDisplay(&current_pat_mode);
+
+      if (current_pat_mode == desired_mode) {
+        // Mode change successful
+        result = 0;
+        break;
+      } else {
+        // Else try change mode again
+        DLPC350_PatternDisplay(desired_mode);
+        sleep_ms(100);
+      }
     }
+  } else {
+    // If not in pattern mode, we display error message
+    show_error(
+        "Warning: Attempted to set pattern sequence (Start/Stop/Pause) mode "
+        "when projector is not in Pattern mode. Ignoring command.");
   }
 
   return result;
@@ -442,7 +455,7 @@ void Lightcrafter_4500_pattern_api::check_and_fix_buffer_swaps() {
   int prev_img_indice =
       -1;  // Negative to ensure that first image indice is always differnt
 
-  for (int i = 0; i < m_pattern_store.size(); i++) {
+  for (int i = 0; i < (int)m_pattern_store.size(); i++) {
     int curr_img_indice = m_pattern_store[i].image_indice;
     // If image indice has changed, we make sure that buffer swap is enabled
     if (prev_img_indice != curr_img_indice && !m_pattern_store[i].buffer_swap) {
@@ -555,4 +568,34 @@ int Lightcrafter_4500_pattern_api::get_led_currents(unsigned char& r,
   }
 
   return status;
+}
+
+int Lightcrafter_4500_pattern_api::set_pattern_sequence(
+    const std::vector<single_pattern>& pattern_vec) {
+  m_pattern_store.clear();
+  m_pattern_store = pattern_vec;
+  return 0;
+}
+
+int Lightcrafter_4500_pattern_api::play_pattern_sequence(
+    const std::vector<single_pattern>& pattern_vec,
+    unsigned int exposure_period_us, unsigned int frame_period_us) {
+  // Set pattern
+  set_pattern_sequence(pattern_vec);
+
+  // Send patterns (This will automatically stop previous pattern)
+  std::cout << "Sending patterns" << std::endl;
+  if (send_pattern_sequence(exposure_period_us, frame_period_us) < 0) {
+    std::cout << "Failed to send pattern" << std::endl;
+    return -1;
+  }
+
+  // Start playing pattern
+  std::cout << "Start playing pattern" << std::endl;
+  if (set_pat_seq_start() < 0) {
+    std::cout << "Failed to start playing pattern" << std::endl;
+    return -1;
+  }
+
+  return 0;
 }

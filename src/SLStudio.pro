@@ -73,7 +73,7 @@ HEADERS  += SLStudio.h \
         tracker/TrackerPCL.h \
         tracker/PoseFilter.h \
         cvtools.h \
-        projector/ProjectorLC4500_versavis.h
+        projector/ProjectorLC4500_versavis.h \
 
 SOURCES += main.cpp \
         SLStudio.cpp \
@@ -122,7 +122,7 @@ SOURCES += main.cpp \
         tracker/CorrRejectOrgBoundFast.cpp \
         tracker/TrackerPCL.cpp \
         tracker/PoseFilter.cpp \
-        projector/ProjectorLC4500_versavis.cpp
+        projector/ProjectorLC4500_versavis.cpp \
 
 INCLUDEPATH += camera/ projector/ codec/ triangulator/ calibrator/ tracker/
 
@@ -390,8 +390,8 @@ SOURCES += projector/ProjectorLC4500.cpp \
 macx:SOURCES += projector/LC4500API/hid.Mac.c
 unix:!macx{
     #SOURCES += projector/LC4500API/hid.Unix.c
-    #SOURCES += projector/LC4500API/hid.Libusb.c
-    SOURCES += projector/LC4500API/hid.c
+    SOURCES += projector/LC4500API/hid.Libusb.c
+    #SOURCES += projector/LC4500API/hid.c
     CONFIG += link_pkgconfig
     PKGCONFIG += libudev
     PKGCONFIG += libusb-1.0
@@ -405,10 +405,16 @@ win32{
 unix:!macx
 {
     DEFINES += WITH_LC4500_VERSAVIS_API
+
+    # Lightcrafter Pattern mode wrapper
+    HEADERS += projector/LC4500API/Lightcrafter_4500_pattern_api.h
+    SOURCES += projector/LC4500API/Lightcrafter_4500_pattern_api.cpp
+
+    # ROS
     INCLUDEPATH += /opt/ros/melodic/include/
     CONFIG += link_pkgconfig
     PKGCONFIG += roscpp
 
-    # Versavis custom messages
+    # Versavis ROS custom messages
     INCLUDEPATH += /home/ltf/catkin_ws/devel/include/
 }

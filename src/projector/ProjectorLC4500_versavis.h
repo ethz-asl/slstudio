@@ -13,6 +13,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
+#include "Lightcrafter_4500_pattern_api.h"
 #include "Projector.h"
 
 // Projecotr implementation for LightCrafter 4500 USB Api
@@ -34,6 +35,11 @@ class ProjectorLC4500_versavis : public Projector {
 
   void sub_cb(const versavis::TimeNumberedConstPtr &time_numbered_ptr);
 
+  virtual void load_param(const std::string &param_name,
+                          std::shared_ptr<void> param_ptr) override;
+
+  virtual void init() override;
+
  private:
   unsigned int nPatterns;
   bool isRunning;
@@ -45,8 +51,22 @@ class ProjectorLC4500_versavis : public Projector {
   boost::mutex m_mutex;
   void ros_init();
   void lc4500_init();
-  void showError(std::string err);
+  void show_error(const std::string &err);
   std::string m_ros_node_name = "SLStudio";
+  bool m_is_hardware_triggered = false;
+  Lightcrafter_4500_pattern_api m_projector;
+  const unsigned char m_rgb_white[3] = {25, 20, 8};
+  bool m_first_time_hardware_triggered = false;
+  bool m_is_in_calibration_mode = false;
+  std::vector<single_pattern> m_pattern_sequence = {};
+  std::vector<single_pattern> get_calibration_pattern_sequence();
+  std::vector<single_pattern> get_scanning_pattern_sequence_software();
+  std::vector<single_pattern> get_scanning_pattern_sequence_hardware();
+  const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
+  const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
+  const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
+  const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10};
+  void load_pattern_sequence();
 };
 
 #endif

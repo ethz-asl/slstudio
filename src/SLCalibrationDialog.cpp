@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "ProjectorLC3000.h"
 #include "ProjectorLC4500.h"
+#include "ProjectorLC4500_versavis.h"
 #include "ProjectorOpenGL.h"
 #include "SLProjectorVirtual.h"
 
@@ -66,9 +67,23 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
     projector = new ProjectorLC3000(0);
   else if (screenNum == -3)
     projector = new ProjectorLC4500(0);
+  else if (screenNum == -4)
+    projector = new ProjectorLC4500_versavis(0);
   else
     std::cerr << "SLCalibrationDialog: invalid projector id " << screenNum
               << std::endl;
+
+  auto is_hardware_triggered = std::make_shared<bool>(false);
+  auto void_is_hardware_triggered =
+      std::static_pointer_cast<void>(is_hardware_triggered);
+  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
+
+  auto is_in_calibration_mode = std::make_shared<bool>(true);
+  auto void_is_in_calibration_mode =
+      std::static_pointer_cast<void>(is_in_calibration_mode);
+  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  projector->init();
 
   unsigned int screenResX, screenResY;
   projector->getScreenRes(&screenResX, &screenResY);
@@ -103,6 +118,9 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
     if (diamondPattern) pattern = cvtools::diamondDownsample(pattern);
 
     projector->setPattern(i, pattern.ptr(), pattern.cols, pattern.rows);
+
+    // Uncomment if you want to save calibration images
+    // cv::imwrite(cv::format("pat_%d.bmp", i), pattern);
   }
 
   // Start live view
@@ -186,11 +204,11 @@ void SLCalibrationDialog::on_snapButton_clicked() {
   projector->displayWhite();
 
 #if 0
-        // Write frame seq to disk
-        for(unsigned int i=0; i<frameSeq.size(); i++){
-            QString filename = QString("frameSeq_%1.bmp").arg(i, 2, 10, QChar('0'));
-            cv::imwrite(filename.toStdString(), frameSeq[i]);
-        }
+  // Write frame seq to disk
+  for (unsigned int i = 0; i < frameSeq.size(); i++) {
+    QString filename = QString("frameSeq_%1.bmp").arg(i, 2, 10, QChar('0'));
+    cv::imwrite(filename.toStdString(), frameSeq[i]);
+  }
 #endif
 
   // Restart live view
