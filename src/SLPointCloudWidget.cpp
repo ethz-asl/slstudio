@@ -117,8 +117,9 @@ void SLPointCloudWidget::updatePointCloud(PointCloudConstPtr _pointCloudPCL) {
   pointCloudPCL = _pointCloudPCL;
 
   // Uncomment this if you are not applying any filter
-  // auto filtered_pc_ptr = pointCloudPCL;
+  auto filtered_pc_ptr = pointCloudPCL;
 
+  /**
   // We leave only points within the SL sensor's FoV
   float minX = -500.0f;
   float maxX = 500.0f;
@@ -143,6 +144,7 @@ void SLPointCloudWidget::updatePointCloud(PointCloudConstPtr _pointCloudPCL) {
   sor.filter(*filtered_pc_ptr);
 
   pointCloudPCL = filtered_pc_ptr;
+  **/
 
   if (surfaceReconstruction) {
     reconstructor->setInputCloud(filtered_pc_ptr);

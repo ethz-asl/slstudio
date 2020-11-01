@@ -67,6 +67,8 @@ class ProjectorLC4500_versavis : public Projector {
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
   const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10};
   void load_pattern_sequence();
+  bool m_display_horizontal_pattern = true;
+  bool m_display_vertical_pattern = true;
 };
 
 #endif

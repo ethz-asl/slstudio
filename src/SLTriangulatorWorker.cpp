@@ -9,122 +9,148 @@
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/io/pcd_io.h>
 
-void SLTriangulatorWorker::setup(){
+#include <pcl/filters/crop_box.h>
 
-    // Initialize triangulator with calibration
-    calibration = new CalibrationData;
-    calibration->load("calibration.xml");
-    triangulator = new Triangulator(*calibration);
+void SLTriangulatorWorker::setup() {
+  // Initialize triangulator with calibration
+  calibration = new CalibrationData;
+  calibration->load("calibration.xml");
+  triangulator = new Triangulator(*calibration);
 
-    QSettings settings("SLStudio");
-    writeToDisk = settings.value("writeToDisk/pointclouds",false).toBool();
-
+  QSettings settings("SLStudio");
+  writeToDisk = settings.value("writeToDisk/pointclouds", false).toBool();
 }
 
+void SLTriangulatorWorker::triangulatePointCloud(cv::Mat up, cv::Mat vp,
+                                                 cv::Mat mask,
+                                                 cv::Mat shading) {
+  // Recursively call self until latest event is hit
+  busy = true;
+  QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
+  bool result = busy;
+  busy = false;
+  if (!result) {
+    std::cerr << "SLTriangulatorWorker: dropped phase image!" << std::endl;
+    return;
+  }
 
-void SLTriangulatorWorker::triangulatePointCloud(cv::Mat up, cv::Mat vp, cv::Mat mask, cv::Mat shading){
+  time.restart();
 
-    // Recursively call self until latest event is hit
-    busy = true;
-    QCoreApplication::sendPostedEvents(this, QEvent::MetaCall);
-    bool result = busy;
-    busy = false;
-    if(!result){
-        std::cerr << "SLTriangulatorWorker: dropped phase image!" << std::endl;
-        return;
+  // Reconstruct point cloud
+  cv::Mat pointCloud;
+  triangulator->triangulate(up, vp, mask, shading, pointCloud);
+
+  // Convert point cloud to PCL format
+  PointCloudPtr pointCloudPCL(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+  // Interprete as organized point cloud
+  pointCloudPCL->width = pointCloud.cols;
+  pointCloudPCL->height = pointCloud.rows;
+  pointCloudPCL->is_dense = false;
+
+  pointCloudPCL->points.resize(pointCloud.rows * pointCloud.cols);
+
+  for (int row = 0; row < pointCloud.rows; row++) {
+    int offset = row * pointCloudPCL->width;
+    for (int col = 0; col < pointCloud.cols; col++) {
+      const cv::Vec3f pnt = pointCloud.at<cv::Vec3f>(row, col);
+      unsigned char shade = shading.at<unsigned char>(row, col);
+      pcl::PointXYZRGB point;
+      // Convert to m from mm
+      point.x = pnt[0];
+      point.y = pnt[1];
+      point.z = pnt[2];
+      point.r = shade;
+      point.g = shade;
+      point.b = shade;
+      pointCloudPCL->points[offset + col] = point;
     }
+  }
 
-    time.restart();
+  //    std::vector<cv::Mat> xyz;
+  //    cv::split(pointCloud, xyz);
 
-    // Reconstruct point cloud
-    cv::Mat pointCloud;
-    triangulator->triangulate(up, vp, mask, shading, pointCloud);
+  //    // stack xyz data
+  //    std::vector<cv::Mat> pointCloudChannels;
+  //    pointCloudChannels.push_back(xyz[0]);
+  //    pointCloudChannels.push_back(xyz[1]);
+  //    pointCloudChannels.push_back(xyz[2]);
 
-    // Convert point cloud to PCL format
-    PointCloudPtr pointCloudPCL(new pcl::PointCloud<pcl::PointXYZRGB>);
+  //    // 4 byte padding
+  //    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
 
-    // Interprete as organized point cloud
-    pointCloudPCL->width = pointCloud.cols;
-    pointCloudPCL->height = pointCloud.rows;
-    pointCloudPCL->is_dense = false;
+  //    // triple uchar color information
+  //    std::vector<cv::Mat> rgb;
+  //    rgb.push_back(shading);
+  //    rgb.push_back(shading);
+  //    rgb.push_back(shading);
+  //    rgb.push_back(cv::Mat::zeros(shading.size(), CV_8U));
 
-    pointCloudPCL->points.resize(pointCloud.rows*pointCloud.cols);
+  //    cv::Mat rgb8UC4;
+  //    cv::merge(rgb, rgb8UC4);
 
-    for(int row=0; row<pointCloud.rows; row++){
-        int offset = row * pointCloudPCL->width;
-        for(int col=0; col<pointCloud.cols; col++){
-            const cv::Vec3f pnt = pointCloud.at<cv::Vec3f>(row,col);
-            unsigned char shade = shading.at<unsigned char>(row,col);
-            pcl::PointXYZRGB point;
-            point.x = pnt[0]; point.y = pnt[1]; point.z = pnt[2];
-            point.r = shade; point.g = shade; point.b = shade;
-            pointCloudPCL->points[offset + col] = point;
-        }
-    }
+  //    cv::Mat rgb32F(rgb8UC4.size(), CV_32F, rgb8UC4.data);
 
-//    std::vector<cv::Mat> xyz;
-//    cv::split(pointCloud, xyz);
+  //    pointCloudChannels.push_back(rgb32F);
 
-//    // stack xyz data
-//    std::vector<cv::Mat> pointCloudChannels;
-//    pointCloudChannels.push_back(xyz[0]);
-//    pointCloudChannels.push_back(xyz[1]);
-//    pointCloudChannels.push_back(xyz[2]);
+  //    // 12 bytes padding
+  //    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
+  //    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
+  //    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
 
-//    // 4 byte padding
-//    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
+  //    // merge channels
+  //    cv::Mat pointCloudPadded;
+  //    cv::merge(pointCloudChannels, pointCloudPadded);
 
-//    // triple uchar color information
-//    std::vector<cv::Mat> rgb;
-//    rgb.push_back(shading);
-//    rgb.push_back(shading);
-//    rgb.push_back(shading);
-//    rgb.push_back(cv::Mat::zeros(shading.size(), CV_8U));
+  //    // memcpy everything
+  //    memcpy(&pointCloudPCL->points[0], pointCloudPadded.data,
+  //    pointCloudPadded.rows*pointCloudPadded.cols*sizeof(pcl::PointXYZRGB));
 
-//    cv::Mat rgb8UC4;
-//    cv::merge(rgb, rgb8UC4);
+  //    // filtering
+  /**
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> filter;
+  filter.setMeanK(5);
+  filter.setStddevMulThresh(1.0);
+  filter.setInputCloud(pointCloudPCL);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointCloudFiltered(
+      new pcl::PointCloud<pcl::PointXYZRGB>);
+  filter.filter(*pointCloudFiltered);
+  **/
 
-//    cv::Mat rgb32F(rgb8UC4.size(), CV_32F, rgb8UC4.data);
+  // We leave only points within the SL sensor's FoV
+  float minX = -500.0f;
+  float maxX = 500.0f;
+  float minZ = 0.0f;
+  float maxZ = 1000.0f;
+  float minY = -500.0f;
+  float maxY = 500.0f;
 
-//    pointCloudChannels.push_back(rgb32F);
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr filtered_pc_ptr(
+      new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::CropBox<pcl::PointXYZRGB> boxFilter;
+  boxFilter.setMin(Eigen::Vector4f(minX, minY, minZ, 1.0));
+  boxFilter.setMax(Eigen::Vector4f(maxX, maxY, maxZ, 1.0));
+  boxFilter.setInputCloud(pointCloudPCL);
+  boxFilter.filter(*filtered_pc_ptr);
 
-//    // 12 bytes padding
-//    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
-//    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
-//    pointCloudChannels.push_back(cv::Mat::zeros(pointCloud.size(), CV_32F));
+  // Emit result
+  emit newPointCloud(filtered_pc_ptr);
 
-//    // merge channels
-//    cv::Mat pointCloudPadded;
-//    cv::merge(pointCloudChannels, pointCloudPadded);
+  std::cout << "Triangulator: " << time.elapsed() << "ms" << std::endl;
 
-//    // memcpy everything
-//    memcpy(&pointCloudPCL->points[0], pointCloudPadded.data, pointCloudPadded.rows*pointCloudPadded.cols*sizeof(pcl::PointXYZRGB));
+  if (writeToDisk) {
+    QString fileName =
+        QDateTime::currentDateTime().toString("yyyyMMdd_HHmmsszzz");
+    fileName.append(".pcd");
+    pcl::io::savePCDFileBinary(fileName.toStdString(), *pointCloudPCL);
+  }
 
-//    // filtering
-//    pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> filter;
-//    filter.setMeanK(5);
-//    filter.setStddevMulThresh(1.0);
-//    filter.setInputCloud(pointCloudPCL);
-//    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointCloudFiltered(new pcl::PointCloud<pcl::PointXYZRGB>);
-//    filter.filter(*pointCloudFiltered);
-
-    // Emit result
-    emit newPointCloud(pointCloudPCL);
-
-    std::cout << "Triangulator: " << time.elapsed() << "ms" << std::endl;
-
-    if(writeToDisk){
-        QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmsszzz");
-        fileName.append(".pcd");
-        pcl::io::savePCDFileBinary(fileName.toStdString(), *pointCloudPCL);
-    }
-
-    //emit finished();
+  // emit finished();
 }
 
-SLTriangulatorWorker::~SLTriangulatorWorker(){
-    delete calibration;
-    delete triangulator;
+SLTriangulatorWorker::~SLTriangulatorWorker() {
+  delete calibration;
+  delete triangulator;
 
-    std::cout<<"triangulatorWorker deleted\n"<<std::flush;
+  std::cout << "triangulatorWorker deleted\n" << std::flush;
 }

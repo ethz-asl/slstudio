@@ -32,6 +32,9 @@
 #include "SLPointCloudWidget.h"
 #include "SLProjectorVirtual.h"
 
+#include <chrono>
+#include <thread>
+
 void SLScanWorker::setup() {
   QSettings settings("SLStudio");
 
@@ -85,6 +88,25 @@ void SLScanWorker::setup() {
   auto void_is_in_calibration_mode =
       std::static_pointer_cast<void>(is_in_calibration_mode);
   projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  CodecDir dir_init =
+      (CodecDir)settings.value("pattern/direction", CodecDirHorizontal).toInt();
+
+  auto display_horizontal_pattern = std::make_shared<bool>(
+      (dir_init == CodecDirHorizontal || dir_init == CodecDirBoth) ? true
+                                                                   : false);
+  auto void_display_horizontal_pattern =
+      std::static_pointer_cast<void>(display_horizontal_pattern);
+  projector->load_param("display_horizontal_pattern",
+                        void_display_horizontal_pattern);
+
+  auto display_vertical_pattern = std::make_shared<bool>(
+      (dir_init == CodecDirVertical || dir_init == CodecDirBoth) ? true
+                                                                 : false);
+  auto void_display_vertical_pattern =
+      std::static_pointer_cast<void>(display_vertical_pattern);
+  projector->load_param("display_vertical_pattern",
+                        void_display_vertical_pattern);
 
   projector->init();
 
@@ -230,6 +252,12 @@ void SLScanWorker::doWork() {
         // Wait a few milliseconds to allow camera to get ready
         // QTest::qSleep(1);
       }
+
+      if (i == 0 && triggerMode == triggerModeHardware) {
+        // First pattern we delay entire camera by 1ms behind pattern changes
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      }
+
       CameraFrame frame;
       frame = camera->getFrame();
 

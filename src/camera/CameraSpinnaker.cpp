@@ -531,10 +531,10 @@ CameraFrame CameraSpinnaker::getFrame() {
 
   int attempts = 100;
 
-  for (int i = 0; i < attempts; i++) {
-    std::this_thread::sleep_for(
-        std::chrono::microseconds((uint32_t)(10 * m_exposure_time_micro_s)));
+  std::this_thread::sleep_for(
+      std::chrono::microseconds((uint32_t)(m_exposure_time_micro_s + 4000)));
 
+  for (int i = 0; i < attempts; i++) {
     try {
       img_ptr = m_cam_ptr->GetNextImage();
     } catch (Spinnaker::Exception& e) {
@@ -542,9 +542,11 @@ CameraFrame CameraSpinnaker::getFrame() {
     }
 
     try {
+      // Check if image retrieval is successful
       if (img_ptr != nullptr &&
           img_ptr->GetImageStatus() == Spinnaker::IMAGE_NO_ERROR &&
           !img_ptr->IsIncomplete()) {
+        // If so, feed all info into frame, break the loop and return the value
         // cout << "Image Acquisition Successful!" << endl;
         frame.timeStamp = img_ptr->GetTimeStamp();
         frame.height = img_ptr->GetHeight();
@@ -553,8 +555,18 @@ CameraFrame CameraSpinnaker::getFrame() {
         frame.sizeBytes = img_ptr->GetBufferSize();
         break;
       } else {
+        // If not, we sleep for a bit and try again
         cout << "Image Acquisition Failed! Attempt " << i << "/" << attempts
              << endl;
+        if (triggerMode == triggerModeSoftware) {
+          // Software trigger we can afford to sleep more before next check
+          std::this_thread::sleep_for(
+              std::chrono::microseconds((uint32_t)(m_exposure_time_micro_s)));
+        } else {
+          // Hardware trigger we can afford less sleep time
+          std::this_thread::sleep_for(
+              std::chrono::microseconds((uint32_t)(50)));
+        }
       }
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;

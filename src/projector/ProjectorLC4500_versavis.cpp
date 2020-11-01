@@ -42,8 +42,7 @@ void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
   // If it is the first pattern being triggered for the first time, we detect
   // the start of the trigger before we end the function to ensure
   // synchronisation
-  if (m_is_hardware_triggered && pattern_no == 0 &&
-      !m_first_time_hardware_triggered) {
+  if (m_is_hardware_triggered && pattern_no == 0) {
     unsigned int current_count;
     unsigned int updated_count;
 
@@ -75,9 +74,11 @@ void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
 
     std::cout << "Started playing image sequence (hardware triggered)!"
               << std::endl;
-    m_projector.set_pat_seq_start();
 
-    m_first_time_hardware_triggered = true;
+    if (!m_first_time_hardware_triggered) {
+      m_projector.set_pat_seq_start();
+      m_first_time_hardware_triggered = true;
+    }
   }
 
   if (!m_is_hardware_triggered) {
@@ -108,8 +109,13 @@ void ProjectorLC4500_versavis::getScreenRes(unsigned int *nx,
 }
 
 ProjectorLC4500_versavis::~ProjectorLC4500_versavis() {
-  m_spinner_ptr->stop();
-  ros::shutdown();
+  // std::cout << "ProjectorLC4500_versavis destructor called" << std::endl;
+  m_projector.close();
+  if (m_is_hardware_triggered && !m_is_in_calibration_mode) {
+    m_spinner_ptr->stop();
+    ros::shutdown();
+  }
+  // std::cout << "ProjectorLC4500_versavis destructor completed" << std::endl;
 }
 
 void ProjectorLC4500_versavis::sub_cb(
@@ -169,6 +175,14 @@ void ProjectorLC4500_versavis::load_param(const std::string &param_name,
     m_is_in_calibration_mode = *temp_ptr;
     // std::cout << "m_is_in_calibration_mode: " << m_is_in_calibration_mode
     //          << std::endl;
+  } else if (param_name == "display_horizontal_pattern") {
+    std::shared_ptr<bool> temp_ptr;
+    temp_ptr = std::static_pointer_cast<bool>(param_ptr);
+    m_display_horizontal_pattern = *temp_ptr;
+  } else if (param_name == "display_vertical_pattern") {
+    std::shared_ptr<bool> temp_ptr;
+    temp_ptr = std::static_pointer_cast<bool>(param_ptr);
+    m_display_vertical_pattern = *temp_ptr;
   }
 }
 
@@ -195,18 +209,36 @@ ProjectorLC4500_versavis::get_calibration_pattern_sequence() {
   return pattern_vec;
 }
 
+// TrigType  - I - Select the trigger type for the pattern
+//                          0 = Internal trigger
+//                          1 = External positive
+//                          2 = External negative
+//                          3 = No Input Trigger
+
 std::vector<single_pattern>
 ProjectorLC4500_versavis::get_scanning_pattern_sequence_software() {
   std::vector<single_pattern> pattern_vec = {};
 
-  for (int i = 0; i < m_scanning_image_indices.size(); i++) {
+  std::vector<int> images_indices_to_display;
+
+  if (m_display_horizontal_pattern) {
+    images_indices_to_display.push_back(m_scanning_image_indices[0]);
+    images_indices_to_display.push_back(m_scanning_image_indices[1]);
+  }
+
+  if (m_display_vertical_pattern) {
+    images_indices_to_display.push_back(m_scanning_image_indices[2]);
+    images_indices_to_display.push_back(m_scanning_image_indices[3]);
+  }
+
+  for (int i = 0; i < images_indices_to_display.size(); i++) {
     for (int j = 0; j < 3; j++) {
       single_pattern temp;
       temp.trigger_type = 0;
       temp.pattern_number = j;
       temp.bit_depth = 8;
       temp.led_select = 7;
-      temp.image_indice = m_scanning_image_indices[i];
+      temp.image_indice = images_indices_to_display[i];
       temp.invert_pattern = false;
       temp.insert_black_frame = false;
       temp.buffer_swap = true;
@@ -222,19 +254,43 @@ std::vector<single_pattern>
 ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
   std::vector<single_pattern> pattern_vec = {};
 
-  for (int i = 0; i < m_scanning_image_indices.size(); i++) {
+  std::vector<int> images_indices_to_display;
+
+  if (m_display_horizontal_pattern) {
+    images_indices_to_display.push_back(m_scanning_image_indices[0]);
+    images_indices_to_display.push_back(m_scanning_image_indices[1]);
+  }
+
+  if (m_display_vertical_pattern) {
+    images_indices_to_display.push_back(m_scanning_image_indices[2]);
+    images_indices_to_display.push_back(m_scanning_image_indices[3]);
+  }
+
+  for (int i = 0; i < images_indices_to_display.size(); i++) {
     for (int j = 0; j < 3; j++) {
-      single_pattern temp;
-      temp.trigger_type = 0;
-      temp.pattern_number = j;
-      temp.bit_depth = 8;
-      temp.led_select = 7;
-      temp.image_indice = m_scanning_image_indices[i];
-      temp.invert_pattern = false;
-      temp.insert_black_frame = true;
-      temp.buffer_swap = (i == 0) ? true : false;
-      temp.trigger_out_prev = false;
-      pattern_vec.push_back(temp);
+      single_pattern temp1;
+      temp1.trigger_type = (i == 0 && j == 0) ? 1 : 3;
+      temp1.pattern_number = j;
+      temp1.bit_depth = 8;
+      temp1.led_select = 7;
+      temp1.image_indice = images_indices_to_display[i];
+      temp1.invert_pattern = false;
+      temp1.insert_black_frame = false;
+      temp1.buffer_swap = (j == 0) ? true : false;
+      temp1.trigger_out_prev = false;
+      pattern_vec.push_back(temp1);
+
+      single_pattern temp2;
+      temp2.trigger_type = 3;
+      temp2.pattern_number = j;
+      temp2.bit_depth = 8;
+      temp2.led_select = 7;
+      temp2.image_indice = images_indices_to_display[i];
+      temp2.invert_pattern = false;
+      temp2.insert_black_frame = false;
+      temp2.buffer_swap = false;
+      temp2.trigger_out_prev = false;
+      pattern_vec.push_back(temp2);
     }
   }
 

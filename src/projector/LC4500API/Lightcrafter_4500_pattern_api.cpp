@@ -584,14 +584,14 @@ int Lightcrafter_4500_pattern_api::play_pattern_sequence(
   set_pattern_sequence(pattern_vec);
 
   // Send patterns (This will automatically stop previous pattern)
-  std::cout << "Sending patterns" << std::endl;
+  // std::cout << "Sending patterns" << std::endl;
   if (send_pattern_sequence(exposure_period_us, frame_period_us) < 0) {
     std::cout << "Failed to send pattern" << std::endl;
     return -1;
   }
 
   // Start playing pattern
-  std::cout << "Start playing pattern" << std::endl;
+  // std::cout << "Start playing pattern" << std::endl;
   if (set_pat_seq_start() < 0) {
     std::cout << "Failed to start playing pattern" << std::endl;
     return -1;
