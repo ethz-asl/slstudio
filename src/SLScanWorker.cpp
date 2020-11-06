@@ -255,7 +255,10 @@ void SLScanWorker::doWork() {
 
       if (i == 0 && triggerMode == triggerModeHardware) {
         // First pattern we delay entire camera by 1ms behind pattern changes
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(1)); // For
+        // blackfly
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(15));
       }
 
       CameraFrame frame;

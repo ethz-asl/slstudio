@@ -7,6 +7,8 @@
 
 using namespace std;
 
+enum class Ecamera_type { blackfly, grasshopper, size };
+
 class CameraSpinnaker : public Camera {
  public:
   // Static methods
@@ -24,6 +26,7 @@ class CameraSpinnaker : public Camera {
   size_t getFrameSizeBytes();
   size_t getFrameWidth();
   size_t getFrameHeight();
+  std::string get_device_name();
   ~CameraSpinnaker();
 
  private:
@@ -31,6 +34,7 @@ class CameraSpinnaker : public Camera {
   Spinnaker::SystemPtr m_sys_ptr = nullptr;
   Spinnaker::CameraPtr retrieveCameraPtrWithCamNum(unsigned int camNum);
   float m_exposure_time_micro_s = 0.0;
+  Ecamera_type m_camera_type = Ecamera_type::size;
 };
 
 #endif

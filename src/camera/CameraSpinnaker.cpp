@@ -54,6 +54,24 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     throw;
   }
 
+  // We Update Camera Type, required for specialised configs for each camera
+  try {
+    std::string model_name = get_device_name();
+    cout << "Model name: " << model_name << endl;
+    if (model_name == "Grasshopper3 GS3-U3-32S4C") {
+      m_camera_type = Ecamera_type::grasshopper;
+      cout << "Grasshopper camera detected" << endl;
+    } else if (model_name == "Blackfly S BFS-U3-04S2M") {
+      m_camera_type = Ecamera_type::blackfly;
+      cout << "Blackfly camera detected" << endl;
+    } else {
+      cout << "Unrecognised camera with name: " << model_name << endl;
+      throw;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   // Initialise camera
   try {
     m_cam_ptr->Init();
@@ -71,6 +89,29 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   }
 
   cout << "***** Print device info end *****" << endl << endl;
+
+  // If Grasshopper, we set 2 x 2 binning to halve resolution to 1024 x 768
+  try {
+    if (m_camera_type == Ecamera_type::grasshopper) {
+      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
+          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
+        m_cam_ptr->BinningHorizontal.SetValue(2);
+        cout << "Set horizontal binning to 2" << endl;
+      } else {
+        cout << "Failed to set horizontal binning to 2" << endl;
+      }
+
+      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
+          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
+        m_cam_ptr->BinningVertical.SetValue(2);
+        cout << "Set vertical binning to 2" << endl;
+      } else {
+        cout << "Failed to set vertical binning to 2" << endl;
+      }
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
 
   // Set no pixel color filter
   try {
@@ -231,7 +272,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
-  // Set to retrieve only the newest image
+  // Buffer Options
   try {
     if (Spinnaker::GenApi::IsReadable(
             m_cam_ptr->TLStream.StreamBufferHandlingMode) &&
@@ -245,6 +286,23 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     }
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
+  }
+
+  if (m_camera_type == Ecamera_type::grasshopper &&
+      triggerMode == triggerModeHardware) {
+    try {
+      if (Spinnaker::GenApi::IsReadable(
+              m_cam_ptr->TLStream.StreamBufferCountManual) &&
+          Spinnaker::GenApi::IsWritable(
+              m_cam_ptr->TLStream.StreamBufferCountManual)) {
+        m_cam_ptr->TLStream.StreamBufferCountManual.SetValue(2);
+        cout << "Set manual buffer count to 2" << endl;
+      } else {
+        cout << "Failed to set manual buffer count to 2" << endl;
+      }
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
   }
 
   // Disable Sharpness Correction
@@ -397,6 +455,7 @@ void CameraSpinnaker::startCapture() {
     } catch (Spinnaker::Exception& e) {
       cout << "Error: " << e.what() << endl;
     }
+
   } else if (triggerMode == triggerModeSoftware) {
     // Set the trigger source to software
     try {
@@ -453,6 +512,26 @@ void CameraSpinnaker::startCapture() {
     cout << "Trigger mode turned back on..." << endl << endl;
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
+  }
+
+  // For grasshopper, we set TriggerOverlap to ReadOut (for some reason
+  // without this, camera images are only sent out at 30Hz when 60Hz is
+  // desired)
+  // ALSO, this setting can on be changed when tigger mode is turned on
+  if (m_camera_type == Ecamera_type::grasshopper &&
+      triggerMode == triggerModeHardware) {
+    try {
+      if (m_cam_ptr->TriggerOverlap == NULL ||
+          m_cam_ptr->TriggerOverlap.GetAccessMode() != Spinnaker::GenApi::RW) {
+        cout << "Unable to set trigger overlap to ReadOut. Aborting..." << endl;
+        throw;
+      }
+      m_cam_ptr->TriggerOverlap.SetValue(
+          Spinnaker::TriggerOverlapEnums::TriggerOverlap_ReadOut);
+      cout << "Set trigger overlap to ReadOut" << endl;
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
   }
 
   // Set acquisition mode to continuous
@@ -531,8 +610,13 @@ CameraFrame CameraSpinnaker::getFrame() {
 
   int attempts = 100;
 
-  std::this_thread::sleep_for(
-      std::chrono::microseconds((uint32_t)(m_exposure_time_micro_s + 4000)));
+  if (m_camera_type == Ecamera_type::blackfly) {
+    std::this_thread::sleep_for(
+        std::chrono::microseconds((uint32_t)(m_exposure_time_micro_s + 4000)));
+  } else if (m_camera_type == Ecamera_type::grasshopper) {
+    std::this_thread::sleep_for(
+        std::chrono::microseconds((uint32_t)(m_exposure_time_micro_s + 4000)));
+  }
 
   for (int i = 0; i < attempts; i++) {
     try {
@@ -820,5 +904,37 @@ int CameraSpinnaker::PrintDeviceInfo(Spinnaker::CameraPtr m_cam_ptr) {
     cout << "Error: " << e.what() << endl;
     result = -1;
   }
+  return result;
+}
+
+// Not the best way to get device name, needs to be refactored in the future
+std::string CameraSpinnaker::get_device_name() {
+  std::string result = "";
+  try {
+    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetTLDeviceNodeMap();
+    Spinnaker::GenApi::FeatureList_t features;
+    Spinnaker::GenApi::CCategoryPtr category =
+        nodeMap.GetNode("DeviceInformation");
+    if (IsAvailable(category) && Spinnaker::GenApi::IsReadable(category)) {
+      category->GetFeatures(features);
+      Spinnaker::GenApi::FeatureList_t::const_iterator it;
+      for (it = features.begin(); it != features.end(); ++it) {
+        Spinnaker::GenApi::CNodePtr pfeatureNode = *it;
+        if (pfeatureNode->GetName() == "DeviceModelName") {
+          Spinnaker::GenApi::CValuePtr pValue =
+              (Spinnaker::GenApi::CValuePtr)pfeatureNode;
+          if (Spinnaker::GenApi::IsReadable(pValue)) {
+            result = pValue->ToString();
+            break;
+          }
+        }
+      }
+    } else {
+      cout << "Device control information not available." << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
   return result;
 }

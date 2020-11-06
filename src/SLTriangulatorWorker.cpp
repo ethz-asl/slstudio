@@ -6,10 +6,11 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+#include <pcl/filters/crop_box.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/filter.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/io/pcd_io.h>
-
-#include <pcl/filters/crop_box.h>
 
 void SLTriangulatorWorker::setup() {
   // Initialize triangulator with calibration
@@ -106,15 +107,19 @@ void SLTriangulatorWorker::triangulatePointCloud(cv::Mat up, cv::Mat vp,
   //    memcpy(&pointCloudPCL->points[0], pointCloudPadded.data,
   //    pointCloudPadded.rows*pointCloudPadded.cols*sizeof(pcl::PointXYZRGB));
 
-  //    // filtering
   /**
-  pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> filter;
-  filter.setMeanK(5);
-  filter.setStddevMulThresh(1.0);
-  filter.setInputCloud(pointCloudPCL);
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointCloudFiltered(
-      new pcl::PointCloud<pcl::PointXYZRGB>);
-  filter.filter(*pointCloudFiltered);
+  // Remove NaN Entries
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr filtered_pc_ptr_1(
+      new pcl::PointCloud<pcl::PointXYZRGB>());
+  std::cout << "size: " << pointCloudPCL->points.size() << std::endl;
+  boost::shared_ptr<std::vector<int>> indices(new std::vector<int>);
+  pcl::removeNaNFromPointCloud(*pointCloudPCL, *indices);
+  pcl::ExtractIndices<pcl::PointXYZRGB> extract;
+  extract.setInputCloud(pointCloudPCL);
+  extract.setIndices(indices);
+  extract.setNegative(false);
+  extract.filter(*filtered_pc_ptr_1);
+  std::cout << "size: " << filtered_pc_ptr_1->points.size() << std::endl;
   **/
 
   // We leave only points within the SL sensor's FoV
@@ -125,16 +130,28 @@ void SLTriangulatorWorker::triangulatePointCloud(cv::Mat up, cv::Mat vp,
   float minY = -500.0f;
   float maxY = 500.0f;
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr filtered_pc_ptr(
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr filtered_pc_ptr2(
       new pcl::PointCloud<pcl::PointXYZRGB>());
   pcl::CropBox<pcl::PointXYZRGB> boxFilter;
   boxFilter.setMin(Eigen::Vector4f(minX, minY, minZ, 1.0));
   boxFilter.setMax(Eigen::Vector4f(maxX, maxY, maxZ, 1.0));
   boxFilter.setInputCloud(pointCloudPCL);
-  boxFilter.filter(*filtered_pc_ptr);
+  boxFilter.filter(*pointCloudPCL);
+  // std::cout << "After box" << filtered_pc_ptr2->points.size() << std::endl;
+
+  /**
+  // SOR filtering
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr filtered_pc_ptr3(
+      new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> filter;
+  filter.setMeanK(50);
+  filter.setStddevMulThresh(1.0);
+  filter.setInputCloud(pointCloudPCL);
+  filter.filter(*pointCloudPCL);
+  **/
 
   // Emit result
-  emit newPointCloud(filtered_pc_ptr);
+  emit newPointCloud(pointCloudPCL);
 
   std::cout << "Triangulator: " << time.elapsed() << "ms" << std::endl;
 

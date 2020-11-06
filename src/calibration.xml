@@ -5,45 +5,45 @@
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    3.44517029e+02 0. 360. 0. 3.44517029e+02 270. 0. 0. 1.</data></Kc>
+    1.74065808e+03 0. 512. 0. 1.74065808e+03 384. 0. 0. 1.</data></Kc>
 <kc type_id="opencv-matrix">
   <rows>5</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    -2.34452501e-01 0. 0. 0. 0.</data></kc>
+    -3.71707737e-01 0. 0. 0. 0.</data></kc>
 <Kp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    2.31950781e+03 0. 9.34119568e+02 0. 2.31950781e+03 1.18593872e+03 0.
+    2.21510669e+03 0. 9.41316467e+02 0. 2.21510669e+03 1.26186975e+03 0.
     0. 1.</data></Kp>
 <kp type_id="opencv-matrix">
   <rows>5</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    -1.25214446e-03 0. 0. 0. 0.</data></kp>
+    -1.06892856e-02 0. 0. 0. 0.</data></kp>
 <Rp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    9.99405921e-01 3.79673252e-03 -3.42549272e-02 3.20418365e-03
-    9.79373038e-01 2.02035099e-01 3.43154259e-02 -2.02024832e-01
-    9.78779018e-01</data></Rp>
+    9.05761719e-01 3.79713275e-03 4.23770338e-01 8.37983657e-03
+    9.99603868e-01 -2.68677697e-02 -4.23704475e-01 2.78869234e-02
+    9.05371130e-01</data></Rp>
 <Tp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    2.84852600e+01 -2.48180176e+02 2.80012787e+02</data></Tp>
-<cam_error>2.6284046889530960e-01</cam_error>
-<proj_error>5.9854525880982989e-01</proj_error>
-<stereo_error>1.0925868013769655e+00</stereo_error>
-<frameWidth>720</frameWidth>
-<frameHeight>540</frameHeight>
+    -4.17589966e+02 -1.78970154e+02 -1.66901459e+02</data></Tp>
+<cam_error>1.9701124828245331e-01</cam_error>
+<proj_error>5.1167121127885606e-01</proj_error>
+<stereo_error>7.5134832273373042e-01</stereo_error>
+<frameWidth>1024</frameWidth>
+<frameHeight>768</frameHeight>
 <screenResX>912</screenResX>
 <screenResY>1140</screenResY>
 </opencv_storage>
