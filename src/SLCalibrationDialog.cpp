@@ -302,9 +302,13 @@ void SLCalibrationDialog::onNewSequenceResult(cv::Mat img, unsigned int idx,
 }
 
 void SLCalibrationDialog::closeEvent(QCloseEvent *) {
+  std::cout << "Deleting camera" << std::endl;
   delete camera;
+  std::cout << "Deleting projector" << std::endl;
   delete projector;
+  std::cout << "Deleting calibrator" << std::endl;
   delete calibrator;
+  std::cout << "SLCalibrationDialog set to be deleted later" << std::endl;
   this->deleteLater();
 
   // Save calibration settings

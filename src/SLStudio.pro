@@ -364,6 +364,14 @@ unix:!macx:exists(/usr/include/spinnaker/Spinnaker.h){
     LIBS += -lSpinnaker
 }
 
+# ROS Camera (Only for Ubuntu)
+unix:!macx
+{
+    DEFINES += WITH_CAMERAROS
+    HEADERS += camera/CameraROS.h
+    SOURCES += camera/CameraROS.cpp
+}
+
 contains(DEFINES, WITH_CAMERASPINNAKER) {
     HEADERS += camera/CameraSpinnaker.h
     SOURCES += camera/CameraSpinnaker.cpp

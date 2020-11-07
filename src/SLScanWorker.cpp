@@ -258,7 +258,10 @@ void SLScanWorker::doWork() {
         // std::this_thread::sleep_for(std::chrono::milliseconds(1)); // For
         // blackfly
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(15));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(15)); //
+        // Grasshopper overlapping trigger
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
 
       CameraFrame frame;

@@ -93,21 +93,55 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   // If Grasshopper, we set 2 x 2 binning to halve resolution to 1024 x 768
   try {
     if (m_camera_type == Ecamera_type::grasshopper) {
-      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
-          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
-        m_cam_ptr->BinningHorizontal.SetValue(2);
-        cout << "Set horizontal binning to 2" << endl;
-      } else {
-        cout << "Failed to set horizontal binning to 2" << endl;
+      /**
+           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
+               Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
+             m_cam_ptr->BinningHorizontal.SetValue(2);
+             cout << "Set horizontal binning to 2" << endl;
+           } else {
+             cout << "Failed to set horizontal binning to 2" << endl;
+           }
+
+         if (m_camera_type == Ecamera_type::grasshopper) {
+           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->DecimationHorizontal) &&
+               Spinnaker::GenApi::IsWritable(m_cam_ptr->DecimationHorizontal)) {
+             m_cam_ptr->DecimationHorizontal.SetValue(2);
+             cout << "Set horizontal decimation to 2" << endl;
+           } else {
+             cout << "Failed to set horizontal decimation to 2" << endl;
+           }
+
+           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
+               Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
+             m_cam_ptr->BinningVertical.SetValue(2);
+             cout << "Set vertical binning to 2" << endl;
+           } else {
+             cout << "Failed to set vertical binning to 2" << endl;
+           } **/
+
+      // Retrieve GenICam nodemap
+      // Set Video Mode 2 (2x2 Subsampling)
+      Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
+      Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
+          nodeMap.GetNode("VideoMode");
+      if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
+          !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
+        cout << "Unable to access Video Mode. "
+                "Aborting..."
+             << endl;
+        throw;
       }
 
-      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
-          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
-        m_cam_ptr->BinningVertical.SetValue(2);
-        cout << "Set vertical binning to 2" << endl;
-      } else {
-        cout << "Failed to set vertical binning to 2" << endl;
+      Spinnaker::GenApi::CEnumEntryPtr ptrMode2 =
+          ptrVideoMode->GetEntryByName("Mode2");
+      if (!Spinnaker::GenApi::IsAvailable(ptrMode2) ||
+          !Spinnaker::GenApi::IsReadable(ptrMode2)) {
+        cout << "Video Mode 2 is not available. Aborting... " << endl;
+        throw;
       }
+
+      ptrVideoMode->SetIntValue(ptrMode2->GetValue());
+      cout << "Set video mode to 2" << endl;
     }
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
@@ -217,6 +251,61 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
+  // For Grasshopper, we set a temporatrily low frame rate of 50Hz so we can
+  // set the exposure timings with no issues later. Video mode has fps of
+  // 240Hz, so you would not be able to set common exposure timings of
+  // 8.333ms, 16.667ms
+  // Note: This must be done only after auto exposure is disabled since possible
+  // exposure times are tied to fps
+
+  if (m_camera_type == Ecamera_type::grasshopper) {
+    try {
+      if (Spinnaker::GenApi::IsAvailable(
+              m_cam_ptr->AcquisitionFrameRateEnable) &&
+          Spinnaker::GenApi::IsWritable(
+              m_cam_ptr->AcquisitionFrameRateEnable)) {
+        m_cam_ptr->AcquisitionFrameRateEnable.SetValue(true);
+        cout << "Enable acquisition frame rate" << endl;
+      } else {
+        cout << "Failed to set enable acquisition frame rate" << endl;
+      }
+
+      {
+        Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
+        Spinnaker::GenApi::CEnumerationPtr ptrAcquisitionFrameRateAuto =
+            nodeMap.GetNode("AcquisitionFrameRateAuto");
+        if (!Spinnaker::GenApi::IsAvailable(ptrAcquisitionFrameRateAuto) ||
+            !Spinnaker::GenApi::IsWritable(ptrAcquisitionFrameRateAuto)) {
+          cout << "Unable to access AcquisitionFrameRateAuto. "
+                  "Aborting..."
+               << endl;
+          throw;
+        }
+
+        Spinnaker::GenApi::CEnumEntryPtr ptrOff =
+            ptrAcquisitionFrameRateAuto->GetEntryByName("Off");
+        if (!Spinnaker::GenApi::IsAvailable(ptrOff) ||
+            !Spinnaker::GenApi::IsReadable(ptrOff)) {
+          cout << "Off for ptrOff is not available. Aborting... " << endl;
+          throw;
+        }
+
+        ptrAcquisitionFrameRateAuto->SetIntValue(ptrOff->GetValue());
+        cout << "Set AcquisitionFrameRateAuto mode to Off" << endl;
+      }
+
+      if (Spinnaker::GenApi::IsAvailable(m_cam_ptr->AcquisitionFrameRate) &&
+          Spinnaker::GenApi::IsWritable(m_cam_ptr->AcquisitionFrameRate)) {
+        m_cam_ptr->AcquisitionFrameRate.SetValue(50);
+        cout << "Set acquisition frame rate to 50" << endl;
+      } else {
+        cout << "Failed to set acquisition frame rate to 50" << endl;
+      }
+    } catch (Spinnaker::Exception& e) {
+      cout << "Error: " << e.what() << endl;
+    }
+  }
+
   // Disable Gamma
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->GammaEnable) &&
@@ -288,6 +377,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
+  /**
   if (m_camera_type == Ecamera_type::grasshopper &&
       triggerMode == triggerModeHardware) {
     try {
@@ -304,6 +394,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Error: " << e.what() << endl;
     }
   }
+  **/
 
   // Disable Sharpness Correction
   try {
@@ -517,13 +608,14 @@ void CameraSpinnaker::startCapture() {
   // For grasshopper, we set TriggerOverlap to ReadOut (for some reason
   // without this, camera images are only sent out at 30Hz when 60Hz is
   // desired)
-  // ALSO, this setting can on be changed when tigger mode is turned on
+  // ALSO, this setting can on only be changed when tigger mode is turned on
+  /**
   if (m_camera_type == Ecamera_type::grasshopper &&
       triggerMode == triggerModeHardware) {
     try {
       if (m_cam_ptr->TriggerOverlap == NULL ||
-          m_cam_ptr->TriggerOverlap.GetAccessMode() != Spinnaker::GenApi::RW) {
-        cout << "Unable to set trigger overlap to ReadOut. Aborting..." << endl;
+          m_cam_ptr->TriggerOverlap.GetAccessMode() != Spinnaker::GenApi::RW)
+  { cout << "Unable to set trigger overlap to ReadOut. Aborting..." << endl;
         throw;
       }
       m_cam_ptr->TriggerOverlap.SetValue(
@@ -533,6 +625,7 @@ void CameraSpinnaker::startCapture() {
       cout << "Error: " << e.what() << endl;
     }
   }
+  **/
 
   // Set acquisition mode to continuous
   try {
@@ -630,8 +723,8 @@ CameraFrame CameraSpinnaker::getFrame() {
       if (img_ptr != nullptr &&
           img_ptr->GetImageStatus() == Spinnaker::IMAGE_NO_ERROR &&
           !img_ptr->IsIncomplete()) {
-        // If so, feed all info into frame, break the loop and return the value
-        // cout << "Image Acquisition Successful!" << endl;
+        // If so, feed all info into frame, break the loop and return the
+        // value cout << "Image Acquisition Successful!" << endl;
         frame.timeStamp = img_ptr->GetTimeStamp();
         frame.height = img_ptr->GetHeight();
         frame.width = img_ptr->GetWidth();
@@ -707,6 +800,7 @@ CameraSpinnaker::~CameraSpinnaker() {
 
   // Clear system pointer
   m_sys_ptr->ReleaseInstance();
+  m_sys_ptr = nullptr;
   cout << "Release system pointer" << endl;
 }
 
