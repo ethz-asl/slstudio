@@ -27,6 +27,8 @@ class Projector {
                           std::shared_ptr<void> param_ptr) {}
   virtual void init() {
   }  // Allows for additional configurations after load_params is called
+
+  virtual std::shared_ptr<void> get_output(const std::string &output_name) {}
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include <iostream>
+#include <memory>
 #include <vector>
 
 struct CameraFrame {
@@ -54,6 +55,8 @@ class Camera {
   virtual CameraSettings getCameraSettings() = 0;
   virtual void setCameraSettings(CameraSettings) = 0;
   virtual ~Camera() {}
+  virtual void get_input(const std::string& input_name,
+                         std::shared_ptr<void> input_ptr) {}
 
  protected:
   bool capturing;

@@ -2,6 +2,7 @@
 #define PROJECTORLC4500_VERSAVIS_H
 
 #include <sys/types.h>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -13,6 +14,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <utility>
 #include "Lightcrafter_4500_pattern_api.h"
 #include "Projector.h"
 
@@ -40,6 +42,9 @@ class ProjectorLC4500_versavis : public Projector {
 
   virtual void init() override;
 
+  virtual std::shared_ptr<void> get_output(
+      const std::string &output_name) override;
+
  private:
   unsigned int nPatterns;
   bool isRunning;
@@ -55,8 +60,8 @@ class ProjectorLC4500_versavis : public Projector {
   std::string m_ros_node_name = "SLStudio";
   bool m_is_hardware_triggered = false;
   Lightcrafter_4500_pattern_api m_projector;
-  const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
-  //  const unsigned char m_rgb_white[3] = {25, 20, 8}; // Blackfly
+  // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
+  const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
   // const unsigned char m_rgb_white[3] = {23, 18, 7}; // Grasshopper bin
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
@@ -75,6 +80,12 @@ class ProjectorLC4500_versavis : public Projector {
   void load_pattern_sequence();
   bool m_display_horizontal_pattern = true;
   bool m_display_vertical_pattern = true;
+
+  std::pair<std::chrono::time_point<std::chrono::system_clock>, ros::Time>
+      m_buffer;
+  ros::Time m_trigger_time;
+  int m_pattern_no = -1;
+  double m_trigger_tolerance = 0.0083333;
 };
 
 #endif

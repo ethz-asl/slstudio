@@ -276,10 +276,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
             nodeMap.GetNode("AcquisitionFrameRateAuto");
         if (!Spinnaker::GenApi::IsAvailable(ptrAcquisitionFrameRateAuto) ||
             !Spinnaker::GenApi::IsWritable(ptrAcquisitionFrameRateAuto)) {
-          cout << "Unable to access AcquisitionFrameRateAuto. "
-                  "Aborting..."
-               << endl;
-          throw;
+          cout << "Unable to access AcquisitionFrameRateAuto. " << endl;
         }
 
         Spinnaker::GenApi::CEnumEntryPtr ptrOff =
@@ -287,7 +284,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
         if (!Spinnaker::GenApi::IsAvailable(ptrOff) ||
             !Spinnaker::GenApi::IsReadable(ptrOff)) {
           cout << "Off for ptrOff is not available. Aborting... " << endl;
-          throw;
         }
 
         ptrAcquisitionFrameRateAuto->SetIntValue(ptrOff->GetValue());

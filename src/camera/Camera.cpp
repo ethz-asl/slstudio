@@ -23,9 +23,9 @@
 std::vector<std::vector<CameraInfo> > Camera::GetInterfaceCameraList() {
   std::vector<std::vector<CameraInfo> > ret;
 
-#ifdef WITH_CAMERAIIDC
-  // std::vector<CameraInfo> iidccameras = CameraIIDC::getCameraList();
-  // ret.push_back(iidccameras);
+#if defined(WITH_CAMERAIIDC) && !defined(WITH_CAMERAROS)
+  std::vector<CameraInfo> iidccameras = CameraIIDC::getCameraList();
+  ret.push_back(iidccameras);
 #endif
 #ifdef WITH_CAMERAXIMEA
   std::vector<CameraInfo> ximeacameras = CameraXIMEA::getCameraList();
@@ -35,13 +35,13 @@ std::vector<std::vector<CameraInfo> > Camera::GetInterfaceCameraList() {
   std::vector<CameraInfo> idscameras = CameraIDSImaging::getCameraList();
   ret.push_back(idscameras);
 #endif
-#ifdef WITH_CAMERAPOINTGREY
-  // std::vector<CameraInfo> ptgreycameras = CameraPointGrey::getCameraList();
-  // ret.push_back(ptgreycameras);
+#if defined(WITH_CAMERAPOINTGREY) && !defined(WITH_CAMERAROS)
+  std::vector<CameraInfo> ptgreycameras = CameraPointGrey::getCameraList();
+  ret.push_back(ptgreycameras);
 #endif
-#ifdef WITH_CAMERASPINNAKER
-  // std::vector<CameraInfo> spinnaker_cameras =
-  // CameraSpinnaker::getCameraList(); ret.push_back(spinnaker_cameras);
+#if defined(WITH_CAMERASPINNAKER) && !defined(WITH_CAMERAROS)
+  std::vector<CameraInfo> spinnaker_cameras = CameraSpinnaker::getCameraList();
+  ret.push_back(spinnaker_cameras);
 #endif
 #ifdef WITH_CAMERAROS
   std::vector<CameraInfo> ros_cameras = CameraROS::getCameraList();
@@ -55,9 +55,9 @@ Camera* Camera::NewCamera(unsigned int interfaceNum, unsigned int camNum,
                           CameraTriggerMode triggerMode) {
   interfaceNum += 1;
 
-#ifdef WITH_CAMERAIIDC
-  // interfaceNum -= 1;
-  // if (interfaceNum == 0) return new CameraIIDC(camNum, triggerMode);
+#if defined(WITH_CAMERAIIDC) && !defined(WITH_CAMERAROS)
+  interfaceNum -= 1;
+  if (interfaceNum == 0) return new CameraIIDC(camNum, triggerMode);
 #endif
 #ifdef WITH_CAMERAXIMEA
   interfaceNum -= 1;
@@ -67,15 +67,15 @@ Camera* Camera::NewCamera(unsigned int interfaceNum, unsigned int camNum,
   interfaceNum -= 1;
   if (interfaceNum == 0) return new CameraIDSImaging(camNum, triggerMode);
 #endif
-#ifdef WITH_CAMERAPOINTGREY
-    // interfaceNum -= 1;
-    // if (interfaceNum == 0) return new CameraPointGrey(camNum, triggerMode);
+#if defined(WITH_CAMERAPOINTGREY) && !defined(WITH_CAMERAROS)
+  interfaceNum -= 1;
+  if (interfaceNum == 0) return new CameraPointGrey(camNum, triggerMode);
 #endif
-#ifdef WITH_CAMERASPINNAKER
-    // interfaceNum -= 1;
-    // if (interfaceNum == 0) return new CameraSpinnaker(camNum, triggerMode);
+#if defined(WITH_CAMERASPINNAKER) && !defined(WITH_CAMERAROS)
+  interfaceNum -= 1;
+  if (interfaceNum == 0) return new CameraSpinnaker(camNum, triggerMode);
 #endif
-#ifdef WITH_CAMERASPINNAKER
+#ifdef WITH_CAMERAROS
   interfaceNum -= 1;
   if (interfaceNum == 0) return new CameraROS(camNum, triggerMode);
 #endif

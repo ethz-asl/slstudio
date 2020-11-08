@@ -264,6 +264,11 @@ void SLScanWorker::doWork() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
 
+      if (triggerMode == triggerModeHardware) {
+        camera->get_input("expected_image_time",
+                          projector->get_output("expected_image_time"));
+      }
+
       CameraFrame frame;
       frame = camera->getFrame();
 

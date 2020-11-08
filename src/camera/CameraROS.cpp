@@ -87,13 +87,31 @@ CameraFrame CameraROS::getFrame() {
       frame.width = m_sw_trig_buffer.width;
       frame.sizeBytes = m_sw_trig_buffer.step;
 
-      cout << frame.height << endl;
-      cout << frame.width << endl;
+      // cout << frame.height << endl;
+      // cout << frame.width << endl;
     }
 
     {
       boost::mutex::scoped_lock mutex_lock(m_mutex);
       m_sw_trig_state = Esoftware_trigger_state::idle;
+    }
+  }
+
+  if (triggerMode == triggerModeHardware) {
+    auto start = std::chrono::system_clock::now();
+    std::chrono::duration<double> duration = std::chrono::seconds(0);
+
+    while (duration.count() * 1000 < m_exposure_time_us * 2) {
+      int status = retrieve_frame(frame);
+      if (status == 1 || status == -1) {
+        break;
+      } else {
+        std::this_thread::sleep_for(std::chrono::microseconds(500));
+        auto end = std::chrono::system_clock::now();
+        duration = end - start;
+        // std::cout << "[CameraROS] getFrame duration: "
+        //         << duration.count() * 1000 << std::endl;
+      }
     }
   }
 
@@ -106,7 +124,7 @@ size_t CameraROS::getFrameWidth() { return m_frame_width; }
 
 size_t CameraROS::getFrameHeight() { return m_frame_height; }
 
-void CameraROS::image_cb(const sensor_msgs::Image &image) {
+void CameraROS::image_cb(const sensor_msgs::Image& image) {
   /**
   cout << "[CameraROS] Image recevied" << endl;
   cout << "Capturing: " << capturing << endl;
@@ -135,6 +153,11 @@ void CameraROS::image_cb(const sensor_msgs::Image &image) {
       //     << image.height << endl;
       m_sw_trig_buffer = image;
       m_sw_trig_state = Esoftware_trigger_state::received_image;
+    } else if (triggerMode == triggerModeHardware) {
+      boost::mutex::scoped_lock mutex_lock(m_mutex);
+      // cout << "[CameraROS] Image received with timestamp: "
+      //     << image.header.stamp << endl;
+      m_hw_trig_buffer.emplace_back(image);
     }
   }
 }
@@ -142,4 +165,60 @@ void CameraROS::image_cb(const sensor_msgs::Image &image) {
 CameraROS::~CameraROS() {
   m_spinner_ptr->stop();
   ros::shutdown();
+}
+
+void CameraROS::get_input(const std::string& input_name,
+                          std::shared_ptr<void> input_ptr) {
+  if (input_name == "expected_image_time") {
+    boost::mutex::scoped_lock mutex_lock(m_mutex);
+    m_expected_image_time = *std::static_pointer_cast<ros::Time>(input_ptr);
+    // std::cout << "[CameraROS] Received expected image time: "
+    //          << m_expected_image_time << std::endl;
+  }
+}
+
+int CameraROS::retrieve_frame(CameraFrame& frame) {
+  int result = 0;  // -1 : Missed frame, 0 : Frame not yet arrived, 1 : Frame
+                   // acquired successfully
+
+  if (m_hw_trig_buffer.size() > 0) {
+    boost::mutex::scoped_lock lock(m_mutex);
+    auto it = m_hw_trig_buffer.begin();
+    while (it != m_hw_trig_buffer.end()) {
+      double delta_t = (it->header.stamp - m_expected_image_time).toSec();
+
+      // std::cout << "[CameraROS] " << m_expected_image_time.toSec() << " - "
+      //          << it->header.stamp << " = " << delta_t << std::endl;
+
+      if (delta_t < -1.0 * m_image_time_tolerance_s) {
+        // If current image is before the expected trigger time, we delete it
+        // since it is no longer of use
+        std::cout << "[CameraROS] Deleting frame, outdated" << std::endl;
+        it = m_hw_trig_buffer.erase(it);
+      } else if (delta_t >= -1.0 * m_image_time_tolerance_s &&
+                 delta_t <= m_image_time_tolerance_s) {
+        // If current image matches the trigger time, we place it in the Camera
+        // frame and delete it from the vector
+        frame.memory = &it->data[0];
+        frame.height = it->height;
+        frame.width = it->width;
+        frame.sizeBytes = it->step;
+
+        std::cout << "[CameraROS] Found matching frame" << std::endl;
+        it = m_hw_trig_buffer.erase(it);
+        result = 1;
+        break;
+      }
+
+      else {
+        // If image is in the future, means we have most likely missed the frame
+        // that matches the current trigger timing
+        std::cout << "[CameraROS] Missed this frame" << std::endl;
+        result = -1;
+        break;
+      }
+    }
+
+    return result;
+  }
 }

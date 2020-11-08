@@ -6,7 +6,6 @@
 #include "LC4500API/dlpc350_api.h"
 #include "LC4500API/dlpc350_usb.h"
 
-#include <chrono>
 #include <thread>
 
 ProjectorLC4500_versavis::ProjectorLC4500_versavis(unsigned int)
@@ -39,10 +38,24 @@ void ProjectorLC4500_versavis::setPattern(unsigned int patternNumber,
                                           unsigned int texHeight) {}
 
 void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
+  m_pattern_no = pattern_no;
+
   // If it is the first pattern being triggered for the first time, we detect
   // the start of the trigger before we end the function to ensure
   // synchronisation
   if (m_is_hardware_triggered && pattern_no == 0) {
+    // After the first time hardware trigger has been performed, if hardware
+    // trigger was detected slightly earlier than this function was called, we
+    // just take it that is ok to proceed
+    if (m_first_time_hardware_triggered) {
+      auto current = std::chrono::system_clock::now();
+      std::chrono::duration<double> duration = current - m_buffer.first;
+      if (duration.count() < m_trigger_tolerance) {
+        m_trigger_time = m_buffer.second;
+        return;
+      }
+    }
+
     unsigned int current_count;
     unsigned int updated_count;
 
@@ -70,10 +83,13 @@ void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
         updated_count = m_counter;
       }
     }
-    std::cout << std::endl;
 
-    std::cout << "Started playing image sequence (hardware triggered)!"
-              << std::endl;
+    m_trigger_time = m_buffer.second;
+
+    // std::cout << std::endl;
+
+    // std::cout << "Started playing image sequence (hardware triggered)!"
+    //          << std::endl;
 
     if (!m_first_time_hardware_triggered) {
       m_projector.set_pat_seq_start();
@@ -124,6 +140,8 @@ void ProjectorLC4500_versavis::sub_cb(
 
   boost::mutex::scoped_lock lock(m_mutex);
   m_counter = time_numbered_ptr->number;
+  m_buffer.first = std::chrono::system_clock::now();
+  m_buffer.second = time_numbered_ptr->time;
 
   // std::cout << "Versavis counter: " << m_counter << std::endl;
 }
@@ -303,4 +321,20 @@ void ProjectorLC4500_versavis::load_pattern_sequence() {
                            : (m_is_hardware_triggered)
                                  ? get_scanning_pattern_sequence_hardware()
                                  : get_scanning_pattern_sequence_software();
+}
+
+std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
+    const std::string &output_name) {
+  if (output_name == "expected_image_time") {
+    boost::mutex::scoped_lock mutex_lock(m_mutex);
+    return std::static_pointer_cast<void>(std::make_shared<ros::Time>(
+        m_trigger_time +
+        ros::Duration(
+            0, m_pattern_no * m_hardware_triggered_timings_us[0] * 2 * 1000)));
+    // Multiply by factor of 2 because remember we display 2 exposures on the
+    // projector
+
+  } else {
+    return nullptr;
+  }
 }
