@@ -180,13 +180,13 @@ void SLScanWorker::setup() {
     pattern = pattern(cv::Range(0, screenRows), cv::Range(0, screenCols));
 
     // correct for lens distortion
-    // cv::remap(pattern, pattern, map1, map2, CV_INTER_CUBIC);
+    cv::remap(pattern, pattern, map1, map2, CV_INTER_CUBIC);
 
     if (diamondPattern) pattern = cvtools::diamondDownsample(pattern);
 
     projector->setPattern(i, pattern.ptr(), pattern.cols, pattern.rows);
 
-    // cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
+    cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
   }
 
   //    // Upload patterns to projector/GPU in compact resolution (texture)
@@ -240,6 +240,8 @@ void SLScanWorker::doWork() {
 
     time.restart();
 
+    projector->displayPattern(0);
+
     // Acquire patterns
     for (unsigned int i = 0; i < N; i++) {
       // Project coded pattern
@@ -261,7 +263,7 @@ void SLScanWorker::doWork() {
         // std::this_thread::sleep_for(std::chrono::milliseconds(15)); //
         // Grasshopper overlapping trigger
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(0));
       }
 
       if (triggerMode == triggerModeHardware) {

@@ -206,7 +206,7 @@ void SLCalibrationDialog::on_snapButton_clicked() {
 #if 0
   // Write frame seq to disk
   for (unsigned int i = 0; i < frameSeq.size(); i++) {
-    QString filename = QString("frameSeq_%1.bmp").arg(i, 2, 10, QChar('0'));
+    QString filename = QString("frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
     cv::imwrite(filename.toStdString(), frameSeq[i]);
   }
 #endif

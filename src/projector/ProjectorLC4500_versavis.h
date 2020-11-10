@@ -18,7 +18,7 @@
 #include "Lightcrafter_4500_pattern_api.h"
 #include "Projector.h"
 
-// Projecotr implementation for LightCrafter 4500 USB Api
+// Projector implementation for LightCrafter 4500 USB Api
 class ProjectorLC4500_versavis : public Projector {
  public:
   // Interface function
@@ -61,8 +61,8 @@ class ProjectorLC4500_versavis : public Projector {
   bool m_is_hardware_triggered = false;
   Lightcrafter_4500_pattern_api m_projector;
   // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
-  const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
-  // const unsigned char m_rgb_white[3] = {23, 18, 7}; // Grasshopper bin
+  // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
+  // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
   std::vector<single_pattern> m_pattern_sequence = {};
@@ -74,8 +74,10 @@ class ProjectorLC4500_versavis : public Projector {
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
   // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; //
   // Blackfly
-  const std::vector<int> m_scanning_image_indices = {11, 12, 13,
-                                                     14};  // Grasshopper
+  // const std::vector<int> m_scanning_image_indices = {11, 12, 13,
+  //                                                   14};  // Grasshopper Dec
+  const std::vector<int> m_scanning_image_indices = {15, 16, 17,
+                                                     18};  // Grasshopper Bin
 
   void load_pattern_sequence();
   bool m_display_horizontal_pattern = true;
@@ -85,7 +87,7 @@ class ProjectorLC4500_versavis : public Projector {
       m_buffer;
   ros::Time m_trigger_time;
   int m_pattern_no = -1;
-  double m_trigger_tolerance = 0.0083333;
+  double m_trigger_tolerance = 0.01;
 };
 
 #endif

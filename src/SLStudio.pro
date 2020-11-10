@@ -362,6 +362,8 @@ unix:!macx:exists(/usr/include/spinnaker/Spinnaker.h){
     INCLUDEPATH += /usr/include/spinnaker
     DEFINES += WITH_CAMERASPINNAKER
     LIBS += -lSpinnaker
+    CONFIG += link_pkgconfig
+    PKGCONFIG += cv_bridge
 }
 
 # ROS Camera (Only for Ubuntu)

@@ -1,4 +1,6 @@
 ﻿#include "CameraROS.h"
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 #include <chrono>
 #include <cstring>
 #include <memory>
@@ -82,6 +84,15 @@ CameraFrame CameraROS::getFrame() {
 
     if (success) {
       boost::mutex::scoped_lock mutex_lock(m_mutex);
+
+      // If image is in BayerGB8, convert to Mono8
+      if (!sensor_msgs::image_encodings::isMono(m_sw_trig_buffer.encoding)) {
+        m_sw_trig_buffer =
+            *cv_bridge::toCvCopy(m_sw_trig_buffer,
+                                 sensor_msgs::image_encodings::MONO8)
+                 ->toImageMsg();
+      }
+
       frame.memory = &m_sw_trig_buffer.data[0];
       frame.height = m_sw_trig_buffer.height;
       frame.width = m_sw_trig_buffer.width;
@@ -110,7 +121,7 @@ CameraFrame CameraROS::getFrame() {
         auto end = std::chrono::system_clock::now();
         duration = end - start;
         // std::cout << "[CameraROS] getFrame duration: "
-        //         << duration.count() * 1000 << std::endl;
+        //          << duration.count() * 1000 << std::endl;
       }
     }
   }
@@ -155,8 +166,8 @@ void CameraROS::image_cb(const sensor_msgs::Image& image) {
       m_sw_trig_state = Esoftware_trigger_state::received_image;
     } else if (triggerMode == triggerModeHardware) {
       boost::mutex::scoped_lock mutex_lock(m_mutex);
-      // cout << "[CameraROS] Image received with timestamp: "
-      //     << image.header.stamp << endl;
+      cout << "[CameraROS] Image received with timestamp: "
+           << image.header.stamp << endl;
       m_hw_trig_buffer.emplace_back(image);
     }
   }
@@ -187,7 +198,7 @@ int CameraROS::retrieve_frame(CameraFrame& frame) {
     while (it != m_hw_trig_buffer.end()) {
       double delta_t = (it->header.stamp - m_expected_image_time).toSec();
 
-      // std::cout << "[CameraROS] " << m_expected_image_time.toSec() << " - "
+      // std::cout << "[CameraROS] " << m_expected_image_time << " - "
       //          << it->header.stamp << " = " << delta_t << std::endl;
 
       if (delta_t < -1.0 * m_image_time_tolerance_s) {
@@ -199,6 +210,13 @@ int CameraROS::retrieve_frame(CameraFrame& frame) {
                  delta_t <= m_image_time_tolerance_s) {
         // If current image matches the trigger time, we place it in the Camera
         // frame and delete it from the vector
+
+        // If image is in BayerGB8, convert to Mono8
+        if (!sensor_msgs::image_encodings::isMono(it->encoding)) {
+          *it = *cv_bridge::toCvCopy(*it, sensor_msgs::image_encodings::MONO8)
+                     ->toImageMsg();
+        }
+
         frame.memory = &it->data[0];
         frame.height = it->height;
         frame.width = it->width;
@@ -218,7 +236,6 @@ int CameraROS::retrieve_frame(CameraFrame& frame) {
         break;
       }
     }
-
-    return result;
   }
+  return result;
 }
