@@ -133,7 +133,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       }
 
       Spinnaker::GenApi::CEnumEntryPtr ptrMode2 =
-          ptrVideoMode->GetEntryByName("Mode2");
+          ptrVideoMode->GetEntryByName("Mode1");
       if (!Spinnaker::GenApi::IsAvailable(ptrMode2) ||
           !Spinnaker::GenApi::IsReadable(ptrMode2)) {
         cout << "Video Mode 2 is not available. Aborting... " << endl;

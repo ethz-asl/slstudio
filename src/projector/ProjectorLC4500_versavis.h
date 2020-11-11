@@ -63,6 +63,7 @@ class ProjectorLC4500_versavis : public Projector {
   // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
   // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
   // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
+  const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
   std::vector<single_pattern> m_pattern_sequence = {};
@@ -71,6 +72,8 @@ class ProjectorLC4500_versavis : public Projector {
   std::vector<single_pattern> get_scanning_pattern_sequence_hardware();
   const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
   const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
+  // const unsigned int m_software_trigger_timings_us[2] = {16667, 16667};
+  // const unsigned int m_hardware_triggered_timings_us[2] = {16667, 16667};
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
   // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; //
   // Blackfly

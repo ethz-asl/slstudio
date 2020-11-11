@@ -212,6 +212,7 @@ int CameraROS::retrieve_frame(CameraFrame& frame) {
         // frame and delete it from the vector
 
         // If image is in BayerGB8, convert to Mono8
+
         if (!sensor_msgs::image_encodings::isMono(it->encoding)) {
           *it = *cv_bridge::toCvCopy(*it, sensor_msgs::image_encodings::MONO8)
                      ->toImageMsg();
@@ -222,7 +223,7 @@ int CameraROS::retrieve_frame(CameraFrame& frame) {
         frame.width = it->width;
         frame.sizeBytes = it->step;
 
-        std::cout << "[CameraROS] Found matching frame" << std::endl;
+        std::cout << "[CameraROS] Found matching frame " << std::endl;
         it = m_hw_trig_buffer.erase(it);
         result = 1;
         break;
