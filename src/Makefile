@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_LC3000API -DWITH_LC4500API -DWITH_LC4500_VERSAVIS_API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
+DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_CAMERAROS -DWITH_LC3000API -DWITH_LC4500API -DWITH_LC4500_VERSAVIS_API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
 CFLAGS        = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 INCPATH       = -I. -Icamera -Iprojector -Icodec -Itriangulator -Icalibrator -Itracker -isystem /usr/include/vtk-6.3 -isystem /usr/include/pcl-1.8 -isystem /usr/include/eigen3 -isystem /usr/include/GLFW/glfw3.h -isystem /usr/include/flycapture -isystem /usr/include/spinnaker -Iprojector/LC4500API -I/opt/ros/melodic/include -I../../catkin_ws/devel/include -isystem /usr/include/opencv -isystem /usr/include/ni -isystem /usr/include/openni2 -isystem /usr/include/eigen3 -isystem /usr/include/libdrm -I/opt/ros/melodic/include -isystem /usr/include/libusb-1.0 -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtTest -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++

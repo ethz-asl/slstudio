@@ -369,7 +369,7 @@ unix:!macx:exists(/usr/include/spinnaker/Spinnaker.h){
 # ROS Camera (Only for Ubuntu)
 unix:!macx
 {
-    # DEFINES += WITH_CAMERAROS
+    DEFINES += WITH_CAMERAROS
     HEADERS += camera/CameraROS.h
     SOURCES += camera/CameraROS.cpp
 }

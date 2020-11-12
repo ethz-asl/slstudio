@@ -60,7 +60,8 @@ class ProjectorLC4500_versavis : public Projector {
   std::string m_ros_node_name = "SLStudio";
   bool m_is_hardware_triggered = false;
   Lightcrafter_4500_pattern_api m_projector;
-  const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
+  // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
+  const unsigned char m_rgb_white[3] = {27, 23, 9};  // Grasshopper dec
   // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
   // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
   // const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin 30
@@ -76,7 +77,7 @@ class ProjectorLC4500_versavis : public Projector {
   // const unsigned int m_software_trigger_timings_us[2] = {16667, 16667};
   // const unsigned int m_hardware_triggered_timings_us[2] = {16667, 16667};
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
-  // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; // n
+  // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; // nn
   // Blackfly
   // const std::vector<int> m_scanning_image_indices = {11, 12, 13,
   //                                                   14};  // Grasshopper Dec
