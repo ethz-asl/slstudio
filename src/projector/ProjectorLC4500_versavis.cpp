@@ -309,6 +309,22 @@ ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
       temp2.buffer_swap = false;
       temp2.trigger_out_prev = false;
       pattern_vec.push_back(temp2);
+
+      if (m_is_30_hz) {
+        for (int k = 0; k < 2; k++) {
+          single_pattern temp2;
+          temp2.trigger_type = 3;
+          temp2.pattern_number = j;
+          temp2.bit_depth = 8;
+          temp2.led_select = 7;
+          temp2.image_indice = images_indices_to_display[i];
+          temp2.invert_pattern = false;
+          temp2.insert_black_frame = false;
+          temp2.buffer_swap = false;
+          temp2.trigger_out_prev = false;
+          pattern_vec.push_back(temp2);
+        }
+      }
     }
   }
 
@@ -329,10 +345,10 @@ std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
     boost::mutex::scoped_lock mutex_lock(m_mutex);
     return std::static_pointer_cast<void>(std::make_shared<ros::Time>(
         m_trigger_time +
-        ros::Duration(
-            0, m_pattern_no * m_hardware_triggered_timings_us[0] * 2 * 1000)));
+        ros::Duration(0, m_pattern_no * m_hardware_triggered_timings_us[0] *
+                             ((m_is_30_hz) ? 4 : 2) * 1000)));
     // Multiply by factor of 2 because remember we display 2 exposures on the
-    // projector
+    // projector, for 30Hz, we are displaying 4 exposures instead
 
   } else {
     return nullptr;

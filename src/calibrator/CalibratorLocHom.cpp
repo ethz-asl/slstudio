@@ -180,12 +180,22 @@ CalibrationData CalibratorLocHom::calibrate() {
   cv::Mat Kc, kc;
   std::vector<cv::Mat> cam_rvecs, cam_tvecs;
   cv::Size frameSize(frameWidth, frameHeight);
+
+  double cam_error = cv::calibrateCamera(
+      Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
+      cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_PRINCIPAL_POINT +
+          cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
+      cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
+                       DBL_EPSILON));
+
+  /**
   double cam_error = cv::calibrateCamera(
       Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
       cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_PRINCIPAL_POINT +
           cv::CALIB_FIX_K2 + cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+  **/
 
   // calibrate the projector
   cv::Mat Kp, kp;
@@ -193,10 +203,19 @@ CalibrationData CalibratorLocHom::calibrate() {
   cv::Size screenSize(screenCols, screenRows);
   double proj_error = cv::calibrateCamera(
       Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
+      cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_K3 +
+          cv::CALIB_ZERO_TANGENT_DIST,
+      cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
+                       DBL_EPSILON));
+
+  /**
+  double proj_error = cv::calibrateCamera(
+      Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
       cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_K2 + cv::CALIB_FIX_K3 +
           cv::CALIB_ZERO_TANGENT_DIST,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+**/
 
   // stereo calibration
   cv::Mat Rp, Tp, E, F;

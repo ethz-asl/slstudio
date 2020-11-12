@@ -112,7 +112,8 @@ CameraFrame CameraROS::getFrame() {
     auto start = std::chrono::system_clock::now();
     std::chrono::duration<double> duration = std::chrono::seconds(0);
 
-    while (duration.count() * 1000 < m_exposure_time_us * 2) {
+    while (duration.count() * 1000 < m_exposure_time_us * 4) {  // 30Hz
+      // while (duration.count() * 1000 < m_exposure_time_us * 2) { // 60 Hz
       int status = retrieve_frame(frame);
       if (status == 1 || status == -1) {
         break;

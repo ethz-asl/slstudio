@@ -92,57 +92,136 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // If Grasshopper, we set 2 x 2 binning to halve resolution to 1024 x 768
   try {
+    /**
     if (m_camera_type == Ecamera_type::grasshopper) {
-      /**
-           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
-               Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
-             m_cam_ptr->BinningHorizontal.SetValue(2);
-             cout << "Set horizontal binning to 2" << endl;
-           } else {
-             cout << "Failed to set horizontal binning to 2" << endl;
-           }
-
-         if (m_camera_type == Ecamera_type::grasshopper) {
-           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->DecimationHorizontal) &&
-               Spinnaker::GenApi::IsWritable(m_cam_ptr->DecimationHorizontal)) {
-             m_cam_ptr->DecimationHorizontal.SetValue(2);
-             cout << "Set horizontal decimation to 2" << endl;
-           } else {
-             cout << "Failed to set horizontal decimation to 2" << endl;
-           }
-
-           if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
-               Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
-             m_cam_ptr->BinningVertical.SetValue(2);
-             cout << "Set vertical binning to 2" << endl;
-           } else {
-             cout << "Failed to set vertical binning to 2" << endl;
-           } **/
-
-      // Retrieve GenICam nodemap
-      // Set Video Mode 2 (2x2 Subsampling)
-      Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
-      Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
-          nodeMap.GetNode("VideoMode");
-      if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
-          !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
-        cout << "Unable to access Video Mode. "
-                "Aborting..."
-             << endl;
-        throw;
+      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
+          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
+        m_cam_ptr->BinningHorizontal.SetValue(2);
+        cout << "Set horizontal binning to 2" << endl;
+      } else {
+        cout << "Failed to set horizontal binning to 2" << endl;
       }
 
-      Spinnaker::GenApi::CEnumEntryPtr ptrMode2 =
-          ptrVideoMode->GetEntryByName("Mode1");
-      if (!Spinnaker::GenApi::IsAvailable(ptrMode2) ||
-          !Spinnaker::GenApi::IsReadable(ptrMode2)) {
-        cout << "Video Mode 2 is not available. Aborting... " << endl;
-        throw;
+      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
+          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
+        m_cam_ptr->BinningHorizontal.SetValue(2);
+        cout << "Set horizontal binning to 2" << endl;
+      } else {
+        cout << "Failed to set horizontal binning to 2" << endl;
       }
+      **/
 
-      ptrVideoMode->SetIntValue(ptrMode2->GetValue());
-      cout << "Set video mode to 2" << endl;
+    /**
+  if (m_camera_type == Ecamera_type::grasshopper) {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->DecimationHorizontal) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->DecimationHorizontal)) {
+      m_cam_ptr->DecimationHorizontal.SetValue(2);
+      cout << "Set horizontal decimation to 2" << endl;
+    } else {
+      cout << "Failed to set horizontal decimation to 2" << endl;
     }
+
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
+      m_cam_ptr->BinningVertical.SetValue(2);
+      cout << "Set vertical binning to 2" << endl;
+    } else {
+      cout << "Failed to set vertical binning to 2" << endl;
+    } **/
+
+    /**
+    // Retrieve GenICam nodemap
+    // Set Video Mode 2 (2x2 Subsampling)
+    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
+    Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
+        nodeMap.GetNode("VideoMode");
+    if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
+        !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
+      cout << "Unable to access Video Mode. "
+              "Aborting..."
+           << endl;
+      throw;
+    }
+
+    Spinnaker::GenApi::CEnumEntryPtr ptrMode2 =
+        ptrVideoMode->GetEntryByName("Mode2");
+    if (!Spinnaker::GenApi::IsAvailable(ptrMode2) ||
+        !Spinnaker::GenApi::IsReadable(ptrMode2)) {
+      cout << "Video Mode 2 is not available. Aborting... " << endl;
+      throw;
+    }
+
+    ptrVideoMode->SetIntValue(ptrMode2->GetValue());
+    cout << "Set video mode to 2" << endl;
+    **/
+
+    // Retrieve GenICam nodemap
+    // Set Video Mode 1 (2x2 Average Binning)
+
+    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
+    Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
+        nodeMap.GetNode("VideoMode");
+    if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
+        !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
+      cout << "Unable to access Video Mode. "
+              "Aborting..."
+           << endl;
+      throw;
+    }
+
+    Spinnaker::GenApi::CEnumEntryPtr ptrMode1 =
+        ptrVideoMode->GetEntryByName("Mode1");
+    if (!Spinnaker::GenApi::IsAvailable(ptrMode1) ||
+        !Spinnaker::GenApi::IsReadable(ptrMode1)) {
+      cout << "Video Mode 1 is not available. Aborting... " << endl;
+      throw;
+    }
+
+    ptrVideoMode->SetIntValue(ptrMode1->GetValue());
+    cout << "Set video mode to 1" << endl;
+
+    Spinnaker::GenApi::CEnumerationPtr ptrBinningControl =
+        nodeMap.GetNode("BinningControl");
+    if (!Spinnaker::GenApi::IsAvailable(ptrBinningControl) ||
+        !Spinnaker::GenApi::IsWritable(ptrBinningControl)) {
+      cout << "Unable to access BinningControl. "
+              "Aborting..."
+           << endl;
+      throw;
+    }
+
+    Spinnaker::GenApi::CEnumEntryPtr ptrAverage =
+        ptrBinningControl->GetEntryByName("Average");
+    if (!Spinnaker::GenApi::IsAvailable(ptrAverage) ||
+        !Spinnaker::GenApi::IsReadable(ptrAverage)) {
+      cout << "Average binning is not available. Aborting... " << endl;
+      throw;
+    }
+
+    ptrBinningControl->SetIntValue(ptrAverage->GetValue());
+    cout << "Set to Average binning" << endl;
+
+    /**
+  if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontalMode) &&
+      Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontalMode)) {
+    m_cam_ptr->BinningHorizontalMode.SetValue(
+        Spinnaker::BinningHorizontalMode_Average);
+    cout << "Set average horizontal binning" << endl;
+  } else {
+    cout << "Failed to set average horizontal binning" << endl;
+    // throw;
+  }
+
+  if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVerticalMode) &&
+      Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVerticalMode)) {
+    m_cam_ptr->BinningVerticalMode.SetValue(
+        Spinnaker::BinningVerticalMode_Average);
+    cout << "Set average vertical binning" << endl;
+  } else {
+    cout << "Failed to set average vertical binning" << endl;
+    // throw;
+  }
+  **/
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
