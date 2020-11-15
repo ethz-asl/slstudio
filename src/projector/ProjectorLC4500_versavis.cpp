@@ -201,6 +201,10 @@ void ProjectorLC4500_versavis::load_param(const std::string &param_name,
     std::shared_ptr<bool> temp_ptr;
     temp_ptr = std::static_pointer_cast<bool>(param_ptr);
     m_display_vertical_pattern = *temp_ptr;
+  } else if (param_name == "is_2_plus_1_mode") {
+    std::shared_ptr<bool> temp_ptr;
+    temp_ptr = std::static_pointer_cast<bool>(param_ptr);
+    m_is_2_plus_1_mode = *temp_ptr;
   }
 }
 
@@ -332,11 +336,16 @@ ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
 }
 
 void ProjectorLC4500_versavis::load_pattern_sequence() {
-  m_pattern_sequence = (m_is_in_calibration_mode)
-                           ? get_calibration_pattern_sequence()
-                           : (m_is_hardware_triggered)
-                                 ? get_scanning_pattern_sequence_hardware()
-                                 : get_scanning_pattern_sequence_software();
+  m_pattern_sequence =
+      (m_is_in_calibration_mode)
+          ? get_calibration_pattern_sequence()
+          : (m_is_2_plus_1_mode)
+                ? ((m_is_hardware_triggered)
+                       ? get_scanning_pattern_2_plus_1_hardware()
+                       : get_scanning_pattern_2_plus_1_software())
+                : (m_is_hardware_triggered)
+                      ? get_scanning_pattern_sequence_hardware()
+                      : get_scanning_pattern_sequence_software();
 }
 
 std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
@@ -353,4 +362,78 @@ std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
   } else {
     return nullptr;
   }
+}
+
+std::vector<single_pattern>
+ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_software() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  for (int i = 0; i < m_2_plus_1_image_indices.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      single_pattern temp;
+      temp.trigger_type = 0;
+      temp.pattern_number = j;
+      temp.bit_depth = 8;
+      temp.led_select = 7;
+      temp.image_indice = m_2_plus_1_image_indices[i];
+      temp.invert_pattern = false;
+      temp.insert_black_frame = false;
+      temp.buffer_swap = true;
+      temp.trigger_out_prev = false;
+      pattern_vec.push_back(temp);
+    }
+  }
+
+  return pattern_vec;
+}
+
+std::vector<single_pattern>
+ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  for (int i = 0; i < m_2_plus_1_image_indices.size(); i++) {
+    for (int j = 0; j < 3; j++) {
+      single_pattern temp1;
+      temp1.trigger_type = (i == 0 && j == 0) ? 1 : 3;
+      temp1.pattern_number = j;
+      temp1.bit_depth = 8;
+      temp1.led_select = 7;
+      temp1.image_indice = m_2_plus_1_image_indices[i];
+      temp1.invert_pattern = false;
+      temp1.insert_black_frame = false;
+      temp1.buffer_swap = (j == 0) ? true : false;
+      temp1.trigger_out_prev = false;
+      pattern_vec.push_back(temp1);
+
+      single_pattern temp2;
+      temp2.trigger_type = 3;
+      temp2.pattern_number = j;
+      temp2.bit_depth = 8;
+      temp2.led_select = 7;
+      temp2.image_indice = m_2_plus_1_image_indices[i];
+      temp2.invert_pattern = false;
+      temp2.insert_black_frame = false;
+      temp2.buffer_swap = false;
+      temp2.trigger_out_prev = false;
+      pattern_vec.push_back(temp2);
+
+      if (m_is_30_hz) {
+        for (int k = 0; k < 2; k++) {
+          single_pattern temp2;
+          temp2.trigger_type = 3;
+          temp2.pattern_number = j;
+          temp2.bit_depth = 8;
+          temp2.led_select = 7;
+          temp2.image_indice = m_2_plus_1_image_indices[i];
+          temp2.invert_pattern = false;
+          temp2.insert_black_frame = false;
+          temp2.buffer_swap = false;
+          temp2.trigger_out_prev = false;
+          pattern_vec.push_back(temp2);
+        }
+      }
+    }
+  }
+
+  return pattern_vec;
 }

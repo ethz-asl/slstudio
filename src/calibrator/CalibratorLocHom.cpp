@@ -28,6 +28,8 @@ CalibrationData CalibratorLocHom::calibrate() {
   unsigned int checkerRows = settings.value("calibration/checkerRows").toInt();
   unsigned int checkerCols = settings.value("calibration/checkerCols").toInt();
 
+  std::cout << "Checker grid size [mm]: " << checkerSize << std::endl;
+
   // Number of saddle points on calibration pattern
   cv::Size patternSize(checkerCols, checkerRows);
 

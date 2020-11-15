@@ -218,6 +218,26 @@ void SLCalibrationDialog::on_snapButton_clicked() {
 }
 
 void SLCalibrationDialog::on_calibrateButton_clicked() {
+  // We save the checkerboard settings displayed in the calibration GUI prior to
+  // the start of calibration
+  // Checkerboard parameters
+  QSettings settings("SLStudio");
+  unsigned int checkerSize = ui->checkerSizeBox->value();
+  settings.setValue("calibration/checkerSize", checkerSize);
+
+  unsigned int checkerRows = ui->checkerRowsBox->value();
+  settings.setValue("calibration/checkerRows", checkerRows);
+
+  unsigned int checkerCols = ui->checkerColsBox->value();
+  settings.setValue("calibration/checkerCols", checkerCols);
+
+  std::cout << "Saving checkerboard settings before calibration starts ..."
+            << std::endl;
+  std::cout << "Checker grid size [mm]: " << checkerSize << std::endl;
+  std::cout << "Number of grid intersection rows: " << checkerRows << std::endl;
+  std::cout << "Number of grid intersection cols: " << checkerCols << std::endl;
+  std::cout << "Done!" << std::endl;
+
   // Disable interface elements
   ui->calibrateButton->setEnabled(false);
   ui->listWidget->setEnabled(false);

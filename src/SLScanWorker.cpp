@@ -78,37 +78,16 @@ void SLScanWorker::setup() {
     std::cerr << "SLScanWorker: invalid projector id " << screenNum
               << std::endl;
 
-  auto is_hardware_triggered = std::make_shared<bool>(
-      (triggerMode == triggerModeHardware) ? true : false);
-  auto void_is_hardware_triggered =
-      std::static_pointer_cast<void>(is_hardware_triggered);
-  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
-
-  auto is_in_calibration_mode = std::make_shared<bool>(false);
-  auto void_is_in_calibration_mode =
-      std::static_pointer_cast<void>(is_in_calibration_mode);
-  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
-
   CodecDir dir_init =
       (CodecDir)settings.value("pattern/direction", CodecDirHorizontal).toInt();
 
   auto display_horizontal_pattern = std::make_shared<bool>(
       (dir_init == CodecDirHorizontal || dir_init == CodecDirBoth) ? true
                                                                    : false);
-  auto void_display_horizontal_pattern =
-      std::static_pointer_cast<void>(display_horizontal_pattern);
-  projector->load_param("display_horizontal_pattern",
-                        void_display_horizontal_pattern);
 
   auto display_vertical_pattern = std::make_shared<bool>(
       (dir_init == CodecDirVertical || dir_init == CodecDirBoth) ? true
                                                                  : false);
-  auto void_display_vertical_pattern =
-      std::static_pointer_cast<void>(display_vertical_pattern);
-  projector->load_param("display_vertical_pattern",
-                        void_display_vertical_pattern);
-
-  projector->init();
 
   // Initialize encoder
   bool diamondPattern =
@@ -161,6 +140,35 @@ void SLScanWorker::setup() {
   else
     std::cerr << "SLScanWorker: invalid pattern mode "
               << patternMode.toStdString() << std::endl;
+
+  // Init projector
+  auto is_hardware_triggered = std::make_shared<bool>(
+      (triggerMode == triggerModeHardware) ? true : false);
+  auto void_is_hardware_triggered =
+      std::static_pointer_cast<void>(is_hardware_triggered);
+  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
+
+  auto is_in_calibration_mode = std::make_shared<bool>(false);
+  auto void_is_in_calibration_mode =
+      std::static_pointer_cast<void>(is_in_calibration_mode);
+  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  auto is_2_plus_1_mode = std::make_shared<bool>(
+      (patternMode == "CodecPhaseShift2p1") ? true : false);
+  auto void_is_2_plus_1_mode = std::static_pointer_cast<void>(is_2_plus_1_mode);
+  projector->load_param("is_2_plus_1_mode", void_is_2_plus_1_mode);
+
+  auto void_display_vertical_pattern =
+      std::static_pointer_cast<void>(display_vertical_pattern);
+  projector->load_param("display_vertical_pattern",
+                        void_display_vertical_pattern);
+
+  auto void_display_horizontal_pattern =
+      std::static_pointer_cast<void>(display_horizontal_pattern);
+  projector->load_param("display_horizontal_pattern",
+                        void_display_horizontal_pattern);
+
+  projector->init();
 
   // Lens correction and upload patterns to projector/GPU
   CalibrationData calibration;
@@ -341,7 +349,9 @@ void SLScanWorker::doWork() {
 
   } while (isWorking && (aquisition == aquisitionContinuous));
 
-  if (triggerMode == triggerModeHardware) camera->stopCapture();
+  // if (triggerMode == triggerModeHardware) camera->stopCapture();
+
+  camera->stopCapture();
 
   // Emit message to e.g. initiate thread break down
   emit finished();

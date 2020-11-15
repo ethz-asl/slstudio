@@ -67,10 +67,13 @@ class ProjectorLC4500_versavis : public Projector {
   // const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin 30
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
+  bool m_is_2_plus_1_mode = false;
   std::vector<single_pattern> m_pattern_sequence = {};
   std::vector<single_pattern> get_calibration_pattern_sequence();
   std::vector<single_pattern> get_scanning_pattern_sequence_software();
   std::vector<single_pattern> get_scanning_pattern_sequence_hardware();
+  std::vector<single_pattern> get_scanning_pattern_2_plus_1_software();
+  std::vector<single_pattern> get_scanning_pattern_2_plus_1_hardware();
   const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
   const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
   const bool m_is_30_hz = true;
@@ -81,8 +84,11 @@ class ProjectorLC4500_versavis : public Projector {
   // Blackfly
   // const std::vector<int> m_scanning_image_indices = {11, 12, 13,
   //                                                   14};  // Grasshopper Dec
-  const std::vector<int> m_scanning_image_indices = {15, 16, 17,
-                                                     18};  // Grasshopper Bin
+  // const std::vector<int> m_scanning_image_indices = {15, 16, 17,
+  //                                                   18};  // Grasshopper Bin
+  const std::vector<int> m_2_plus_1_image_indices = {19};  //  PSP 2+1
+  const std::vector<int> m_scanning_image_indices = {
+      7, 8, 9, 10};  // Grasshopper Bin Center
 
   void load_pattern_sequence();
   bool m_display_horizontal_pattern = true;

@@ -126,7 +126,7 @@ void SLTriangulatorWorker::triangulatePointCloud(cv::Mat up, cv::Mat vp,
   float minX = -500.0f;
   float maxX = 500.0f;
   float minZ = 0.0f;
-  float maxZ = 1000.0f;
+  float maxZ = 2000.0f;
   float minY = -500.0f;
   float maxY = 500.0f;
 
