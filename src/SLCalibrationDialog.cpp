@@ -100,6 +100,8 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
   }
 
   // Create calibrator
+  std::cout << "Calibration num cols: " << screenCols
+            << ", num rows: " << screenRows << std::endl;
   calibrator = new CalibratorLocHom(screenCols, screenRows);
   // calibrator = new CalibratorRBF(screenCols, screenRows);
 
@@ -149,6 +151,8 @@ void SLCalibrationDialog::timerEvent(QTimerEvent *event) {
 SLCalibrationDialog::~SLCalibrationDialog() { delete ui; }
 
 void SLCalibrationDialog::on_snapButton_clicked() {
+  m_counter++;
+
   // If in review mode
   if (reviewMode) {
     reviewMode = false;
@@ -203,11 +207,14 @@ void SLCalibrationDialog::on_snapButton_clicked() {
   // Display white
   projector->displayWhite();
 
-#if 0
+#if 1
   // Write frame seq to disk
   for (unsigned int i = 0; i < frameSeq.size(); i++) {
-    QString filename = QString("frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
-    cv::imwrite(filename.toStdString(), frameSeq[i]);
+    // QString filename =
+    //    QString("calib_frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
+    std::string filename = "calib_frame_seq_" + std::to_string(i) + "_" +
+                           std::to_string(m_counter) + ".bmp";
+    cv::imwrite(filename, frameSeq[i]);
   }
 #endif
 

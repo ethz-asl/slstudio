@@ -115,7 +115,29 @@ void ProjectorLC4500_versavis::displayTexture(const unsigned char *tex,
 
 void ProjectorLC4500_versavis::displayBlack() {}
 
-void ProjectorLC4500_versavis::displayWhite() {}
+void ProjectorLC4500_versavis::displayWhite() {
+  std::cout << "Displaying white" << std::endl;
+
+  std::vector<single_pattern> pattern_vec = {};
+
+  // Settings for white pattern (pattern number 25, bit depth 1)
+  single_pattern temp;
+  temp.trigger_type = 0;
+  temp.pattern_number = 24;
+  temp.bit_depth = 1;
+  temp.led_select = 7;
+  temp.image_indice = 0;
+  temp.invert_pattern = true;
+  temp.insert_black_frame = false;
+  temp.buffer_swap = true;
+  temp.trigger_out_prev = false;
+
+  pattern_vec.push_back(temp);
+
+  m_projector.play_pattern_sequence(pattern_vec,
+                                    m_software_trigger_timings_us[0],
+                                    m_software_trigger_timings_us[1]);
+}
 
 void ProjectorLC4500_versavis::getScreenRes(unsigned int *nx,
                                             unsigned int *ny) {
@@ -131,7 +153,8 @@ ProjectorLC4500_versavis::~ProjectorLC4500_versavis() {
     m_spinner_ptr->stop();
     ros::shutdown();
   }
-  // std::cout << "ProjectorLC4500_versavis destructor completed" << std::endl;
+  // std::cout << "ProjectorLC4500_versavis destructor completed" <<
+  // std::endl;
 }
 
 void ProjectorLC4500_versavis::sub_cb(
@@ -156,8 +179,9 @@ void ProjectorLC4500_versavis::ros_init() {
   m_sub = m_nh_ptr->subscribe(m_projector_trigger_topic, 5,
                               &ProjectorLC4500_versavis::sub_cb, this);
 
-  // We use an Asyncrhonous Spinner since we dont have access to the main loop
-  // Spinning is required or else subscriber will never receive messages
+  // We use an Asyncrhonous Spinner since we dont have access to the main
+  // loop Spinning is required or else subscriber will never receive
+  // messages
   m_spinner_ptr = std::make_unique<ros::AsyncSpinner>(1);
   m_spinner_ptr->start();
 }
@@ -356,8 +380,8 @@ std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
         m_trigger_time +
         ros::Duration(0, m_pattern_no * m_hardware_triggered_timings_us[0] *
                              ((m_is_30_hz) ? 4 : 2) * 1000)));
-    // Multiply by factor of 2 because remember we display 2 exposures on the
-    // projector, for 30Hz, we are displaying 4 exposures instead
+    // Multiply by factor of 2 because remember we display 2 exposures on
+    // the projector, for 30Hz, we are displaying 4 exposures instead
 
   } else {
     return nullptr;

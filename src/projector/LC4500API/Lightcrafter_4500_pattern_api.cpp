@@ -177,7 +177,6 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
       }
     }
 
-    /**
     std::cout << "Pattern "
               << "[" << i << "] "
               << "TrigType = " << curr_pattern.trigger_type << ","
@@ -188,7 +187,6 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
               << "Insert Black = " << curr_pattern.insert_black_frame << ","
               << "BufSwap = " << curr_pattern.buffer_swap << ","
               << "TrigOutPrev = " << curr_pattern.trigger_out_prev << std::endl;
-    **/
 
     // If everything checks out, add pattern
     if (DLPC350_AddToPatLut(

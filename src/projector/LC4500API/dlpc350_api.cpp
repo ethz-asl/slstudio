@@ -2364,12 +2364,12 @@ int DLPC350_AddToPatLut(int TrigType, int PatNum, int BitDepth, int LEDSelect,
  * intensity
  * @param   PatNum  - I - Pattern number (0 based index). For pattern number
  * 0x3F, there is no pattern display. The maximum number supported is 24 for 1
- * bit-depth patterns. Setting the pattern number to be 25, with a bit-depth of
- * 1 will insert a white-fill pattern. Inverting this pattern will insert a
- * black-fill pattern. These w patterns will have the same exposure time as
- * defined in the Pattern Display Exposure and Frame Period command. Table 2-66
- * in the programmer's guide illustrates which bit planes are illuminated by
- * each pattern number.
+ * bit-depth patterns. Setting the pattern number to be 24 (originally was 25
+ * but this is wrong), with a bit-depth of 1 will insert a black-fill pattern.
+ * Inverting this pattern will insert a white-fill pattern. These w patterns
+ * will have the same exposure time as defined in the Pattern Display Exposure
+ * and Frame Period command. Table 2-66 in the programmer's guide illustrates
+ * which bit planes are illuminated by each pattern number.
  * @param   BitDepth  - I - Select desired bit-depth
  *                          0 = Reserved
  *                          1 = 1-bit
@@ -4430,7 +4430,7 @@ int DLPC350_MemRead(unsigned int addr, unsigned int *readWord)
     *readWord = msg.text.data[0] | msg.text.data[1] << 8 |
                 msg.text.data[2] << 16 | msg.text.data[3] << 24;
     //*readWord = msg.text.data[3] | msg.text.data[2] << 8 | msg.text.data[1] <<
-    //16 | msg.text.data[0] << 24; //MSB first
+    // 16 | msg.text.data[0] << 24; //MSB first
     return 0;
   }
   return -1;

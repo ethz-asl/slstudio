@@ -61,10 +61,10 @@ class ProjectorLC4500_versavis : public Projector {
   bool m_is_hardware_triggered = false;
   Lightcrafter_4500_pattern_api m_projector;
   // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
-  const unsigned char m_rgb_white[3] = {27, 23, 9};  // Grasshopper dec
+  // const unsigned char m_rgb_white[3] = {27, 23, 9};  // Grasshopper dec
   // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
   // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
-  // const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin 30
+  const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin 30
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
   bool m_is_2_plus_1_mode = false;
@@ -89,7 +89,6 @@ class ProjectorLC4500_versavis : public Projector {
   const std::vector<int> m_2_plus_1_image_indices = {19};  //  PSP 2+1
   const std::vector<int> m_scanning_image_indices = {
       7, 8, 9, 10};  // Grasshopper Bin Center
-
   void load_pattern_sequence();
   bool m_display_horizontal_pattern = true;
   bool m_display_vertical_pattern = true;

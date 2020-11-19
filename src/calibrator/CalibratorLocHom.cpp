@@ -186,7 +186,7 @@ CalibrationData CalibratorLocHom::calibrate() {
   double cam_error = cv::calibrateCamera(
       Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
       cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_PRINCIPAL_POINT +
-          cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
+          cv::CALIB_FIX_K2 + cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
 
@@ -203,12 +203,40 @@ CalibrationData CalibratorLocHom::calibrate() {
   cv::Mat Kp, kp;
   std::vector<cv::Mat> proj_rvecs, proj_tvecs;
   cv::Size screenSize(screenCols, screenRows);
+
+  std::cout << "Calibration num cols: " << screenCols
+            << ", num rows: " << screenRows << std::endl;
+
+  Kp = cv::Mat::zeros(3, 3, CV_32F);
+  Kp.at<float>(0, 0) = 2200;  // Focal length [mm] guess based on
+                              // existing calibration attempts
+  Kp.at<float>(1, 1) = 2200;
+  Kp.at<float>(0, 2) = 912;       // SLStudio convention for diamond pixels, so
+                                  // there are double the number of cols
+  Kp.at<float>(1, 2) = 1140 - 1;  // 100% Offset for lightcrafter 4500 so its
+                                  // the full height not the standard height/2,
+                                  // must minus 1 or else opencv complains
+  Kp.at<float>(2, 2) = 1;
+
+  std::cout << "Calibration matrix guess: " << std::endl;
+  std::cout << Kp << std::endl;
+
+  double proj_error = cv::calibrateCamera(
+      Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
+      cv::CALIB_USE_INTRINSIC_GUESS + cv::CALIB_FIX_PRINCIPAL_POINT +
+          cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_K3 +
+          cv::CALIB_ZERO_TANGENT_DIST,
+      cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
+                       DBL_EPSILON));
+
+  /**
   double proj_error = cv::calibrateCamera(
       Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
       cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_K3 +
           cv::CALIB_ZERO_TANGENT_DIST,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+  **/
 
   /**
   double proj_error = cv::calibrateCamera(
