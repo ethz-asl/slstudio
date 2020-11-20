@@ -35,6 +35,8 @@ class SLCalibrationDialog : public QDialog {
   void on_listWidget_itemSelectionChanged();
   void on_saveButton_clicked();
   void onNewSequenceResult(cv::Mat img, unsigned int idx, bool success);
+  void on_pushButton_clicked();
+
  signals:
   void newCalibrationSaved(CalibrationData _calib);
 
@@ -43,6 +45,7 @@ class SLCalibrationDialog : public QDialog {
   Camera *camera;
   Projector *projector;
   Calibrator *calibrator;
+  Calibrator *recalibrator;
   CalibrationData calib;
   int liveViewTimer;
   vector<vector<cv::Mat> > frameSeqs;

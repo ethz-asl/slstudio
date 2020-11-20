@@ -113,14 +113,32 @@ void ProjectorLC4500_versavis::displayTexture(const unsigned char *tex,
                                               unsigned int texWidth,
                                               unsigned int texHeight) {}
 
-void ProjectorLC4500_versavis::displayBlack() {}
-
-void ProjectorLC4500_versavis::displayWhite() {
-  std::cout << "Displaying white" << std::endl;
-
+void ProjectorLC4500_versavis::displayBlack() {
   std::vector<single_pattern> pattern_vec = {};
 
-  // Settings for white pattern (pattern number 25, bit depth 1)
+  // Settings for white pattern (pattern number 24, bit depth 1)
+  single_pattern temp;
+  temp.trigger_type = 0;
+  temp.pattern_number = 24;
+  temp.bit_depth = 1;
+  temp.led_select = 7;
+  temp.image_indice = 0;
+  temp.invert_pattern = false;
+  temp.insert_black_frame = false;
+  temp.buffer_swap = true;
+  temp.trigger_out_prev = false;
+
+  pattern_vec.push_back(temp);
+
+  m_projector.play_pattern_sequence(pattern_vec,
+                                    m_software_trigger_timings_us[0],
+                                    m_software_trigger_timings_us[1]);
+}
+
+void ProjectorLC4500_versavis::displayWhite() {
+  std::vector<single_pattern> pattern_vec = {};
+
+  // Settings for white pattern (pattern number 24, bit depth 1, invert pattern)
   single_pattern temp;
   temp.trigger_type = 0;
   temp.pattern_number = 24;

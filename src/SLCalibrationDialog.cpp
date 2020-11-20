@@ -16,6 +16,7 @@
 #include "CalibratorLocHom.h"
 #include "CalibratorRBF.h"
 
+#include <unordered_set>
 #include "cvtools.h"
 
 SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
@@ -108,6 +109,9 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
   connect(calibrator, SIGNAL(newSequenceResult(cv::Mat, unsigned int, bool)),
           this, SLOT(onNewSequenceResult(cv::Mat, uint, bool)));
 
+  // Create recalibrator
+  recalibrator = new CalibratorLocHom(screenCols, screenRows);
+
   // Upload patterns to projector/GPU
   for (unsigned int i = 0; i < calibrator->getNPatterns(); i++) {
     cv::Mat pattern = calibrator->getCalibrationPattern(i);
@@ -148,7 +152,13 @@ void SLCalibrationDialog::timerEvent(QTimerEvent *event) {
   QApplication::processEvents();
 }
 
-SLCalibrationDialog::~SLCalibrationDialog() { delete ui; }
+SLCalibrationDialog::~SLCalibrationDialog() {
+  delete camera;
+  delete projector;
+  delete calibrator;
+  delete recalibrator;
+  delete ui;
+}
 
 void SLCalibrationDialog::on_snapButton_clicked() {
   m_counter++;
@@ -346,4 +356,86 @@ void SLCalibrationDialog::closeEvent(QCloseEvent *) {
   settings.setValue("calibration/checkerRows", checkerRows);
   unsigned int checkerCols = ui->checkerColsBox->value();
   settings.setValue("calibration/checkerCols", checkerCols);
+}
+
+void SLCalibrationDialog::on_pushButton_clicked() {
+  std::cout << "Recalibration starting" << std::endl;
+
+  recalibrator->reset();
+
+  std::string directory = "/home/ltf/cali_pics/";
+  int number_patterns = 12;
+  int number_sequences = 90;
+  std::unordered_set<int> seq_to_exclude = {10, 78};
+
+  for (int s = 1; s <= number_sequences; s++) {
+    if (seq_to_exclude.find(s) == seq_to_exclude.end()) {
+      std::vector<cv::Mat> frame_sequence = {};
+      for (int p = 0; p < number_patterns; p++) {
+        std::string image_path = directory + "calib_frame_seq_" +
+                                 std::to_string(p) + "_" + std::to_string(s) +
+                                 ".bmp";
+        // std::cout << "Trying to read " << image_path << std::endl;
+        cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+
+        if (img.empty()) {
+          std::cout << "Could not read the image: " << image_path << std::endl;
+          return;
+        } else {
+          // std::cout << "Successfully read image " << image_path << std::endl;
+          frame_sequence.push_back(img);
+        }
+      }
+      if (frame_sequence.size() == number_patterns) {
+        recalibrator->addFrameSequence(frame_sequence);
+      }
+    } else {
+      std::cout << "Excluded frame seq no: " << s << std::endl;
+    }
+  }
+
+  number_patterns = 12;
+  number_sequences = 33;
+  seq_to_exclude = {};
+
+  for (int s = 1; s <= number_sequences; s++) {
+    if (seq_to_exclude.find(s) == seq_to_exclude.end()) {
+      std::vector<cv::Mat> frame_sequence = {};
+      for (int p = 0; p < number_patterns; p++) {
+        std::string image_path = directory + "balib_frame_seq_" +
+                                 std::to_string(p) + "_" + std::to_string(s) +
+                                 ".bmp";
+        // std::cout << "Trying to read " << image_path << std::endl;
+        cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+
+        if (img.empty()) {
+          std::cout << "Could not read the image: " << image_path << std::endl;
+          return;
+        } else {
+          // std::cout << "Successfully read image " << image_path << std::endl;
+          frame_sequence.push_back(img);
+        }
+      }
+      if (frame_sequence.size() == number_patterns) {
+        recalibrator->addFrameSequence(frame_sequence);
+      }
+    } else {
+      std::cout << "Excluded frame seq no: " << s << std::endl;
+    }
+  }
+
+  auto recali_results = recalibrator->calibrate();
+
+  // Save results
+  recali_results.frameWidth = camera->getFrameWidth();
+  recali_results.frameHeight = camera->getFrameHeight();
+  unsigned int screenResX, screenResY;
+  projector->getScreenRes(&screenResX, &screenResY);
+  recali_results.screenResX = screenResX;
+  recali_results.screenResY = screenResY;
+  recali_results.calibrationDateTime = QDateTime::currentDateTime()
+                                           .toString("DD.MM.YYYY HH:MM:SS")
+                                           .toStdString();
+
+  recali_results.save("recalibration.xml");
 }

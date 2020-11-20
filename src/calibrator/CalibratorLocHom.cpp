@@ -99,7 +99,8 @@ CalibrationData CalibratorLocHom::calibrate() {
     cv::imwrite("shadingColor.png", shadingColor);
 #endif
     // Emit chessboard results
-    // std::cout << i << " newSequenceResult" << std::endl;
+    std::cout << i << " Seq Chessboard Extraction Results: "
+              << (success ? "Passed" : "Failed") << std::endl;
     emit newSequenceResult(shadingColor, i, success);
 
     if (success) {
@@ -223,11 +224,11 @@ CalibrationData CalibratorLocHom::calibrate() {
 
   double proj_error = cv::calibrateCamera(
       Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
-      cv::CALIB_USE_INTRINSIC_GUESS + cv::CALIB_FIX_PRINCIPAL_POINT +
-          cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_K3 +
-          cv::CALIB_ZERO_TANGENT_DIST,
+      cv::CALIB_USE_INTRINSIC_GUESS + cv::CALIB_FIX_ASPECT_RATIO,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+
+  // + cv::CALIB_FIX_PRINCIPAL_POINT
 
   /**
   double proj_error = cv::calibrateCamera(

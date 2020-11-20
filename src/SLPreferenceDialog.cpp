@@ -106,7 +106,9 @@ SLPreferenceDialog::SLPreferenceDialog(QWidget *parent)
       ui->cameraComboBox->findData(cameraInterfaceSetting);
   ui->cameraComboBox->setCurrentIndex(cameraIndex);
 
-  float shutter = settings.value("camera/shutter", 16.666).toFloat();
+  // float shutter = settings.value("camera/shutter", 16.666).toFloat();
+  // Quick hack to make sure that default exposure time is 8.333
+  float shutter = 8.333f;
   ui->shutterDoubleSpinBox->setValue(shutter);
 
   QString triggerMode = settings.value("trigger/mode", "hardware").toString();

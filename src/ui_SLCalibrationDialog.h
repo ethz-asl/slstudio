@@ -48,6 +48,7 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QPushButton *cancelButton;
     QPushButton *saveButton;
+    QPushButton *pushButton;
 
     void setupUi(QDialog *SLCalibrationDialog)
     {
@@ -141,6 +142,9 @@ public:
 
         horizontalLayout_4->addWidget(saveButton);
 
+        pushButton = new QPushButton(SLCalibrationDialog);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(690, 510, 89, 25));
 
         retranslateUi(SLCalibrationDialog);
         QObject::connect(cancelButton, SIGNAL(clicked()), SLCalibrationDialog, SLOT(close()));
@@ -158,6 +162,7 @@ public:
         label_4->setText(QApplication::translate("SLCalibrationDialog", "Cols:", Q_NULLPTR));
         cancelButton->setText(QApplication::translate("SLCalibrationDialog", "&Cancel", Q_NULLPTR));
         saveButton->setText(QApplication::translate("SLCalibrationDialog", "&Save", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("SLCalibrationDialog", "Re-Calibrate", Q_NULLPTR));
     } // retranslateUi
 
 };
