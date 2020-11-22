@@ -353,6 +353,18 @@ void SLScanWorker::doWork() {
 
   camera->stopCapture();
 
+  // Really dirty fix to close USB connection with Lightcrafter after a scan or
+  // else there will be problems during the second scan by destroying projector
+  // class object then creating a new one
+  int screenNum = settings.value("projector/screenNumber", -1).toInt();
+  if (screenNum == -4) {
+    delete projector;
+    projector = nullptr;
+
+    delete camera;
+    camera = nullptr;
+  }
+
   // Emit message to e.g. initiate thread break down
   emit finished();
 }
@@ -360,6 +372,11 @@ void SLScanWorker::doWork() {
 void SLScanWorker::stopWorking() { isWorking = false; }
 
 SLScanWorker::~SLScanWorker() {
-  delete camera;
-  delete projector;
+  if (camera != nullptr) {
+    delete camera;
+  }
+
+  if (projector != nullptr) {
+    delete projector;
+  }
 }

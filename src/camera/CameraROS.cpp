@@ -167,8 +167,8 @@ void CameraROS::image_cb(const sensor_msgs::Image& image) {
       m_sw_trig_state = Esoftware_trigger_state::received_image;
     } else if (triggerMode == triggerModeHardware) {
       boost::mutex::scoped_lock mutex_lock(m_mutex);
-      cout << "[CameraROS] Image received with timestamp: "
-           << image.header.stamp << endl;
+      // cout << "[CameraROS] Image received with timestamp: "
+      //   << image.header.stamp << endl;
       m_hw_trig_buffer.emplace_back(image);
     }
   }
@@ -177,6 +177,7 @@ void CameraROS::image_cb(const sensor_msgs::Image& image) {
 CameraROS::~CameraROS() {
   m_spinner_ptr->stop();
   ros::shutdown();
+  cout << "[CameraROS] : ROS Shutdown" << endl;
 }
 
 void CameraROS::get_input(const std::string& input_name,

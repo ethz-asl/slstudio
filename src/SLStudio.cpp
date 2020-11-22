@@ -211,8 +211,8 @@ void SLStudio::onScanWorkerFinished() {
   // Terminate scan worker thread
   scanWorkerThread->quit();
   scanWorkerThread->wait();
-  // scanWorkerThread->deleteLater();
-  // delete scanWorkerThread;
+  scanWorkerThread->deleteLater();
+  delete scanWorkerThread;
 
   // Change ui elements
   ui->actionStart->setEnabled(true);
