@@ -18,6 +18,8 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -44,6 +46,9 @@ public:
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     SLPointCloudWidget *pointCloudWidget;
+    QPushButton *pushButton;
+    QSpinBox *pattern_num_spin;
+    QSpinBox *frame_num_spin;
     QMenuBar *menuBar;
     QMenu *menuCalibration;
     QMenu *menuSLStudio;
@@ -56,7 +61,7 @@ public:
     {
         if (SLStudio->objectName().isEmpty())
             SLStudio->setObjectName(QStringLiteral("SLStudio"));
-        SLStudio->resize(824, 537);
+        SLStudio->resize(828, 544);
         SLStudio->setAutoFillBackground(false);
         actionQuit = new QAction(SLStudio);
         actionQuit->setObjectName(QStringLiteral("actionQuit"));
@@ -107,13 +112,24 @@ public:
         pointCloudWidget->setEnabled(true);
         pointCloudWidget->setLayoutDirection(Qt::LeftToRight);
         pointCloudWidget->setAutoFillBackground(false);
+        pushButton = new QPushButton(pointCloudWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(0, 420, 89, 25));
+        pattern_num_spin = new QSpinBox(pointCloudWidget);
+        pattern_num_spin->setObjectName(QStringLiteral("pattern_num_spin"));
+        pattern_num_spin->setGeometry(QRect(90, 420, 48, 26));
+        pattern_num_spin->setMaximum(1);
+        frame_num_spin = new QSpinBox(pointCloudWidget);
+        frame_num_spin->setObjectName(QStringLiteral("frame_num_spin"));
+        frame_num_spin->setGeometry(QRect(140, 420, 48, 26));
+        frame_num_spin->setMaximum(7);
 
-        gridLayout->addWidget(pointCloudWidget, 0, 0, 1, 1);
+        gridLayout->addWidget(pointCloudWidget, 0, 1, 1, 1);
 
         SLStudio->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(SLStudio);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 824, 25));
+        menuBar->setGeometry(QRect(0, 0, 828, 22));
         menuCalibration = new QMenu(menuBar);
         menuCalibration->setObjectName(QStringLiteral("menuCalibration"));
         menuSLStudio = new QMenu(menuBar);
@@ -191,6 +207,7 @@ public:
         actionAbout->setText(QApplication::translate("SLStudio", "About", Q_NULLPTR));
         actionTracker->setText(QApplication::translate("SLStudio", "Tracker", Q_NULLPTR));
         actionUpdatePointClouds->setText(QApplication::translate("SLStudio", "Update Point Clouds", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("SLStudio", "Grab Image", Q_NULLPTR));
         menuCalibration->setTitle(QApplication::translate("SLStudio", "Calibration", Q_NULLPTR));
         menuSLStudio->setTitle(QApplication::translate("SLStudio", "SLStudio", Q_NULLPTR));
         menuScan->setTitle(QApplication::translate("SLStudio", "Scan", Q_NULLPTR));

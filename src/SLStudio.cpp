@@ -12,9 +12,22 @@
 
 #include "SLVideoWidget.h"
 
+#include <QSettings>
 #include <QtGui>
 
 #include "cvtools.h"
+
+#include "CodecPhaseShift2x3.h"
+#include "ProjectorLC3000.h"
+#include "ProjectorLC4500.h"
+#include "ProjectorLC4500_versavis.h"
+//#include "ProjectorOpenGL.h"
+
+#include "SLCameraVirtual.h"
+#include "SLProjectorVirtual.h"
+
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -333,4 +346,192 @@ void SLStudio::hist(const char *windowName, cv::Mat im, unsigned int x,
 void SLStudio::imshow(const char *windowName, cv::Mat im, unsigned int x,
                       unsigned int y) {
   cvtools::imshow(windowName, im, x, y);
+}
+
+// For now a quick and dirty way to get images with a specific projection
+// pattern
+void SLStudio::on_pushButton_clicked() {
+  // Grab information from spin boxes
+  unsigned int pattern_num = ui->pattern_num_spin->value();
+  unsigned int frame_num = ui->frame_num_spin->value();
+
+  // Initialise some parameters
+  Camera *camera;
+  Projector *projector;
+  Encoder *encoder;
+  CameraTriggerMode triggerMode = triggerModeSoftware;
+
+  // Create camera
+
+  QSettings settings("SLStudio");
+
+  int iNum = settings.value("camera/interfaceNumber", -1).toInt();
+  int cNum = settings.value("camera/cameraNumber", -1).toInt();
+  if (iNum != -1)
+    camera = Camera::NewCamera(iNum, cNum, triggerMode);
+  else
+    camera = new SLCameraVirtual(cNum, triggerMode);
+
+  // Set camera settings
+  CameraSettings camSettings;
+  camSettings.shutter = settings.value("camera/shutter", 16.666).toFloat();
+  camSettings.gain = 0.0;
+  camera->setCameraSettings(camSettings);
+
+  // Initialize projector
+
+  int screenNum = settings.value("projector/screenNumber", -1).toInt();
+  if (screenNum >= 0)
+    throw;
+  else if (screenNum == -1)
+    projector = new SLProjectorVirtual(screenNum);
+  else if (screenNum == -2)
+    projector = new ProjectorLC3000(0);
+  else if (screenNum == -3)
+    projector = new ProjectorLC4500(0);
+  else if (screenNum == -4)
+    projector = new ProjectorLC4500_versavis(0);
+  else
+    std::cerr << "SLScanWorker: invalid projector id " << screenNum
+              << std::endl;
+
+  CodecDir dir_init =
+      (pattern_num == 0) ? CodecDirHorizontal
+                         : (pattern_num == 1) ? CodecDirVertical : CodecDirBoth;
+
+  (CodecDir) settings.value("pattern/direction", CodecDirHorizontal).toInt();
+
+  auto display_horizontal_pattern = std::make_shared<bool>(
+      (dir_init == CodecDirHorizontal || dir_init == CodecDirBoth) ? true
+                                                                   : false);
+
+  auto display_vertical_pattern = std::make_shared<bool>(
+      (dir_init == CodecDirVertical || dir_init == CodecDirBoth) ? true
+                                                                 : false);
+
+  // Initialize encoder
+  bool diamondPattern =
+      settings.value("projector/diamondPattern", false).toBool();
+  QString patternMode =
+      settings.value("pattern/mode", "CodecPhaseShift3").toString();
+
+  unsigned int screenResX, screenResY;
+  projector->getScreenRes(&screenResX, &screenResY);
+
+  // Unique number of rows and columns
+  unsigned int screenCols, screenRows;
+  if (diamondPattern) {
+    screenCols = 2 * screenResX;
+    screenRows = screenResY;
+  } else {
+    screenCols = screenResX;
+    screenRows = screenResY;
+  }
+
+  encoder = new EncoderPhaseShift2x3(screenCols, screenRows, dir_init);
+
+  // Init projector
+  auto is_hardware_triggered = std::make_shared<bool>(false);
+  auto void_is_hardware_triggered =
+      std::static_pointer_cast<void>(is_hardware_triggered);
+  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
+
+  auto is_in_calibration_mode = std::make_shared<bool>(false);
+  auto void_is_in_calibration_mode =
+      std::static_pointer_cast<void>(is_in_calibration_mode);
+  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  auto is_2_plus_1_mode = std::make_shared<bool>(false);
+  auto void_is_2_plus_1_mode = std::static_pointer_cast<void>(is_2_plus_1_mode);
+  projector->load_param("is_2_plus_1_mode", void_is_2_plus_1_mode);
+
+  auto void_display_vertical_pattern =
+      std::static_pointer_cast<void>(display_vertical_pattern);
+  projector->load_param("display_vertical_pattern",
+                        void_display_vertical_pattern);
+
+  auto void_display_horizontal_pattern =
+      std::static_pointer_cast<void>(display_horizontal_pattern);
+  projector->load_param("display_horizontal_pattern",
+                        void_display_horizontal_pattern);
+
+  projector->init();
+
+  // Lens correction and upload patterns to projector/GPU
+  CalibrationData calibration;
+  calibration.load("calibration.xml");
+
+  cv::Mat map1, map2;
+  cv::Size mapSize = cv::Size(screenCols, screenRows);
+  cvtools::initDistortMap(calibration.Kp, calibration.kp, mapSize, map1, map2);
+
+  // Upload patterns to projector/GPU in full projector resolution
+  for (unsigned int i = 0; i < encoder->getNPatterns(); i++) {
+    cv::Mat pattern = encoder->getEncodingPattern(i);
+
+    // general repmat
+    pattern = cv::repeat(pattern, screenRows / pattern.rows + 1,
+                         screenCols / pattern.cols + 1);
+    pattern = pattern(cv::Range(0, screenRows), cv::Range(0, screenCols));
+
+    // correct for lens distortion
+    // cv::remap(pattern, pattern, map1, map2, CV_INTER_CUBIC);
+
+    if (diamondPattern) pattern = cvtools::diamondDownsample(pattern);
+
+    projector->setPattern(i, pattern.ptr(), pattern.cols, pattern.rows);
+
+    // cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
+  }
+
+  unsigned int N = encoder->getNPatterns();
+
+  std::cout << "Starting capture!" << std::endl;
+  camera->startCapture();
+
+  std::cout << "pattern_num: " << (unsigned)pattern_num << std::endl;
+  std::cout << "frame_num: " << (unsigned)frame_num << std::endl;
+  std::cout << "N: " << (unsigned)N << std::endl;
+
+  if (frame_num < N) {
+    projector->displayPattern(frame_num);
+  } else if (frame_num == N) {
+    std::cout << "Displaying white screen" << std::endl;
+    projector->displayWhite();
+  } else {
+    std::cout << "Displaying black screen" << std::endl;
+    projector->displayBlack();
+  }
+
+  std::this_thread::sleep_for(
+      std::chrono::milliseconds((int)(camSettings.shutter * 2)));
+
+  CameraFrame frame;
+  frame = camera->getFrame();
+  cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+  frameCV = frameCV.clone();
+
+  bool success = true;
+
+  if (!frame.memory) {
+    std::cerr << "SLScanWorker: missed frame!" << std::endl;
+    success = false;
+  }
+
+  if (success) {
+    std::string timestamp = QDateTime::currentDateTime()
+                                .toString("dd-MM-yyyy-hh-mm-ss")
+                                .toStdString();
+    std::string filename = "single_capture_pat_" + std::to_string(pattern_num) +
+                           "_frame_" + std::to_string(frame_num) + "_" +
+                           timestamp + ".bmp";
+    cv::imwrite(filename, frameCV);
+  }
+
+  camera->stopCapture();
+  projector->displayBlack();
+
+  delete camera;
+  delete projector;
+  delete encoder;
 }

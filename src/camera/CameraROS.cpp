@@ -37,7 +37,9 @@ CameraROS::CameraROS(unsigned int camNum, CameraTriggerMode triggerMode)
   // Spinning is required or else subscriber will never receive messages
   cout << "[CameraROS] Setting up Asynchronous ROS Spinner " << endl;
   m_spinner_ptr = std::make_unique<ros::AsyncSpinner>(1);
+  cout << "[CameraROS] Starting Asynchronous ROS Spinner " << endl;
   m_spinner_ptr->start();
+  cout << "[CameraROS] Started Asynchronous ROS Spinner " << endl;
 
   return;
 }
@@ -176,8 +178,13 @@ void CameraROS::image_cb(const sensor_msgs::Image& image) {
 
 CameraROS::~CameraROS() {
   m_spinner_ptr->stop();
+  m_nh_ptr->shutdown();
   ros::shutdown();
-  cout << "[CameraROS] : ROS Shutdown" << endl;
+  while (ros::ok()) {
+    cout << "Waiting for ROS to complete shutdown..." << endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+  cout << "[CameraROS] : ROS Shutdown Complete" << endl;
 }
 
 void CameraROS::get_input(const std::string& input_name,

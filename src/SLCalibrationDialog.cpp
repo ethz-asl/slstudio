@@ -234,8 +234,9 @@ void SLCalibrationDialog::on_snapButton_clicked() {
   ui->snapButton->setEnabled(true);
 }
 
-void SLCalibrationDialog::on_calibrateButton_clicked() {
-  // We save the checkerboard settings displayed in the calibration GUI prior to
+void SLCalibrationDialog::
+    on_calibrateButton_clicked() {  // We save the checkerboard settings
+                                    // displayed in the calibration GUI prior to
   // the start of calibration
   // Checkerboard parameters
   QSettings settings("SLStudio");

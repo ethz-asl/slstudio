@@ -165,14 +165,14 @@ void ProjectorLC4500_versavis::getScreenRes(unsigned int *nx,
 }
 
 ProjectorLC4500_versavis::~ProjectorLC4500_versavis() {
-  // std::cout << "ProjectorLC4500_versavis destructor called" << std::endl;
+  std::cout << "ProjectorLC4500_versavis destructor called" << std::endl;
   m_projector.close();
-  if (m_is_hardware_triggered && !m_is_in_calibration_mode) {
+  if (m_is_hardware_triggered) {
+    // if (m_is_hardware_triggered && !m_is_in_calibration_mode) {
     m_spinner_ptr->stop();
     ros::shutdown();
   }
-  // std::cout << "ProjectorLC4500_versavis destructor completed" <<
-  // std::endl;
+  std::cout << "ProjectorLC4500_versavis destructor completed" << std::endl;
 }
 
 void ProjectorLC4500_versavis::sub_cb(

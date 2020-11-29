@@ -9,76 +9,83 @@
 #define SLSTUDIO_H
 
 #include <QMainWindow>
-#include <QTimer>
 #include <QPointer>
 #include <QSettings>
+#include <QTimer>
 
-#include "SLScanWorker.h"
-#include "SLTrackerWorker.h"
 #include "SLPointCloudWidget.h"
-#include "SLVideoDialog.h"
+#include "SLScanWorker.h"
 #include "SLTrackerDialog.h"
+#include "SLTrackerWorker.h"
+#include "SLVideoDialog.h"
+
+#include "Camera.h"
+#include "Codec.h"
+#include "Projector.h"
 
 namespace Ui {
-    class SLStudio;
+class SLStudio;
 }
 
 class SLStudio : public QMainWindow {
-    Q_OBJECT
-    
-    public:
-        explicit SLStudio(QWidget *parent = 0);
-        void closeEvent(QCloseEvent *event);
-        ~SLStudio();
+  Q_OBJECT
 
-    private slots:
-        void onActionStart();
-        void onActionStop();
-        void onScanWorkerFinished();
+ public:
+  explicit SLStudio(QWidget *parent = 0);
+  void closeEvent(QCloseEvent *event);
+  ~SLStudio();
 
-        void onActionCalibration();
-        void onActionLoadCalibration();
-        void onActionPreferences();
-        void onActionExportCalibration();
+ private slots:
+  void onActionStart();
+  void onActionStop();
+  void onScanWorkerFinished();
 
-        void updateDisplayRate();
-        void receiveNewPointCloud(PointCloudConstPtr pointCloud);
+  void onActionCalibration();
+  void onActionLoadCalibration();
+  void onActionPreferences();
+  void onActionExportCalibration();
 
-        void imshow(const char* windowName, cv::Mat im, unsigned int x, unsigned int y);
-        void hist(const char* windowName, cv::Mat im, unsigned int x, unsigned int y);
+  void updateDisplayRate();
+  void receiveNewPointCloud(PointCloudConstPtr pointCloud);
 
-        void onShowHistogram(cv::Mat im);
-        void onShowShading(cv::Mat im);
-        void onShowCameraFrames(std::vector<cv::Mat> frameSeq);
-        void onShowDecoderUp(cv::Mat im);
-        void onShowDecoderVp(cv::Mat im);
+  void imshow(const char *windowName, cv::Mat im, unsigned int x,
+              unsigned int y);
+  void hist(const char *windowName, cv::Mat im, unsigned int x, unsigned int y);
 
-        void onActionAbout();
+  void onShowHistogram(cv::Mat im);
+  void onShowShading(cv::Mat im);
+  void onShowCameraFrames(std::vector<cv::Mat> frameSeq);
+  void onShowDecoderUp(cv::Mat im);
+  void onShowDecoderVp(cv::Mat im);
 
-signals:
-        void newPointCloud(PointCloudConstPtr pointCloud);
+  void onActionAbout();
 
-    private:
-        Ui::SLStudio *ui;
-        std::vector<unsigned int> displayIntervals;
+  void on_pushButton_clicked();
 
-        SLScanWorker *scanWorker;
-        QThread *scanWorkerThread;
+ signals:
+  void newPointCloud(PointCloudConstPtr pointCloud);
 
-        SLDecoderWorker *decoderWorker;
-        QThread *decoderThread;
+ private:
+  Ui::SLStudio *ui;
+  std::vector<unsigned int> displayIntervals;
 
-        SLTriangulatorWorker *triangulatorWorker;
-        QThread *triangulatorThread;
+  SLScanWorker *scanWorker;
+  QThread *scanWorkerThread;
 
-        QTime *time;
-        QSettings *settings;
+  SLDecoderWorker *decoderWorker;
+  QThread *decoderThread;
 
-        SLVideoDialog *histogramDialog, *shadingDialog, *cameraFramesDialog, *decoderUpDialog, *decoderVpDialog;
-        SLTrackerDialog *trackerDialog;
+  SLTriangulatorWorker *triangulatorWorker;
+  QThread *triangulatorThread;
 
-    public:
+  QTime *time;
+  QSettings *settings;
 
+  SLVideoDialog *histogramDialog, *shadingDialog, *cameraFramesDialog,
+      *decoderUpDialog, *decoderVpDialog;
+  SLTrackerDialog *trackerDialog;
+
+ public:
 };
 
 #endif
