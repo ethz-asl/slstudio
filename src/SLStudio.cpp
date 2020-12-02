@@ -17,6 +17,7 @@
 
 #include "cvtools.h"
 
+#include "CameraSpinnaker.h"
 #include "CodecPhaseShift2x3.h"
 #include "ProjectorLC3000.h"
 #include "ProjectorLC4500.h"
@@ -356,21 +357,18 @@ void SLStudio::on_pushButton_clicked() {
   unsigned int frame_num = ui->frame_num_spin->value();
 
   // Initialise some parameters
-  Camera *camera;
+  CameraSpinnaker *camera;
   Projector *projector;
   Encoder *encoder;
   CameraTriggerMode triggerMode = triggerModeSoftware;
-
-  // Create camera
-
   QSettings settings("SLStudio");
 
-  int iNum = settings.value("camera/interfaceNumber", -1).toInt();
-  int cNum = settings.value("camera/cameraNumber", -1).toInt();
-  if (iNum != -1)
-    camera = Camera::NewCamera(iNum, cNum, triggerMode);
-  else
-    camera = new SLCameraVirtual(cNum, triggerMode);
+  // Create camera (to keep it simple, we use the Spinnaker API, using ROS
+  // interface will cause some (currently) unidentified segmentation fault,
+  // mostly likely due to multiple creation/descruction of ROS nodes)
+
+  int camera_indice = 0;
+  camera = new CameraSpinnaker(camera_indice, triggerMode);
 
   // Set camera settings
   CameraSettings camSettings;
@@ -398,8 +396,6 @@ void SLStudio::on_pushButton_clicked() {
   CodecDir dir_init =
       (pattern_num == 0) ? CodecDirHorizontal
                          : (pattern_num == 1) ? CodecDirVertical : CodecDirBoth;
-
-  (CodecDir) settings.value("pattern/direction", CodecDirHorizontal).toInt();
 
   auto display_horizontal_pattern = std::make_shared<bool>(
       (dir_init == CodecDirHorizontal || dir_init == CodecDirBoth) ? true

@@ -47,7 +47,7 @@ class CameraROS : public Camera {
   ros::Subscriber m_camera_image_sub;
   // const std::string m_projector_time_topic =
   // "/versavis/projector/image_time";
-  // const std::string m_camera_time_topic = "/versavis/cam1/image_time";
+  // const std::string m_camera_time_topic = "/versavis/cam1/image_time" ;
   const std::string m_camera_image_topic = "/versavis/cam1/image_raw";
   const std::string m_ros_node_name = "SLStudio_ROS_camera";
   const size_t m_frame_width = 1024;  // Grasshopper mode 2sss
