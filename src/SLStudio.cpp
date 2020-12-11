@@ -393,9 +393,12 @@ void SLStudio::on_pushButton_clicked() {
     std::cerr << "SLScanWorker: invalid projector id " << screenNum
               << std::endl;
 
-  CodecDir dir_init =
-      (pattern_num == 0) ? CodecDirHorizontal
-                         : (pattern_num == 1) ? CodecDirVertical : CodecDirBoth;
+  // CodecDir dir_init =
+  //    (pattern_num == 0) ? CodecDirHorizontal
+  //                       : (pattern_num == 1) ? CodecDirVertical :
+  //                       CodecDirBoth;
+
+  CodecDir dir_init = CodecDirBoth;
 
   auto display_horizontal_pattern = std::make_shared<bool>(
       (dir_init == CodecDirHorizontal || dir_init == CodecDirBoth) ? true
@@ -489,39 +492,41 @@ void SLStudio::on_pushButton_clicked() {
   std::cout << "frame_num: " << (unsigned)frame_num << std::endl;
   std::cout << "N: " << (unsigned)N << std::endl;
 
-  if (frame_num < N) {
-    projector->displayPattern(frame_num);
-  } else if (frame_num == N) {
-    std::cout << "Displaying white screen" << std::endl;
-    projector->displayWhite();
-  } else {
-    std::cout << "Displaying black screen" << std::endl;
-    projector->displayBlack();
-  }
+  for (int i = 0; i < N + 2; i++) {
+    if (i < N) {
+      projector->displayPattern(i);
+    } else if (i == N) {
+      std::cout << "Displaying white screen" << std::endl;
+      projector->displayWhite();
+    } else {
+      std::cout << "Displaying black screen" << std::endl;
+      projector->displayBlack();
+    }
 
-  std::this_thread::sleep_for(
-      std::chrono::milliseconds((int)(camSettings.shutter * 2)));
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds((int)(camSettings.shutter * 2)));
 
-  CameraFrame frame;
-  frame = camera->getFrame();
-  cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
-  frameCV = frameCV.clone();
+    CameraFrame frame;
+    frame = camera->getFrame();
+    cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+    frameCV = frameCV.clone();
 
-  bool success = true;
+    bool success = true;
 
-  if (!frame.memory) {
-    std::cerr << "SLScanWorker: missed frame!" << std::endl;
-    success = false;
-  }
+    if (!frame.memory) {
+      std::cerr << "SLScanWorker: missed frame!" << std::endl;
+      success = false;
+    }
 
-  if (success) {
-    std::string timestamp = QDateTime::currentDateTime()
-                                .toString("dd-MM-yyyy-hh-mm-ss")
-                                .toStdString();
-    std::string filename = "single_capture_pat_" + std::to_string(pattern_num) +
-                           "_frame_" + std::to_string(frame_num) + "_" +
-                           timestamp + ".bmp";
-    cv::imwrite(filename, frameCV);
+    if (success) {
+      std::string timestamp = QDateTime::currentDateTime()
+                                  .toString("dd-MM-yyyy-hh-mm-ss")
+                                  .toStdString();
+      std::string filename = "single_capture_pat_" +
+                             std::to_string(pattern_num) + "_frame_" +
+                             std::to_string(i) + "_" + timestamp + ".bmp";
+      cv::imwrite(filename, frameCV);
+    }
   }
 
   camera->stopCapture();
