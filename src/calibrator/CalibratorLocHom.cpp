@@ -186,8 +186,7 @@ CalibrationData CalibratorLocHom::calibrate() {
 
   double cam_error = cv::calibrateCamera(
       Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
-      cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_PRINCIPAL_POINT +
-          cv::CALIB_FIX_K2 + cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
+      cv::CALIB_FIX_ASPECT_RATIO,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
 

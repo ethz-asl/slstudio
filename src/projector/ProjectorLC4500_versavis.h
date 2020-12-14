@@ -65,6 +65,8 @@ class ProjectorLC4500_versavis : public Projector {
   // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
   // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
   const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin  30
+  // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Grasshopper  bin  30
+  // Motion Compensation
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;
   bool m_is_2_plus_1_mode = false;
