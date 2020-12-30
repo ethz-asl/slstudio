@@ -98,20 +98,23 @@ void DecoderCalibration::decodeFrames(cv::Mat &up, cv::Mat &vp, cv::Mat &mask,
     // Horizontal decoding
     up = pstools::getPhase(framesHorz[0], framesHorz[1], framesHorz[2]);
 
-    cvtools::writeMat(up, (directory + "hf.mat").c_str());
+    // cvtools::writeMat(up, (directory + "hf.mat").c_str());
 
     cv::Mat upCue =
         pstools::getPhase(framesHorz[3], framesHorz[4], framesHorz[5]);
 
-    cvtools::writeMat(upCue, (directory + "lf.mat").c_str());
+    // cvtools::writeMat(upCue, (directory + "lf.mat").c_str());
 
     up = pstools::unwrapWithCue(up, upCue, nPhases);
 
-    cvtools::writeMat(up, (directory + "unwrapped.mat").c_str());
+    // cvtools::writeMat(up, (directory + "unwrapped.mat").c_str());
 
     up *= screenCols / (2 * pi);
 
-    cvtools::writeMat(up, (directory + "wrapped_normalised.mat").c_str());
+    // cvtools::writeMat(up, (directory + "wrapped_normalised.mat").c_str());
+
+    std::cout << "Decoding using horizontal pattern (vertical stripes)"
+              << std::endl;
   }
   if (dir & CodecDirVertical) {
     std::vector<cv::Mat> framesVert(frames.end() - 6, frames.end());
@@ -122,6 +125,9 @@ void DecoderCalibration::decodeFrames(cv::Mat &up, cv::Mat &vp, cv::Mat &mask,
         pstools::getPhase(framesVert[3], framesVert[4], framesVert[5]);
     vp = pstools::unwrapWithCue(vp, vpCue, nPhases);
     vp *= screenRows / (2 * pi);
+
+    std::cout << "Decoding using vertical pattern (Horizontal stripes)"
+              << std::endl;
   }
 
   // Calculate modulation

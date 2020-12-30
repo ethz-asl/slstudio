@@ -372,26 +372,13 @@ void SLStudio::on_pushButton_clicked() {
 
   // Set camera settings
   CameraSettings camSettings;
-  camSettings.shutter = settings.value("camera/shutter", 16.666).toFloat();
+  camSettings.shutter = 8.333;
   camSettings.gain = 0.0;
   camera->setCameraSettings(camSettings);
 
-  // Initialize projector
-
-  int screenNum = settings.value("projector/screenNumber", -1).toInt();
-  if (screenNum >= 0)
-    throw;
-  else if (screenNum == -1)
-    projector = new SLProjectorVirtual(screenNum);
-  else if (screenNum == -2)
-    projector = new ProjectorLC3000(0);
-  else if (screenNum == -3)
-    projector = new ProjectorLC4500(0);
-  else if (screenNum == -4)
-    projector = new ProjectorLC4500_versavis(0);
-  else
-    std::cerr << "SLScanWorker: invalid projector id " << screenNum
-              << std::endl;
+  // Initialize projector (just set to versavis for now, only displays patterns
+  // stored in flash)
+  projector = new ProjectorLC4500_versavis(0);
 
   // CodecDir dir_init =
   //    (pattern_num == 0) ? CodecDirHorizontal
