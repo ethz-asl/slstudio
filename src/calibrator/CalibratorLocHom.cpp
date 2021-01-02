@@ -3,6 +3,8 @@
 
 #include "cvtools.h"
 
+#include <algorithm>
+
 #include <QSettings>
 
 CalibratorLocHom::CalibratorLocHom(unsigned int _screenCols,
@@ -186,9 +188,18 @@ CalibrationData CalibratorLocHom::calibrate() {
 
   double cam_error = cv::calibrateCamera(
       Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
+      cv::CALIB_FIX_ASPECT_RATIO + cv::CALIB_FIX_PRINCIPAL_POINT +
+          cv::CALIB_FIX_K2 + cv::CALIB_FIX_K3 + cv::CALIB_ZERO_TANGENT_DIST,
+      cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
+                       DBL_EPSILON));
+
+  /**
+  double cam_error = cv::calibrateCamera(
+      Q, qc, frameSize, Kc, kc, cam_rvecs, cam_tvecs,
       cv::CALIB_FIX_ASPECT_RATIO,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+  **/
 
   /**
   double cam_error = cv::calibrateCamera(
@@ -199,6 +210,32 @@ CalibrationData CalibratorLocHom::calibrate() {
                        DBL_EPSILON));
   **/
 
+  // Fix Camera Instrinsics using pre-calibrated values
+
+  /**
+  double cam_error = 0.0f;
+
+  Kc = cv::Mat::zeros(3, 3, cv::DataType<double>::type);
+
+  Kc.at<double>(0, 0) = 1.7750504851764342e+03;
+  Kc.at<double>(0, 1) = 0.0f;
+  Kc.at<double>(0, 2) = 5.1150000000000000e+02;
+  Kc.at<double>(1, 0) = 0.0f;
+  Kc.at<double>(1, 1) = 1.7750504851764342e+03;
+  Kc.at<double>(1, 2) = 3.8350000000000000e+02;
+  Kc.at<double>(2, 0) = 0.0f;
+  Kc.at<double>(2, 1) = 0.0f;
+  Kc.at<double>(2, 2) = 1.0f;
+
+  kc = cv::Mat::zeros(5, 1, cv::DataType<double>::type);
+
+  kc.at<double>(0, 0) = -3.7442396873633860e-01;
+  kc.at<double>(1, 0) = 0.0f;
+  kc.at<double>(2, 0) = 0.0f;
+  kc.at<double>(3, 0) = 0.0f;
+  kc.at<double>(4, 0) = 0.0f;
+  **/
+
   // calibrate the projector
   cv::Mat Kp, kp;
   std::vector<cv::Mat> proj_rvecs, proj_tvecs;
@@ -207,16 +244,16 @@ CalibrationData CalibratorLocHom::calibrate() {
   std::cout << "Calibration num cols: " << screenCols
             << ", num rows: " << screenRows << std::endl;
 
-  Kp = cv::Mat::zeros(3, 3, CV_32F);
-  Kp.at<float>(0, 0) = 2200;  // Focal length [mm] guess based on
-                              // existing calibration attempts
-  Kp.at<float>(1, 1) = 2200;
-  Kp.at<float>(0, 2) = 912;       // SLStudio convention for diamond pixels, so
-                                  // there are double the number of cols
-  Kp.at<float>(1, 2) = 1140 - 1;  // 100% Offset for lightcrafter 4500 so its
-                                  // the full height not the standard height/2,
-                                  // must minus 1 or else opencv complains
-  Kp.at<float>(2, 2) = 1;
+  Kp = cv::Mat::zeros(3, 3, cv::DataType<double>::type);
+  Kp.at<double>(0, 0) = 2200;  // Focal length [mm] guess based on
+                               // existing calibration attempts
+  Kp.at<double>(1, 1) = 2200;
+  Kp.at<double>(0, 2) = 912;       // SLStudio convention for diamond pixels, so
+                                   // there are double the number of cols
+  Kp.at<double>(1, 2) = 1140 - 1;  // 100% Offset for lightcrafter 4500 so its
+                                   // the full height not the standard height/2,
+                                   // must minus 1 or else opencv complains
+  Kp.at<double>(2, 2) = 1;
 
   std::cout << "Calibration matrix guess: " << std::endl;
   std::cout << Kp << std::endl;
@@ -226,6 +263,40 @@ CalibrationData CalibratorLocHom::calibrate() {
       cv::CALIB_USE_INTRINSIC_GUESS + cv::CALIB_FIX_ASPECT_RATIO,
       cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
                        DBL_EPSILON));
+
+  // Fix Projector Instrinsics using pre-calibrated values
+
+  /**
+  double proj_error = 0.0f;
+
+  Kp = cv::Mat::zeros(3, 3, cv::DataType<double>::type);
+
+  Kp.at<double>(0, 0) = 2.20166968e+03;
+  Kp.at<double>(0, 1) = 0.0f;
+  Kp.at<double>(0, 2) = 8.91940002e+02;
+  Kp.at<double>(1, 0) = 0.0f;
+  Kp.at<double>(1, 1) = 2.20166968e+03;
+  Kp.at<double>(1, 2) = 1.17738135e+03;
+  Kp.at<double>(2, 0) = 0.0f;
+  Kp.at<double>(2, 1) = 0.0f;
+  Kp.at<double>(2, 2) = 1.0f;
+
+  kp = cv::Mat::zeros(5, 1, cv::DataType<double>::type);
+
+  kp.at<double>(0, 0) = 5.50963022e-02;
+  kp.at<double>(1, 0) = -1.76440150e-01;
+  kp.at<double>(2, 0) = -1.62195798e-03;
+  kp.at<double>(3, 0) = -4.73100721e-04;
+  kp.at<double>(4, 0) = 8.93107653e-02;
+  **/
+
+  /**
+  double proj_error = cv::calibrateCamera(
+      Q, qp, screenSize, Kp, kp, proj_rvecs, proj_tvecs,
+      cv::CALIB_USE_INTRINSIC_GUESS + cv::CALIB_FIX_ASPECT_RATIO,
+      cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 50,
+                       DBL_EPSILON));
+  **/
 
   // + cv::CALIB_FIX_PRINCIPAL_POINT
 
@@ -276,15 +347,32 @@ CalibrationData CalibratorLocHom::calibrate() {
   for (unsigned int i = 0; i < (unsigned int)Q.size(); ++i) {
     int n = (int)Q[i].size();
 
+    // These lines are required if you are using a pre-calibrated camera
+    // intrinsics
+    /**
+    cam_rvecs.push_back(cv::Mat::zeros(3, 3, cv::DataType<double>::type));
+    cam_tvecs.push_back(cv::Mat::zeros(3, 3, cv::DataType<double>::type));
+    cv::solvePnP(cv::Mat(Q[i]), qc[i], Kc, kc, cam_rvecs[i], cam_tvecs[i]);
+    **/
+
     vector<cv::Point2f> qc_proj;
     cv::projectPoints(cv::Mat(Q[i]), cam_rvecs[i], cam_tvecs[i], Kc, kc,
                       qc_proj);
+
     float err = 0;
     for (unsigned int j = 0; j < qc_proj.size(); j++) {
       cv::Point2f d = qc[i][j] - qc_proj[j];
       err += cv::sqrt(d.x * d.x + d.y * d.y);
     }
     cam_error_per_view[i] = (float)err / n;
+
+    // These lines are required if you are using a pre-calibrated projector
+    // intrinsics
+    /**
+    proj_rvecs.push_back(cv::Mat::zeros(3, 3, cv::DataType<double>::type));
+    proj_tvecs.push_back(cv::Mat::zeros(3, 3, cv::DataType<double>::type));
+    cv::solvePnP(cv::Mat(Q[i]), qp[i], Kp, kp, proj_rvecs[i], proj_tvecs[i]);
+    **/
 
     vector<cv::Point2f> qp_proj;
     cv::projectPoints(cv::Mat(Q[i]), proj_rvecs[i], proj_tvecs[i], Kp, kp,

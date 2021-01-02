@@ -15,10 +15,10 @@ cv::Mat computePhaseVector(unsigned int length, float phase, float pitch) {
   // Loop through vector
   for (int i = 0; i < phaseVector.rows; i++) {
     // Amplitude of channels
-    // float amp = 0.5*(1+cos(2*pi*i/pitch - phase));
-    float amp =
-        0.6 + 0.4 * cos(2 * pi * i / pitch -
-                        phase);  // Larger base signal for motion compensation
+    float amp = 0.5 * (1 + cos(2 * pi * i / pitch - phase));
+    // float amp =
+    //    0.6 + 0.4 * cos(2 * pi * i / pitch -
+    //                    phase);  // Larger base signal for motion compensation
     phaseVector.at<cv::Vec3b>(i, 0) =
         cv::Vec3b(255.0 * amp, 255.0 * amp, 255.0 * amp);
   }

@@ -178,6 +178,10 @@ void SLScanWorker::setup() {
   cv::Size mapSize = cv::Size(screenCols, screenRows);
   cvtools::initDistortMap(calibration.Kp, calibration.kp, mapSize, map1, map2);
 
+  std::cout << calibration.Kp << std::endl;
+
+  std::cout << calibration.kp << std::endl;
+
   // Upload patterns to projector/GPU in full projector resolution
   for (unsigned int i = 0; i < encoder->getNPatterns(); i++) {
     cv::Mat pattern = encoder->getEncodingPattern(i);

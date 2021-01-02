@@ -112,9 +112,6 @@ void DecoderCalibration::decodeFrames(cv::Mat &up, cv::Mat &vp, cv::Mat &mask,
     up *= screenCols / (2 * pi);
 
     // cvtools::writeMat(up, (directory + "wrapped_normalised.mat").c_str());
-
-    std::cout << "Decoding using horizontal pattern (vertical stripes)"
-              << std::endl;
   }
   if (dir & CodecDirVertical) {
     std::vector<cv::Mat> framesVert(frames.end() - 6, frames.end());
@@ -125,12 +122,13 @@ void DecoderCalibration::decodeFrames(cv::Mat &up, cv::Mat &vp, cv::Mat &mask,
         pstools::getPhase(framesVert[3], framesVert[4], framesVert[5]);
     vp = pstools::unwrapWithCue(vp, vpCue, nPhases);
     vp *= screenRows / (2 * pi);
-
-    std::cout << "Decoding using vertical pattern (Horizontal stripes)"
-              << std::endl;
   }
 
   // Calculate modulation
+  // Restore image using horizontal patterns
+  // shading = pstools::getMagnitude(frames[0], frames[1], frames[2]);
+
+  // Resture image using vertical patterns
   shading = pstools::getMagnitude(frames[0], frames[1], frames[2]);
 
   mask = shading > 10;
