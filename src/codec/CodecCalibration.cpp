@@ -126,10 +126,10 @@ void DecoderCalibration::decodeFrames(cv::Mat &up, cv::Mat &vp, cv::Mat &mask,
 
   // Calculate modulation
   // Restore image using horizontal patterns
-  // shading = pstools::getMagnitude(frames[0], frames[1], frames[2]);
-
-  // Resture image using vertical patterns
   shading = pstools::getMagnitude(frames[0], frames[1], frames[2]);
+
+  // Restore image using vertical patterns
+  // shading = pstools::getMagnitude(frames[6], frames[7], frames[8]);
 
   mask = shading > 10;
 }

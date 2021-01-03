@@ -371,10 +371,11 @@ void SLCalibrationDialog::on_pushButton_clicked() {
   // int number_sequences = 5;
   // int number_sequences = 21;
   // int number_sequences = 69;
-  int number_sequences = 142;
-  std::unordered_set<int> seq_to_exclude = {15, 20, 22, 24,  38, 40, 41,
-                                            43, 45, 47, 50,  51, 53, 55,
-                                            63, 85, 93, 100, 113};
+  // int number_sequences = 142;
+  int number_sequences = 177;
+  std::unordered_set<int> seq_to_exclude = {
+      15, 20, 22, 24,  38,  40,  41,  43,  45,  47,  50,  51,  53, 55,
+      63, 85, 93, 100, 113, 148, 151, 153, 155, 157, 160, 163, 169};
 
   for (int s = starting_indice; s <= number_sequences; s++) {
     if (seq_to_exclude.find(s) == seq_to_exclude.end()) {

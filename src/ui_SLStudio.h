@@ -15,11 +15,11 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
@@ -47,8 +47,7 @@ public:
     QGridLayout *gridLayout;
     SLPointCloudWidget *pointCloudWidget;
     QPushButton *pushButton;
-    QSpinBox *pattern_num_spin;
-    QSpinBox *frame_num_spin;
+    QLineEdit *lineEdit;
     QMenuBar *menuBar;
     QMenu *menuCalibration;
     QMenu *menuSLStudio;
@@ -115,14 +114,9 @@ public:
         pushButton = new QPushButton(pointCloudWidget);
         pushButton->setObjectName(QStringLiteral("pushButton"));
         pushButton->setGeometry(QRect(0, 420, 89, 25));
-        pattern_num_spin = new QSpinBox(pointCloudWidget);
-        pattern_num_spin->setObjectName(QStringLiteral("pattern_num_spin"));
-        pattern_num_spin->setGeometry(QRect(90, 420, 48, 26));
-        pattern_num_spin->setMaximum(1);
-        frame_num_spin = new QSpinBox(pointCloudWidget);
-        frame_num_spin->setObjectName(QStringLiteral("frame_num_spin"));
-        frame_num_spin->setGeometry(QRect(140, 420, 48, 26));
-        frame_num_spin->setMaximum(7);
+        lineEdit = new QLineEdit(pointCloudWidget);
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+        lineEdit->setGeometry(QRect(100, 420, 113, 25));
 
         gridLayout->addWidget(pointCloudWidget, 0, 1, 1, 1);
 

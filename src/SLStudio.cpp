@@ -353,8 +353,7 @@ void SLStudio::imshow(const char *windowName, cv::Mat im, unsigned int x,
 // pattern
 void SLStudio::on_pushButton_clicked() {
   // Grab information from spin boxes
-  unsigned int pattern_num = ui->pattern_num_spin->value();
-  unsigned int frame_num = ui->frame_num_spin->value();
+  std::string file_header = ui->lineEdit->text().toUtf8().constData();
 
   // Initialise some parameters
   CameraSpinnaker *camera;
@@ -475,10 +474,6 @@ void SLStudio::on_pushButton_clicked() {
   std::cout << "Starting capture!" << std::endl;
   camera->startCapture();
 
-  std::cout << "pattern_num: " << (unsigned)pattern_num << std::endl;
-  std::cout << "frame_num: " << (unsigned)frame_num << std::endl;
-  std::cout << "N: " << (unsigned)N << std::endl;
-
   for (int i = 0; i < N + 2; i++) {
     if (i < N) {
       projector->displayPattern(i);
@@ -506,12 +501,17 @@ void SLStudio::on_pushButton_clicked() {
     }
 
     if (success) {
-      std::string timestamp = QDateTime::currentDateTime()
-                                  .toString("dd-MM-yyyy-hh-mm-ss")
-                                  .toStdString();
-      std::string filename = "single_capture_pat_" +
-                             std::to_string(pattern_num) + "_frame_" +
-                             std::to_string(i) + "_" + timestamp + ".bmp";
+      std::string filename;
+
+      if (file_header == "") {
+        std::string timestamp = QDateTime::currentDateTime()
+                                    .toString("dd-MM-yyyy-hh-mm-ss")
+                                    .toStdString();
+        filename = "single_capture_pat_" + std::to_string(i) + "_" + timestamp +
+                   ".bmp";
+      } else {
+        filename = file_header + "_" + std::to_string(i) + ".bmp";
+      }
       cv::imwrite(filename, frameCV);
     }
   }
