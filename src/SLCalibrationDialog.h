@@ -57,7 +57,7 @@ class SLCalibrationDialog : public QDialog {
   unsigned int screenCols;
   unsigned int screenRows;
   // unsigned int m_counter = 0;
-  unsigned int m_counter = 142;
+  unsigned int m_counter = 60;
 };
 
 #endif  // SLCALIBRATAIONDIALOG_H
