@@ -116,9 +116,9 @@ void ProjectorLC4500_versavis::displayTexture(const unsigned char *tex,
 void ProjectorLC4500_versavis::displayBlack() {
   std::vector<single_pattern> pattern_vec = {};
 
-  // Settings for white pattern (pattern number 24, bit depth 1)
+  // Settings for black pattern (pattern number 24, bit depth 1)
   single_pattern temp;
-  temp.trigger_type = 0;
+  temp.trigger_type = m_is_hardware_triggered ? 1 : 0;
   temp.pattern_number = 24;
   temp.bit_depth = 1;
   temp.led_select = 7;
@@ -128,11 +128,46 @@ void ProjectorLC4500_versavis::displayBlack() {
   temp.buffer_swap = true;
   temp.trigger_out_prev = false;
 
+  unsigned int exposure_period = m_is_hardware_triggered
+                                     ? m_hardware_triggered_timings_us[0]
+                                     : m_software_trigger_timings_us[0];
+
+  unsigned int frame_period = m_is_hardware_triggered
+                                  ? m_hardware_triggered_timings_us[1]
+                                  : m_software_trigger_timings_us[1];
+
   pattern_vec.push_back(temp);
 
-  m_projector.play_pattern_sequence(pattern_vec,
-                                    m_software_trigger_timings_us[0],
-                                    m_software_trigger_timings_us[1]);
+  m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
+}
+
+void ProjectorLC4500_versavis::display_8_bit_image(int image_indice,
+                                                   int pattern_number) {
+  std::vector<single_pattern> pattern_vec = {};
+
+  // Settings for white pattern (pattern number 24, bit depth 1, invert pattern)
+  single_pattern temp;
+  temp.trigger_type = m_is_hardware_triggered ? 1 : 0;
+  temp.pattern_number = pattern_number;  // 0-G, 1-R, 2-B
+  temp.bit_depth = 8;
+  temp.led_select = 7;
+  temp.image_indice = image_indice;
+  temp.invert_pattern = false;
+  temp.insert_black_frame = false;
+  temp.buffer_swap = true;
+  temp.trigger_out_prev = false;
+
+  unsigned int exposure_period = m_is_hardware_triggered
+                                     ? m_hardware_triggered_timings_us[0]
+                                     : m_software_trigger_timings_us[0];
+
+  unsigned int frame_period = m_is_hardware_triggered
+                                  ? m_hardware_triggered_timings_us[1]
+                                  : m_software_trigger_timings_us[1];
+
+  pattern_vec.push_back(temp);
+
+  m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
 }
 
 void ProjectorLC4500_versavis::displayWhite() {
@@ -140,7 +175,7 @@ void ProjectorLC4500_versavis::displayWhite() {
 
   // Settings for white pattern (pattern number 24, bit depth 1, invert pattern)
   single_pattern temp;
-  temp.trigger_type = 0;
+  temp.trigger_type = m_is_hardware_triggered ? 1 : 0;
   temp.pattern_number = 24;
   temp.bit_depth = 1;
   temp.led_select = 7;
@@ -152,9 +187,17 @@ void ProjectorLC4500_versavis::displayWhite() {
 
   pattern_vec.push_back(temp);
 
-  m_projector.play_pattern_sequence(pattern_vec,
-                                    m_software_trigger_timings_us[0],
-                                    m_software_trigger_timings_us[1]);
+  unsigned int exposure_period = m_is_hardware_triggered
+                                     ? m_hardware_triggered_timings_us[0]
+                                     : m_software_trigger_timings_us[0];
+
+  unsigned int frame_period = m_is_hardware_triggered
+                                  ? m_hardware_triggered_timings_us[1]
+                                  : m_software_trigger_timings_us[1];
+
+  pattern_vec.push_back(temp);
+
+  m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
 }
 
 void ProjectorLC4500_versavis::getScreenRes(unsigned int *nx,

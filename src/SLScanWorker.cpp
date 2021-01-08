@@ -324,26 +324,30 @@ void SLScanWorker::doWork() {
     // Write frames to disk if desired
     if (writeToDisk) {
       for (unsigned int i = 0; i < frameSeq.size(); i++) {
-        QString filename = QString("frameSeq_%1.bmp").arg(i, 2, 10, QChar('0'));
-        cv::imwrite(filename.toStdString(), frameSeq[i]);
+        QString filename = QString("frameSeq_%2_%1.bmp")
+                               .arg(i, 2, 10, QChar('0'))
+                               .arg(k, 2, 10, QChar('0'));
+        filename = cv::imwrite(filename.toStdString(), frameSeq[i]);
       }
     }
 
     // Pass frame sequence to decoder
     emit newFrameSeq(frameSeq);
 
-    //        // Calculate and show histogram of sumimage
-    //        float range[] = {0, 255};
-    //        const float* histRange = {range};
-    //        int histSize = 256;
-    //        cv::Mat histogram;
-    //        cv::Mat frameSeqArr[] = {frameSeq[0], frameSeq[1], frameSeq[2]};
-    //        const int channels[] = {0,1,2};
-    //        cv::calcHist(frameSeqArr, 3, channels, cv::Mat(), histogram, 1,
-    //        &histSize, &histRange);
-    //        //emit hist("Histogram", histogram, 100, 50);
-    //        cv::Mat histogramImage = cvtools::histimage(histogram);
-    //        emit showHistogram(histogramImage);
+    // Calculate and show histogram of sumimage
+    /**
+    float range[] = {0, 255};
+    const float* histRange = {range};
+    int histSize = 256;
+    cv::Mat histogram;
+    cv::Mat frameSeqArr[] = {frameSeq[0], frameSeq[1], frameSeq[2]};
+    const int channels[] = {0, 1, 2};
+    cv::calcHist(frameSeqArr, 3, channels, cv::Mat(), histogram, 1, &histSize,
+                 &histRange);
+    // emit hist("Histogram", histogram, 100, 50);
+    cv::Mat histogramImage = cvtools::histimage(histogram);
+    emit showHistogram(histogramImage);
+    **/
 
     // Increase iteration counter
     k += 1;

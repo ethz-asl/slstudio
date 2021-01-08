@@ -58,6 +58,19 @@
         </rect>
        </property>
       </widget>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>420</y>
+         <width>111</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Linearity Test</string>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>

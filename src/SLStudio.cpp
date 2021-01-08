@@ -17,6 +17,7 @@
 
 #include "cvtools.h"
 
+#include "CameraROS.h"
 #include "CameraSpinnaker.h"
 #include "CodecPhaseShift2x3.h"
 #include "ProjectorLC3000.h"
@@ -522,4 +523,71 @@ void SLStudio::on_pushButton_clicked() {
   delete camera;
   delete projector;
   delete encoder;
+}
+
+void SLStudio::on_pushButton_2_clicked() {
+  //
+  unsigned int image_indices[] = {7, 49};
+  int num_photos = 10;
+  std::vector<unsigned int> display_seq = {1, 0, 2};  // R->G->B
+
+  // Initialise some parameters
+  CameraTriggerMode triggerMode = triggerModeSoftware;
+  QSettings settings("SLStudio");
+
+  int camera_indice = 0;
+  // Since we are displaying the same pattern until all images are captured
+  // software trigger mode for the ROS camera is sufficient
+  CameraROS camera{camera_indice, triggerModeSoftware};
+
+  // Set camera settings
+  CameraSettings camSettings;
+  camSettings.shutter = 8.333;
+  camSettings.gain = 0.0;
+  camera.setCameraSettings(camSettings);
+
+  // Initialize projector (just set to versavis for now, only displays patterns
+  // stored in flash)
+  ProjectorLC4500_versavis projector{0};
+
+  // Init projector
+  auto is_hardware_triggered = std::make_shared<bool>(false);
+  auto void_is_hardware_triggered =
+      std::static_pointer_cast<void>(is_hardware_triggered);
+  projector.load_param("is_hardware_triggered", void_is_hardware_triggered);
+
+  auto is_in_calibration_mode = std::make_shared<bool>(false);
+  auto void_is_in_calibration_mode =
+      std::static_pointer_cast<void>(is_in_calibration_mode);
+  projector.load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+
+  projector.init();
+
+  std::cout << "Starting capture!" << std::endl;
+  camera.startCapture();
+
+  for (int i = image_indices[0]; i <= image_indices[1]; i++) {
+    for (int j = 0; j < display_seq.size(); j++) {
+      projector.display_8_bit_image(i, display_seq[j]);
+      // Give projector some time to receive and execute change in pattern
+      // display
+      std::this_thread::sleep_for(std::chrono::milliseconds((int)(1000)));
+      for (int k = 1; k <= num_photos; k++) {
+        std::cout << "Capturing frame " << i << " pattern " << j
+                  << " iteration " << k << std::endl;
+
+        CameraFrame frame;
+        frame = camera.getFrame();
+        cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+        frameCV = frameCV.clone();
+        std::string filename = "Intensity_" + std::to_string(i) + "_" +
+                               std::to_string(j) + "_" + std::to_string(k) +
+                               ".bmp";
+        cv::imwrite(filename, frameCV);
+      }
+    }
+  }
+
+  camera.stopCapture();
+  projector.displayBlack();
 }
