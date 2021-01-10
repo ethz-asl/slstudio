@@ -399,7 +399,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
       temp2.trigger_out_prev = false;
       pattern_vec.push_back(temp2);
 
-      if (m_is_30_hz) {
+      if (m_is_30_hz_8333_us_exposure) {
         for (int k = 0; k < 2; k++) {
           single_pattern temp2;
           temp2.trigger_type = 3;
@@ -440,7 +440,7 @@ std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
     return std::static_pointer_cast<void>(std::make_shared<ros::Time>(
         m_trigger_time +
         ros::Duration(0, m_pattern_no * m_hardware_triggered_timings_us[0] *
-                             ((m_is_30_hz) ? 4 : 2) * 1000)));
+                             ((m_is_30_hz_8333_us_exposure) ? 4 : 2) * 1000)));
     // Multiply by factor of 2 because remember we display 2 exposures on
     // the projector, for 30Hz, we are displaying 4 exposures instead
 
@@ -502,7 +502,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
       temp2.trigger_out_prev = false;
       pattern_vec.push_back(temp2);
 
-      if (m_is_30_hz) {
+      if (m_is_30_hz_8333_us_exposure) {
         for (int k = 0; k < 2; k++) {
           single_pattern temp2;
           temp2.trigger_type = 3;

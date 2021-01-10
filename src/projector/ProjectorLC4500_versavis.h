@@ -83,11 +83,11 @@ class ProjectorLC4500_versavis : public Projector {
   std::vector<single_pattern> get_scanning_pattern_sequence_hardware();
   std::vector<single_pattern> get_scanning_pattern_2_plus_1_software();
   std::vector<single_pattern> get_scanning_pattern_2_plus_1_hardware();
-  const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
-  const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
-  const bool m_is_30_hz = true;
-  // const unsigned int m_software_trigger_timings_us[2] = {16667, 16667};
-  // const unsigned int m_hardware_triggered_timings_us[2] = {16667, 16667};
+  // const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
+  // const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
+  const bool m_is_30_hz_8333_us_exposure = false;
+  const unsigned int m_software_trigger_timings_us[2] = {16667, 16667};
+  const unsigned int m_hardware_triggered_timings_us[2] = {16667, 16667};
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
   // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; // nn
   // Blackfly
