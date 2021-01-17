@@ -56,8 +56,8 @@ class SLCalibrationDialog : public QDialog {
   bool diamondPattern;
   unsigned int screenCols;
   unsigned int screenRows;
-  // unsigned int m_counter = 0;
-  unsigned int m_counter = 60;
+  unsigned int m_counter = 0;
+  // unsigned int m_counter = 60;
 };
 
 #endif  // SLCALIBRATAIONDIALOG_H
