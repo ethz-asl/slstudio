@@ -526,9 +526,9 @@ void SLStudio::on_pushButton_clicked() {
 }
 
 void SLStudio::on_pushButton_2_clicked() {
-  //
-  unsigned int image_indices[] = {7, 49};
-  int num_photos = 10;
+  // unsigned int image_indices[] = {7, 49};
+  unsigned int image_indices[] = {7, 7};
+  int num_photos = 3;
   std::vector<unsigned int> display_seq = {1, 0, 2};  // R->G->B
 
   // Initialise some parameters
@@ -538,13 +538,34 @@ void SLStudio::on_pushButton_2_clicked() {
   int camera_indice = 0;
   // Since we are displaying the same pattern until all images are captured
   // software trigger mode for the ROS camera is sufficient
-  CameraROS camera{camera_indice, triggerModeSoftware};
+
+  // CameraROS camera{camera_indice, triggerModeSoftware};
+
+  CameraSpinnaker camera{camera_indice, triggerModeSoftware};
 
   // Set camera settings
   CameraSettings camSettings;
-  camSettings.shutter = 8.333;
+  camSettings.shutter = 16.667f;
+  // camSettings.shutter = 8.333f;
   camSettings.gain = 0.0;
   camera.setCameraSettings(camSettings);
+
+  // Grab single image
+  /**
+  camera.startCapture();
+  CameraFrame frame;
+  frame = camera.getFrame();
+  // For RGB8 images
+  cv::Mat frameCV(frame.height, frame.width, CV_8UC3, frame.memory);
+  cv::cvtColor(frameCV, frameCV, cv::COLOR_RGB2BGR);
+
+  frameCV = frameCV.clone();
+  std::string filename = "initial.bmp";
+  cv::imwrite(filename, frameCV);
+  camera.stopCapture();
+
+  cout << "Done" << endl;
+  **/
 
   // Initialize projector (just set to versavis for now, only displays patterns
   // stored in flash)
@@ -578,7 +599,13 @@ void SLStudio::on_pushButton_2_clicked() {
 
         CameraFrame frame;
         frame = camera.getFrame();
-        cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+
+        // cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+
+        // For RGB8 images
+        cv::Mat frameCV(frame.height, frame.width, CV_8UC3, frame.memory);
+        cv::cvtColor(frameCV, frameCV, cv::COLOR_RGB2BGR);
+
         frameCV = frameCV.clone();
         std::string filename = "Intensity_" + std::to_string(i) + "_" +
                                std::to_string(j) + "_" + std::to_string(k) +

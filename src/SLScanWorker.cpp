@@ -28,6 +28,7 @@
 #include "ProjectorLC4500_versavis.h"
 #include "ProjectorOpenGL.h"
 
+#include "CameraSpinnaker.h"
 #include "SLCameraVirtual.h"
 #include "SLPointCloudWidget.h"
 #include "SLProjectorVirtual.h"
@@ -49,12 +50,16 @@ void SLScanWorker::setup() {
               << sTriggerMode.toStdString() << std::endl;
 
   // Create camera
+
   int iNum = settings.value("camera/interfaceNumber", -1).toInt();
   int cNum = settings.value("camera/cameraNumber", -1).toInt();
   if (iNum != -1)
     camera = Camera::NewCamera(iNum, cNum, triggerMode);
   else
     camera = new SLCameraVirtual(cNum, triggerMode);
+
+  // Temp use point grey because trigger wire broke :(
+  // camera = new CameraSpinnaker(0, triggerMode);
 
   // Set camera settings
   CameraSettings camSettings;

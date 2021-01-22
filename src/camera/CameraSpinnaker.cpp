@@ -226,20 +226,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
-  // Set no pixel color filter
-  try {
-    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelColorFilter) &&
-        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelColorFilter)) {
-      m_cam_ptr->PixelColorFilter.SetValue(Spinnaker::PixelColorFilter_None);
-      cout << "Disabled all pixel color filters" << endl;
-    } else {
-      cout << "Failed to disable pixel color filters" << endl;
-      // throw;
-    }
-  } catch (Spinnaker::Exception& e) {
-    cout << "Error: " << e.what() << endl;
-  }
-
   // Set pixel format to be Mono8
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
@@ -250,6 +236,38 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
            << endl;
     } else {
       cout << "Pixel format not available..." << endl;
+      // throw;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  /**
+  // Set pixel format to be RGB8
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
+      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_RGB8);
+      cout << "Pixel format set to "
+           << m_cam_ptr->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
+           << endl;
+    } else {
+      cout << "Pixel format not available..." << endl;
+      // throw;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+  **/
+
+  // Set no pixel color filter
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelColorFilter) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelColorFilter)) {
+      m_cam_ptr->PixelColorFilter.SetValue(Spinnaker::PixelColorFilter_None);
+      cout << "Disabled all pixel color filters" << endl;
+    } else {
+      cout << "Failed to disable pixel color filters" << endl;
       // throw;
     }
   } catch (Spinnaker::Exception& e) {
@@ -518,6 +536,19 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
       cout << "Set black level to " << m_cam_ptr->BlackLevel.GetValue() << endl;
     } else {
       cout << "Unable to set black value to zero" << endl;
+    }
+  } catch (Spinnaker::Exception& e) {
+    cout << "Error: " << e.what() << endl;
+  }
+
+  // Turn off white balance
+  try {
+    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BalanceWhiteAuto) &&
+        Spinnaker::GenApi::IsWritable(m_cam_ptr->BalanceWhiteAuto)) {
+      m_cam_ptr->BalanceWhiteAuto.SetValue(Spinnaker::BalanceWhiteAuto_Off);
+      cout << "Set white balance off " << endl;
+    } else {
+      cout << "Unable to set white balance to off" << endl;
     }
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
