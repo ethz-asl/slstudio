@@ -27,7 +27,7 @@ class ProjectorLC4500_versavis : public Projector {
   void setPattern(unsigned int patternNumber, const unsigned char *tex,
                   unsigned int texWidth, unsigned int texHeight);
   void displayPattern(unsigned int patternNumber);
-  // Upload and display pattern on the fly
+  //  Upload and display pattern on the fly
   void displayTexture(const unsigned char *tex, unsigned int width,
                       unsigned int height);
   void displayBlack();
@@ -74,9 +74,9 @@ class ProjectorLC4500_versavis : public Projector {
 
   // const unsigned char m_rgb_white[3] = {75, 0, 0};
   // const unsigned char m_rgb_white[3] = {104, 0, 0};
-  // const unsigned char m_rgb_white[3] = {0, 88, 0};
+  const unsigned char m_rgb_white[3] = {0, 88, 0};
   // const unsigned char m_rgb_white[3] = {0, 0, 36};
-  const unsigned char m_rgb_white[3] = {104, 88, 36};
+  // const unsigned char m_rgb_white[3] = {104, 88, 36};
 
   bool m_first_time_hardware_triggered = false;
   bool m_is_in_calibration_mode = false;

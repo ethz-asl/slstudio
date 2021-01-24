@@ -526,8 +526,8 @@ void SLStudio::on_pushButton_clicked() {
 }
 
 void SLStudio::on_pushButton_2_clicked() {
-  // unsigned int image_indices[] = {7, 49};
-  unsigned int image_indices[] = {7, 7};
+  unsigned int image_indices[] = {7, 49};
+  // unsigned int image_indices[] = {7, 7};
   int num_photos = 3;
   std::vector<unsigned int> display_seq = {1, 0, 2};  // R->G->B
 
@@ -600,6 +600,7 @@ void SLStudio::on_pushButton_2_clicked() {
         CameraFrame frame;
         frame = camera.getFrame();
 
+        // Mono 8 Images
         // cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
 
         // For RGB8 images

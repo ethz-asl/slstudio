@@ -156,6 +156,30 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     **/
 
     // Retrieve GenICam nodemap
+    // Set Video Mode 0 (Full Resolution)
+
+    /**
+    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
+    Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
+        nodeMap.GetNode("VideoMode");
+    if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
+        !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
+      cout << "Unable to access Video Mode. "
+              "Aborting..."
+           << endl;
+      throw;
+    }
+
+    Spinnaker::GenApi::CEnumEntryPtr ptrMode1 =
+        ptrVideoMode->GetEntryByName("Mode0");
+    if (!Spinnaker::GenApi::IsAvailable(ptrMode1) ||
+        !Spinnaker::GenApi::IsReadable(ptrMode1)) {
+      cout << "Video Mode 0 is not available. Aborting... " << endl;
+      throw;
+    }
+    **/
+
+    // Retrieve GenICam nodemap
     // Set Video Mode 1 (2x2 Average Binning)
 
     Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
@@ -227,6 +251,7 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   }
 
   // Set pixel format to be Mono8
+
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
@@ -242,8 +267,8 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     cout << "Error: " << e.what() << endl;
   }
 
-  /**
   // Set pixel format to be RGB8
+  /**
   try {
     if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
         Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
