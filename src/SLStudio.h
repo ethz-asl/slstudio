@@ -64,6 +64,8 @@ class SLStudio : public QMainWindow {
 
   void on_pushButton_2_clicked();
 
+  void on_pushButton_3_clicked();
+
  signals:
   void newPointCloud(PointCloudConstPtr pointCloud);
 

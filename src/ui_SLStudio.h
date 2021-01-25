@@ -49,6 +49,7 @@ public:
     QPushButton *pushButton;
     QLineEdit *lineEdit;
     QPushButton *pushButton_2;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QMenu *menuCalibration;
     QMenu *menuSLStudio;
@@ -121,6 +122,9 @@ public:
         pushButton_2 = new QPushButton(pointCloudWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
         pushButton_2->setGeometry(QRect(220, 420, 111, 25));
+        pushButton_3 = new QPushButton(pointCloudWidget);
+        pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setGeometry(QRect(340, 420, 141, 25));
 
         gridLayout->addWidget(pointCloudWidget, 0, 1, 1, 1);
 
@@ -207,6 +211,7 @@ public:
         actionUpdatePointClouds->setText(QApplication::translate("SLStudio", "Update Point Clouds", Q_NULLPTR));
         pushButton->setText(QApplication::translate("SLStudio", "Grab Image", Q_NULLPTR));
         pushButton_2->setText(QApplication::translate("SLStudio", "Linearity Test", Q_NULLPTR));
+        pushButton_3->setText(QApplication::translate("SLStudio", "Generate Patterns", Q_NULLPTR));
         menuCalibration->setTitle(QApplication::translate("SLStudio", "Calibration", Q_NULLPTR));
         menuSLStudio->setTitle(QApplication::translate("SLStudio", "SLStudio", Q_NULLPTR));
         menuScan->setTitle(QApplication::translate("SLStudio", "Scan", Q_NULLPTR));

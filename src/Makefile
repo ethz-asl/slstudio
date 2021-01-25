@@ -98,6 +98,7 @@ SOURCES       = main.cpp \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
 		projector/ProjectorLC4500_versavis.cpp \
+		codec/CodecPhaseShift2p1Tpu.cpp \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -180,6 +181,7 @@ OBJECTS       = main.o \
 		TrackerPCL.o \
 		PoseFilter.o \
 		ProjectorLC4500_versavis.o \
+		CodecPhaseShift2p1Tpu.o \
 		OpenGLContext.GLFW.o \
 		CameraIIDC.o \
 		CameraPointGrey.o \
@@ -360,6 +362,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/PoseFilter.h \
 		cvtools.h \
 		projector/ProjectorLC4500_versavis.h \
+		codec/CodecPhaseShift2p1Tpu.h \
 		camera/CameraIIDC.h \
 		camera/CameraPointGrey.h \
 		camera/CameraSpinnaker.h \
@@ -412,6 +415,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		tracker/TrackerPCL.cpp \
 		tracker/PoseFilter.cpp \
 		projector/ProjectorLC4500_versavis.cpp \
+		codec/CodecPhaseShift2p1Tpu.cpp \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
@@ -648,8 +652,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents SLResources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h projector/ProjectorLC4500_versavis.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h projector/LC4500API/Lightcrafter_4500_pattern_api.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/ProjectorLC4500_versavis.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/dlpc350_common.cpp projector/LC4500API/dlpc350_firmware.cpp projector/LC4500API/dlpc350_BMPParser.cpp projector/LC4500API/hid.Libusb.c projector/LC4500API/Lightcrafter_4500_pattern_api.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h projector/ProjectorLC4500_versavis.h codec/CodecPhaseShift2p1Tpu.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h projector/LC4500API/Lightcrafter_4500_pattern_api.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/ProjectorLC4500_versavis.cpp codec/CodecPhaseShift2p1Tpu.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/dlpc350_common.cpp projector/LC4500API/dlpc350_firmware.cpp projector/LC4500API/dlpc350_BMPParser.cpp projector/LC4500API/hid.Libusb.c projector/LC4500API/Lightcrafter_4500_pattern_api.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents SLStudio.ui SLPreferenceDialog.ui SLCalibrationDialog.ui SLVideoDialog.ui SLAboutDialog.ui SLTrackerDialog.ui $(DISTDIR)/
 
 
@@ -979,6 +983,7 @@ SLStudio.o: SLStudio.cpp SLStudio.h \
 		/opt/ros/melodic/include/std_msgs/Header.h \
 		../../catkin_ws/devel/include/versavis/TimeNumbered.h \
 		camera/CameraSpinnaker.h \
+		codec/CodecPhaseShift2p1Tpu.h \
 		codec/CodecPhaseShift2x3.h \
 		projector/ProjectorLC3000.h \
 		projector/LC3000API/lcr_cmd.h \
@@ -1403,8 +1408,8 @@ CodecFastRatio.o: codec/CodecFastRatio.cpp codec/CodecFastRatio.h \
 
 CodecPhaseShift2p1.o: codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShift2p1.h \
 		codec/Codec.h \
-		codec/pstools.h \
-		cvtools.h
+		cvtools.h \
+		codec/pstools.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CodecPhaseShift2p1.o codec/CodecPhaseShift2p1.cpp
 
 CodecPhaseShiftModulated.o: codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftModulated.h \
@@ -1554,6 +1559,12 @@ ProjectorLC4500_versavis.o: projector/ProjectorLC4500_versavis.cpp projector/Pro
 		projector/LC4500API/dlpc350_common.h \
 		projector/LC4500API/dlpc350_usb.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ProjectorLC4500_versavis.o projector/ProjectorLC4500_versavis.cpp
+
+CodecPhaseShift2p1Tpu.o: codec/CodecPhaseShift2p1Tpu.cpp codec/CodecPhaseShift2p1Tpu.h \
+		codec/Codec.h \
+		cvtools.h \
+		codec/pstools.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CodecPhaseShift2p1Tpu.o codec/CodecPhaseShift2p1Tpu.cpp
 
 OpenGLContext.GLFW.o: projector/OpenGLContext.GLFW.cpp projector/OpenGLContext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o OpenGLContext.GLFW.o projector/OpenGLContext.GLFW.cpp

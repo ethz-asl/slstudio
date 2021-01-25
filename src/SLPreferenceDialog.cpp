@@ -66,6 +66,8 @@ SLPreferenceDialog::SLPreferenceDialog(QWidget *parent)
                                    "CodecPhaseShift3FastWrap");
   ui->patternModeComboBox->addItem("2+1 Pattern Phase Shift",
                                    "CodecPhaseShift2p1");
+  ui->patternModeComboBox->addItem("2+1 Pattern Phase Shift with TPU",
+                                   "CodecPhaseShift2p1Tpu");
   ui->patternModeComboBox->addItem("Descattering Phase Shift",
                                    "CodecPhaseShiftDescatter");
   ui->patternModeComboBox->addItem("Modulated Phase Shift",
@@ -108,7 +110,8 @@ SLPreferenceDialog::SLPreferenceDialog(QWidget *parent)
 
   // float shutter = settings.value("camera/shutter", 16.666).toFloat();
   // Quick hack to make sure that default exposure time is 8.333
-  float shutter = 8.333f;
+  // float shutter = 8.333f;
+  float shutter = 16.667f;
   ui->shutterDoubleSpinBox->setValue(shutter);
 
   QString triggerMode = settings.value("trigger/mode", "hardware").toString();

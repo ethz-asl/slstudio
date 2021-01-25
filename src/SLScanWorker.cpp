@@ -13,6 +13,7 @@
 #include "CodecFastRatio.h"
 #include "CodecGrayCode.h"
 #include "CodecPhaseShift2p1.h"
+#include "CodecPhaseShift2p1Tpu.h"
 #include "CodecPhaseShift2x3.h"
 #include "CodecPhaseShift3.h"
 #include "CodecPhaseShift3FastWrap.h"
@@ -132,6 +133,8 @@ void SLScanWorker::setup() {
     encoder = new EncoderPhaseShift3FastWrap(screenCols, screenRows, dir);
   else if (patternMode == "CodecPhaseShift2p1")
     encoder = new EncoderPhaseShift2p1(screenCols, screenRows, dir);
+  else if (patternMode == "CodecPhaseShift2p1Tpu")
+    encoder = new EncoderPhaseShift2p1Tpu(screenCols, screenRows, dir);
   else if (patternMode == "CodecPhaseShiftDescatter")
     encoder = new EncoderPhaseShiftDescatter(screenCols, screenRows, dir);
   else if (patternMode == "CodecPhaseShiftModulated")
@@ -159,7 +162,7 @@ void SLScanWorker::setup() {
   projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
 
   auto is_2_plus_1_mode = std::make_shared<bool>(
-      (patternMode == "CodecPhaseShift2p1") ? true : false);
+      (patternMode == "CodecPhaseShift2p1Tpu") ? true : false);
   auto void_is_2_plus_1_mode = std::static_pointer_cast<void>(is_2_plus_1_mode);
   projector->load_param("is_2_plus_1_mode", void_is_2_plus_1_mode);
 
@@ -366,9 +369,12 @@ void SLScanWorker::doWork() {
 
   camera->stopCapture();
 
+  projector->displayBlack();
+
   // Really dirty fix to close USB connection with Lightcrafter after a scan or
   // else there will be problems during the second scan by destroying projector
   // class object then creating a new one
+  /**
   int screenNum = settings.value("projector/screenNumber", -1).toInt();
   if (screenNum == -4) {
     delete projector;
@@ -377,6 +383,7 @@ void SLScanWorker::doWork() {
     delete camera;
     camera = nullptr;
   }
+  **/
 
   // Emit message to e.g. initiate thread break down
   emit finished();

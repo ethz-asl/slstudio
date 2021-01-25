@@ -74,7 +74,8 @@ class ProjectorLC4500_versavis : public Projector {
 
   // const unsigned char m_rgb_white[3] = {75, 0, 0};
   // const unsigned char m_rgb_white[3] = {104, 0, 0};
-  const unsigned char m_rgb_white[3] = {0, 88, 0};
+  // const unsigned char m_rgb_white[3] = {0, 88, 0};
+  const unsigned char m_rgb_white[3] = {0, 60, 0};
   // const unsigned char m_rgb_white[3] = {0, 0, 36};
   // const unsigned char m_rgb_white[3] = {104, 88, 36};
 
@@ -88,20 +89,15 @@ class ProjectorLC4500_versavis : public Projector {
   std::vector<single_pattern> get_scanning_pattern_2_plus_1_software();
   std::vector<single_pattern> get_scanning_pattern_2_plus_1_hardware();
   // const unsigned int m_software_trigger_timings_us[2] = {8333, 8333};
-  // const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
+  //  const unsigned int m_hardware_triggered_timings_us[2] = {8333, 8333};
   const bool m_is_30_hz_8333_us_exposure = false;
   const unsigned int m_software_trigger_timings_us[2] = {16667, 16667};
   const unsigned int m_hardware_triggered_timings_us[2] = {16667, 16667};
   const std::vector<int> m_calibration_image_indices = {3, 4, 5, 6};
-  // const std::vector<int> m_scanning_image_indices = {7, 8, 9, 10}; // nn
-  //   Blackfly
-  // const std::vector<int> m_scanning_image_indices = {11, 12, 13,
-  //                                                   14};  // Grasshopper Dec
-  // const std::vector<int> m_scanning_image_indices = {15, 16, 17,
-  //                                                   18};  // Grasshopper Bin
-  const std::vector<int> m_2_plus_1_image_indices = {19};  //  PSP 2+1
+  const std::vector<int> m_2_plus_1_image_indices = {11, 12, 13,
+                                                     14};  //  PSP 2+1
   const std::vector<int> m_scanning_image_indices = {
-      7, 8, 9, 10};  // Grasshopper Bin  Center
+      7, 8, 9, 10};  // Grasshopper Bin   Center
   void load_pattern_sequence();
   bool m_display_horizontal_pattern = true;
   bool m_display_vertical_pattern = true;

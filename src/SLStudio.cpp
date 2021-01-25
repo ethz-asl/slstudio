@@ -19,6 +19,7 @@
 
 #include "CameraROS.h"
 #include "CameraSpinnaker.h"
+#include "CodecPhaseShift2p1Tpu.h"
 #include "CodecPhaseShift2x3.h"
 #include "ProjectorLC3000.h"
 #include "ProjectorLC4500.h"
@@ -618,4 +619,61 @@ void SLStudio::on_pushButton_2_clicked() {
 
   camera.stopCapture();
   projector.displayBlack();
+}
+
+void SLStudio::on_pushButton_3_clicked() {
+  QSettings settings("SLStudio");
+
+  // Initialize encoder
+  bool diamondPattern =
+      settings.value("projector/diamondPattern", false).toBool();
+
+  CodecDir dir =
+      (CodecDir)settings.value("pattern/direction", CodecDirHorizontal).toInt();
+
+  ProjectorLC4500_versavis projector{0};
+
+  unsigned int screenResX, screenResY;
+  projector.getScreenRes(&screenResX, &screenResY);
+
+  // Unique number of rows and columns
+  unsigned int screenCols, screenRows;
+  if (diamondPattern) {
+    screenCols = 2 * screenResX;
+    screenRows = screenResY;
+  } else {
+    screenCols = screenResX;
+    screenRows = screenResY;
+  }
+
+  EncoderPhaseShift2p1Tpu encoder(screenCols, screenRows, dir);
+
+  // Lens correction and upload patterns to projector/GPU
+  CalibrationData calibration;
+  calibration.load("calibration.xml");
+
+  cv::Mat map1, map2;
+  cv::Size mapSize = cv::Size(screenCols, screenRows);
+  cvtools::initDistortMap(calibration.Kp, calibration.kp, mapSize, map1, map2);
+
+  std::cout << calibration.Kp << std::endl;
+
+  std::cout << calibration.kp << std::endl;
+
+  // Generate patterns and save
+  for (unsigned int i = 0; i < encoder.getNPatterns(); i++) {
+    cv::Mat pattern = encoder.getEncodingPattern(i);
+
+    // general repmat
+    pattern = cv::repeat(pattern, screenRows / pattern.rows + 1,
+                         screenCols / pattern.cols + 1);
+    pattern = pattern(cv::Range(0, screenRows), cv::Range(0, screenCols));
+
+    // correct for lens distortion
+    cv::remap(pattern, pattern, map1, map2, CV_INTER_CUBIC);
+
+    if (diamondPattern) pattern = cvtools::diamondDownsample(pattern);
+
+    cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
+  }
 }

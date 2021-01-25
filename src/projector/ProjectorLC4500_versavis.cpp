@@ -453,14 +453,26 @@ std::vector<single_pattern>
 ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_software() {
   std::vector<single_pattern> pattern_vec = {};
 
-  for (int i = 0; i < m_2_plus_1_image_indices.size(); i++) {
+  std::vector<int> images_indices_to_display;
+
+  if (m_display_horizontal_pattern) {
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[0]);
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[1]);
+  }
+
+  if (m_display_vertical_pattern) {
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[2]);
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[3]);
+  }
+
+  for (int i = 0; i < images_indices_to_display.size(); i++) {
     for (int j = 0; j < 3; j++) {
       single_pattern temp;
       temp.trigger_type = 0;
       temp.pattern_number = j;
       temp.bit_depth = 8;
       temp.led_select = 7;
-      temp.image_indice = m_2_plus_1_image_indices[i];
+      temp.image_indice = images_indices_to_display[i];
       temp.invert_pattern = false;
       temp.insert_black_frame = false;
       temp.buffer_swap = true;
@@ -469,6 +481,9 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_software() {
     }
   }
 
+  // Remove last entry (2P1 TPU only requires 5 patterns)
+  pattern_vec.pop_back();
+
   return pattern_vec;
 }
 
@@ -476,14 +491,26 @@ std::vector<single_pattern>
 ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
   std::vector<single_pattern> pattern_vec = {};
 
-  for (int i = 0; i < m_2_plus_1_image_indices.size(); i++) {
+  std::vector<int> images_indices_to_display;
+
+  if (m_display_horizontal_pattern) {
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[0]);
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[1]);
+  }
+
+  if (m_display_vertical_pattern) {
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[2]);
+    images_indices_to_display.push_back(m_2_plus_1_image_indices[3]);
+  }
+
+  for (int i = 0; i < images_indices_to_display.size(); i++) {
     for (int j = 0; j < 3; j++) {
       single_pattern temp1;
       temp1.trigger_type = (i == 0 && j == 0) ? 1 : 3;
       temp1.pattern_number = j;
       temp1.bit_depth = 8;
       temp1.led_select = 7;
-      temp1.image_indice = m_2_plus_1_image_indices[i];
+      temp1.image_indice = images_indices_to_display[i];
       temp1.invert_pattern = false;
       temp1.insert_black_frame = false;
       temp1.buffer_swap = (j == 0) ? true : false;
@@ -495,7 +522,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
       temp2.pattern_number = j;
       temp2.bit_depth = 8;
       temp2.led_select = 7;
-      temp2.image_indice = m_2_plus_1_image_indices[i];
+      temp2.image_indice = images_indices_to_display[i];
       temp2.invert_pattern = false;
       temp2.insert_black_frame = false;
       temp2.buffer_swap = false;
@@ -509,7 +536,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
           temp2.pattern_number = j;
           temp2.bit_depth = 8;
           temp2.led_select = 7;
-          temp2.image_indice = m_2_plus_1_image_indices[i];
+          temp2.image_indice = images_indices_to_display[i];
           temp2.invert_pattern = false;
           temp2.insert_black_frame = false;
           temp2.buffer_swap = false;
@@ -519,6 +546,9 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
       }
     }
   }
+
+  // Remove last entry (2P1 TPU only requires 5 patterns)
+  pattern_vec.pop_back();
 
   return pattern_vec;
 }
