@@ -66,7 +66,7 @@ class ProjectorLC4500_versavis : public Projector {
   Lightcrafter_4500_pattern_api m_projector;
   // const unsigned char m_rgb_white[3] = {29, 25, 9};  // Grasshopper dec
   // const unsigned char m_rgb_white[3] = {27, 23, 9};  // Grasshopper dec
-  // const unsigned char m_rgb_white[3] = {25, 20, 8};  // Blackfly
+  // const unsigned char m_rgb_white[3] = {25, 20, 8};  //   Blackfly
   // const unsigned char m_rgb_white[3] = {23, 17, 7};  // Grasshopper bin
   // const unsigned char m_rgb_white[3] = {32, 27, 10};  // Grasshopper  bin  30
   // good const unsigned char m_rgb_white[3] = {25, 20, 8};  // Grasshopper  bin

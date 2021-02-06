@@ -12,7 +12,7 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_LC3000API -DWITH_LC4500API -DWITH_LC4500_VERSAVIS_API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
+DEFINES       = -DWITH_CAMERAIIDC -DWITH_CAMERAPOINTGREY -DWITH_CAMERASPINNAKER -DWITH_CAMERAROS -DWITH_LC3000API -DWITH_LC4500API -DWITH_LC4500_VERSAVIS_API -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_TESTLIB_LIB -DQT_CORE_LIB -DQT_TESTCASE_BUILDDIR='"/home/ltf/slstudio/src"'
 CFLAGS        = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -D_REENTRANT -Wall -W -fPIC $(DEFINES)
 INCPATH       = -I. -Icamera -Iprojector -Icodec -Itriangulator -Icalibrator -Itracker -isystem /usr/include/vtk-6.3 -isystem /usr/include/pcl-1.8 -isystem /usr/include/eigen3 -isystem /usr/include/GLFW/glfw3.h -isystem /usr/include/flycapture -isystem /usr/include/spinnaker -Iprojector/LC4500API -I/opt/ros/melodic/include -I../../catkin_ws/devel/include -isystem /usr/include/opencv -isystem /usr/include/ni -isystem /usr/include/openni2 -isystem /usr/include/eigen3 -isystem /usr/include/libdrm -I/opt/ros/melodic/include -isystem /usr/include/libusb-1.0 -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtOpenGL -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtTest -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
@@ -102,6 +102,7 @@ SOURCES       = main.cpp \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
+		camera/CameraROS.cpp \
 		camera/CameraSpinnaker.cpp \
 		projector/ProjectorLC3000.cpp \
 		projector/LC3000API/lcr_cmd.cpp \
@@ -185,6 +186,7 @@ OBJECTS       = main.o \
 		OpenGLContext.GLFW.o \
 		CameraIIDC.o \
 		CameraPointGrey.o \
+		CameraROS.o \
 		CameraSpinnaker.o \
 		ProjectorLC3000.o \
 		lcr_cmd.o \
@@ -365,6 +367,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		codec/CodecPhaseShift2p1Tpu.h \
 		camera/CameraIIDC.h \
 		camera/CameraPointGrey.h \
+		camera/CameraROS.h \
 		camera/CameraSpinnaker.h \
 		projector/LC3000API/lcr_cmd.h \
 		projector/LC4500API/Lightcrafter_4500_pattern_api.h main.cpp \
@@ -419,6 +422,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		projector/OpenGLContext.GLFW.cpp \
 		camera/CameraIIDC.cpp \
 		camera/CameraPointGrey.cpp \
+		camera/CameraROS.cpp \
 		camera/CameraSpinnaker.cpp \
 		projector/ProjectorLC3000.cpp \
 		projector/LC3000API/lcr_cmd.cpp \
@@ -652,8 +656,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents SLResources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h projector/ProjectorLC4500_versavis.h codec/CodecPhaseShift2p1Tpu.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h projector/LC4500API/Lightcrafter_4500_pattern_api.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/ProjectorLC4500_versavis.cpp codec/CodecPhaseShift2p1Tpu.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/dlpc350_common.cpp projector/LC4500API/dlpc350_firmware.cpp projector/LC4500API/dlpc350_BMPParser.cpp projector/LC4500API/hid.Libusb.c projector/LC4500API/Lightcrafter_4500_pattern_api.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents SLStudio.h SLVideoWidget.h SLPreferenceDialog.h SLCalibrationDialog.h SLCameraVirtual.h SLProjectorVirtual.h SLScanWorker.h SLDecoderWorker.h SLTrackerWorker.h SLVideoDialog.h SLAboutDialog.h SLPoseWidget.h SLPointCloudWidget.h SLTrackerDialog.h SLTriangulatorWorker.h SLTraceWidget.h camera/Camera.h projector/Projector.h projector/ProjectorOpenGL.h projector/OpenGLContext.h projector/ProjectorLC3000.h projector/ProjectorLC4500.h codec/Codec.h codec/phaseunwrap.h codec/phasecorr.h codec/pstools.h codec/CodecCalibration.h codec/CodecPhaseShift2x3.h codec/CodecPhaseShiftDescatter.h codec/CodecPhaseShift3.h codec/CodecPhaseShift3FastWrap.h codec/CodecPhaseShift3Unwrap.h codec/CodecPhaseShift4.h codec/CodecGrayCode.h codec/CodecPhaseShift2p1.h codec/CodecFastRatio.h codec/CodecPhaseShiftModulated.h codec/CodecPhaseShiftMicro.h codec/CodecPhaseShiftNStep.h triangulator/Triangulator.h calibrator/CalibrationData.h calibrator/Calibrator.h calibrator/CalibratorLocHom.h calibrator/CalibratorRBF.h calibrator/CThinPlateSpline.h calibrator/RBFInterpolator.h tracker/Tracker.h tracker/TrackerICP.h tracker/TrackerNDT.h tracker/CorrRejectOrgBoundFast.h tracker/CorrEstOrgProjFast.h tracker/CorrEstKdTreeFast.h tracker/TrackerPCL.h tracker/PoseFilter.h cvtools.h projector/ProjectorLC4500_versavis.h codec/CodecPhaseShift2p1Tpu.h camera/CameraIIDC.h camera/CameraPointGrey.h camera/CameraROS.h camera/CameraSpinnaker.h projector/LC3000API/lcr_cmd.h projector/LC4500API/Lightcrafter_4500_pattern_api.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp SLStudio.cpp SLScanWorker.cpp SLDecoderWorker.cpp SLTrackerWorker.cpp SLVideoWidget.cpp SLPreferenceDialog.cpp SLCalibrationDialog.cpp SLCameraVirtual.cpp SLProjectorVirtual.cpp SLVideoDialog.cpp SLAboutDialog.cpp SLPoseWidget.cpp SLPointCloudWidget.cpp SLTrackerDialog.cpp SLTriangulatorWorker.cpp SLTraceWidget.cpp camera/Camera.cpp projector/ProjectorOpenGL.cpp codec/phaseunwrap.cpp codec/phasecorr.cpp codec/CodecCalibration.cpp codec/CodecPhaseShift2x3.cpp codec/CodecPhaseShiftDescatter.cpp codec/CodecPhaseShift3.cpp codec/CodecPhaseShift3FastWrap.cpp codec/CodecPhaseShift3Unwrap.cpp codec/CodecPhaseShift4.cpp codec/CodecFastRatio.cpp codec/CodecPhaseShift2p1.cpp codec/CodecPhaseShiftModulated.cpp codec/CodecPhaseShiftMicro.cpp codec/CodecGrayCode.cpp codec/pstools.cpp codec/CodecPhaseShiftNStep.cpp triangulator/Triangulator.cpp calibrator/CalibrationData.cpp calibrator/CalibratorLocHom.cpp calibrator/CalibratorRBF.cpp calibrator/CThinPlateSpline.cpp calibrator/RBFInterpolator.cpp cvtools.cpp tracker/TrackerICP.cpp tracker/TrackerNDT.cpp tracker/CorrRejectOrgBoundFast.cpp tracker/TrackerPCL.cpp tracker/PoseFilter.cpp projector/ProjectorLC4500_versavis.cpp codec/CodecPhaseShift2p1Tpu.cpp projector/OpenGLContext.GLFW.cpp camera/CameraIIDC.cpp camera/CameraPointGrey.cpp camera/CameraROS.cpp camera/CameraSpinnaker.cpp projector/ProjectorLC3000.cpp projector/LC3000API/lcr_cmd.cpp projector/LC3000API/lcr_packetizer.cpp projector/LC3000API/tcp_client.cpp projector/ProjectorLC4500.cpp projector/LC4500API/dlpc350_api.cpp projector/LC4500API/dlpc350_usb.cpp projector/LC4500API/dlpc350_common.cpp projector/LC4500API/dlpc350_firmware.cpp projector/LC4500API/dlpc350_BMPParser.cpp projector/LC4500API/hid.Libusb.c projector/LC4500API/Lightcrafter_4500_pattern_api.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents SLStudio.ui SLPreferenceDialog.ui SLCalibrationDialog.ui SLVideoDialog.ui SLAboutDialog.ui SLTrackerDialog.ui $(DISTDIR)/
 
 
@@ -1009,6 +1013,7 @@ SLScanWorker.o: SLScanWorker.cpp SLScanWorker.h \
 		codec/CodecFastRatio.h \
 		codec/CodecGrayCode.h \
 		codec/CodecPhaseShift2p1.h \
+		codec/CodecPhaseShift2p1Tpu.h \
 		codec/CodecPhaseShift2x3.h \
 		codec/CodecPhaseShift3.h \
 		codec/CodecPhaseShift3FastWrap.h \
@@ -1093,18 +1098,19 @@ SLScanWorker.o: SLScanWorker.cpp SLScanWorker.h \
 
 SLDecoderWorker.o: SLDecoderWorker.cpp SLDecoderWorker.h \
 		codec/Codec.h \
-		codec/CodecPhaseShift3.h \
-		codec/CodecPhaseShift3Unwrap.h \
-		codec/CodecPhaseShift4.h \
-		codec/CodecPhaseShift2x3.h \
-		codec/CodecPhaseShiftNStep.h \
-		codec/CodecPhaseShift3FastWrap.h \
-		codec/CodecPhaseShift2p1.h \
-		codec/CodecPhaseShiftDescatter.h \
-		codec/CodecPhaseShiftModulated.h \
-		codec/CodecPhaseShiftMicro.h \
 		codec/CodecFastRatio.h \
 		codec/CodecGrayCode.h \
+		codec/CodecPhaseShift2p1.h \
+		codec/CodecPhaseShift2p1Tpu.h \
+		codec/CodecPhaseShift2x3.h \
+		codec/CodecPhaseShift3.h \
+		codec/CodecPhaseShift3FastWrap.h \
+		codec/CodecPhaseShift3Unwrap.h \
+		codec/CodecPhaseShift4.h \
+		codec/CodecPhaseShiftDescatter.h \
+		codec/CodecPhaseShiftMicro.h \
+		codec/CodecPhaseShiftModulated.h \
+		codec/CodecPhaseShiftNStep.h \
 		calibrator/CalibrationData.h \
 		cvtools.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SLDecoderWorker.o SLDecoderWorker.cpp
@@ -1576,6 +1582,74 @@ CameraIIDC.o: camera/CameraIIDC.cpp camera/CameraIIDC.h \
 CameraPointGrey.o: camera/CameraPointGrey.cpp camera/CameraPointGrey.h \
 		camera/Camera.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CameraPointGrey.o camera/CameraPointGrey.cpp
+
+CameraROS.o: camera/CameraROS.cpp camera/CameraROS.h \
+		camera/Camera.h \
+		/opt/ros/melodic/include/ros/ros.h \
+		/opt/ros/melodic/include/ros/time.h \
+		/opt/ros/melodic/include/ros/platform.h \
+		/opt/ros/melodic/include/ros/exception.h \
+		/opt/ros/melodic/include/ros/duration.h \
+		/opt/ros/melodic/include/ros/rostime_decl.h \
+		/opt/ros/melodic/include/ros/macros.h \
+		/opt/ros/melodic/include/ros/rate.h \
+		/opt/ros/melodic/include/ros/console.h \
+		/opt/ros/melodic/include/ros/console_backend.h \
+		/opt/ros/melodic/include/rosconsole/macros_generated.h \
+		/opt/ros/melodic/include/ros/assert.h \
+		/opt/ros/melodic/include/ros/static_assert.h \
+		/opt/ros/melodic/include/ros/common.h \
+		/opt/ros/melodic/include/ros/forwards.h \
+		/opt/ros/melodic/include/ros/exceptions.h \
+		/opt/ros/melodic/include/ros/datatypes.h \
+		/opt/ros/melodic/include/ros/serialized_message.h \
+		/opt/ros/melodic/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/melodic/include/ros/types.h \
+		/opt/ros/melodic/include/ros/node_handle.h \
+		/opt/ros/melodic/include/ros/publisher.h \
+		/opt/ros/melodic/include/ros/message.h \
+		/opt/ros/melodic/include/ros/serialization.h \
+		/opt/ros/melodic/include/ros/message_traits.h \
+		/opt/ros/melodic/include/ros/message_forward.h \
+		/opt/ros/melodic/include/ros/builtin_message_traits.h \
+		/opt/ros/melodic/include/ros/subscriber.h \
+		/opt/ros/melodic/include/ros/subscription_callback_helper.h \
+		/opt/ros/melodic/include/ros/parameter_adapter.h \
+		/opt/ros/melodic/include/ros/message_event.h \
+		/opt/ros/melodic/include/ros/service_server.h \
+		/opt/ros/melodic/include/ros/service_client.h \
+		/opt/ros/melodic/include/ros/service_traits.h \
+		/opt/ros/melodic/include/ros/timer.h \
+		/opt/ros/melodic/include/ros/timer_options.h \
+		/opt/ros/melodic/include/ros/wall_timer.h \
+		/opt/ros/melodic/include/ros/wall_timer_options.h \
+		/opt/ros/melodic/include/ros/steady_timer.h \
+		/opt/ros/melodic/include/ros/steady_timer_options.h \
+		/opt/ros/melodic/include/ros/advertise_options.h \
+		/opt/ros/melodic/include/ros/advertise_service_options.h \
+		/opt/ros/melodic/include/ros/service_callback_helper.h \
+		/opt/ros/melodic/include/ros/subscribe_options.h \
+		/opt/ros/melodic/include/ros/transport_hints.h \
+		/opt/ros/melodic/include/ros/service_client_options.h \
+		/opt/ros/melodic/include/ros/spinner.h \
+		/opt/ros/melodic/include/ros/init.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h \
+		/opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h \
+		/opt/ros/melodic/include/ros/single_subscriber_publisher.h \
+		/opt/ros/melodic/include/ros/service.h \
+		/opt/ros/melodic/include/ros/names.h \
+		/opt/ros/melodic/include/ros/master.h \
+		/opt/ros/melodic/include/ros/this_node.h \
+		/opt/ros/melodic/include/ros/param.h \
+		/opt/ros/melodic/include/ros/topic.h \
+		/opt/ros/melodic/include/sensor_msgs/Image.h \
+		/opt/ros/melodic/include/ros/message_operations.h \
+		/opt/ros/melodic/include/std_msgs/Header.h \
+		../../catkin_ws/devel/include/versavis/TimeNumbered.h \
+		/opt/ros/melodic/include/cv_bridge/cv_bridge.h \
+		/opt/ros/melodic/include/sensor_msgs/CompressedImage.h \
+		/opt/ros/melodic/include/sensor_msgs/image_encodings.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o CameraROS.o camera/CameraROS.cpp
 
 CameraSpinnaker.o: camera/CameraSpinnaker.cpp camera/CameraSpinnaker.h \
 		camera/Camera.h

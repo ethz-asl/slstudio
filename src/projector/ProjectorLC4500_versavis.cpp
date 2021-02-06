@@ -547,7 +547,9 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
     }
   }
 
-  // Remove last entry (2P1 TPU only requires 5 patterns)
+  // Remove last entry (2P1 TPU only requires 5 patterns) perform twice because
+  // of double exposure
+  pattern_vec.pop_back();
   pattern_vec.pop_back();
 
   return pattern_vec;

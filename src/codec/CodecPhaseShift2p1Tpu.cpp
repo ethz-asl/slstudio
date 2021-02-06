@@ -12,7 +12,8 @@
 #define M_PI 3.14159265359
 #endif
 
-static unsigned int nPhases = 12;
+// static unsigned int nPhases = 12;
+static unsigned int nPhases = 16;
 
 // Encoder
 EncoderPhaseShift2p1Tpu::EncoderPhaseShift2p1Tpu(unsigned int _screenCols,

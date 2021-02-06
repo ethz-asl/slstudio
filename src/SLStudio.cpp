@@ -540,9 +540,9 @@ void SLStudio::on_pushButton_2_clicked() {
   // Since we are displaying the same pattern until all images are captured
   // software trigger mode for the ROS camera is sufficient
 
-  // CameraROS camera{camera_indice, triggerModeSoftware};
+  CameraROS camera{camera_indice, triggerModeSoftware};
 
-  CameraSpinnaker camera{camera_indice, triggerModeSoftware};
+  // CameraSpinnaker camera{camera_indice, triggerModeSoftware};
 
   // Set camera settings
   CameraSettings camSettings;
@@ -602,11 +602,11 @@ void SLStudio::on_pushButton_2_clicked() {
         frame = camera.getFrame();
 
         // Mono 8 Images
-        // cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
+        cv::Mat frameCV(frame.height, frame.width, CV_8U, frame.memory);
 
         // For RGB8 images
-        cv::Mat frameCV(frame.height, frame.width, CV_8UC3, frame.memory);
-        cv::cvtColor(frameCV, frameCV, cv::COLOR_RGB2BGR);
+        // cv::Mat frameCV(frame.height, frame.width, CV_8UC3, frame.memory);
+        // cv::cvtColor(frameCV, frameCV, cv::COLOR_RGB2BGR);
 
         frameCV = frameCV.clone();
         std::string filename = "Intensity_" + std::to_string(i) + "_" +
