@@ -218,16 +218,18 @@ void SLCalibrationDialog::on_snapButton_clicked() {
   // Display white
   projector->displayWhite();
 
-#if 1
-  // Write frame seq to disk
-  for (unsigned int i = 0; i < frameSeq.size(); i++) {
-    // QString filename =
-    //    QString("calib_frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
-    std::string filename = "calib_frame_seq_" + std::to_string(i) + "_" +
-                           std::to_string(m_counter) + ".bmp";
-    cv::imwrite(filename, frameSeq[i]);
-  }
-#endif
+  /**
+  #if 1
+    // Write frame seq to disk
+    for (unsigned int i = 0; i < frameSeq.size(); i++) {
+      // QString filename =
+      //    QString("calib_frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
+      std::string filename = "calib_frame_seq_" + std::to_string(i) + "_" +
+                             std::to_string(m_counter) + ".bmp";
+      cv::imwrite(filename, frameSeq[i]);
+    }
+  #endif
+  **/
 
   // Restart live view
   liveViewTimer = startTimer(timerInterval);
@@ -278,6 +280,17 @@ void SLCalibrationDialog::
           frameSeqs[i].begin() + calibrator->getNPatterns());
       calibrator->addFrameSequence(frameSeq);
       activeFrameSeqs.push_back(i);
+
+#if 1
+      // Write frame seq to disk
+      for (unsigned int j = 0; j < frameSeq.size(); j++) {
+        // QString filename =
+        //    QString("calib_frameSeq__%1.bmp").arg(i, 2, 10, QChar('0'));
+        std::string filename = "calib_frame_seq_" + std::to_string(j) + "_" +
+                               std::to_string(i) + ".bmp";
+        cv::imwrite(filename, frameSeq[j]);
+      }
+#endif
     }
   }
 
@@ -365,15 +378,17 @@ void SLCalibrationDialog::on_pushButton_clicked() {
 
   recalibrator->reset();
 
-  std::string directory = "/home/ltf/horz2_redo_cal_pics/";
+  std::string directory = "/home/ltf/Desktop/horz4_2_cal_pics/";
   int number_patterns = 12;
   int starting_indice = 1;
   // int number_sequences = 5;
   // int number_sequences = 21;
   // int number_sequences = 69;
   // int number_sequences = 142;
-  int number_sequences = 74;
-  std::unordered_set<int> seq_to_exclude = {2, 15, 22, 24, 30, 41, 51};
+  int number_sequences = 59;
+  // std::unordered_set<int> seq_to_exclude = {24, 40, 41, 42, 43, 44, 45, 46,
+  // 47};
+  std::unordered_set<int> seq_to_exclude = {24};
 
   for (int s = starting_indice; s <= number_sequences; s++) {
     if (seq_to_exclude.find(s) == seq_to_exclude.end()) {
@@ -400,6 +415,44 @@ void SLCalibrationDialog::on_pushButton_clicked() {
       std::cout << "Excluded frame seq no: " << s << std::endl;
     }
   }
+
+  /**
+ std::string directory = "/home/ltf/horz2_redo_cal_pics/";
+ int number_patterns = 12;
+ int starting_indice = 1;
+ // int number_sequences = 5;
+ // int number_sequences = 21;
+ // int number_sequences = 69;
+ // int number_sequences = 142;
+ int number_sequences = 74;
+ std::unordered_set<int> seq_to_exclude = {2, 15, 22, 24, 30, 41, 51};
+
+ for (int s = starting_indice; s <= number_sequences; s++) {
+   if (seq_to_exclude.find(s) == seq_to_exclude.end()) {
+     std::vector<cv::Mat> frame_sequence = {};
+     for (int p = 0; p < number_patterns; p++) {
+       std::string image_path = directory + "calib_frame_seq_" +
+                                std::to_string(p) + "_" + std::to_string(s) +
+                                ".bmp";
+       // std::cout << "Trying to read " << image_path << std::endl;
+       cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+
+       if (img.empty()) {
+         std::cout << "Could not read the image: " << image_path << std::endl;
+         // return;
+       } else {
+         // std::cout << "Successfully read image " << image_path << std::endl;
+         frame_sequence.push_back(img);
+       }
+     }
+     if (frame_sequence.size() == number_patterns) {
+       recalibrator->addFrameSequence(frame_sequence);
+     }
+   } else {
+     std::cout << "Excluded frame seq no: " << s << std::endl;
+   }
+ }
+ **/
 
   /**
   std::string directory = "/home/ltf/horz_redo_cal_pics/";

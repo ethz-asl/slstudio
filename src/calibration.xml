@@ -5,45 +5,45 @@
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    1.72787305e+03 0. 512. 0. 1.72787305e+03 384. 0. 0. 1.</data></Kc>
+    1.72170386e+03 0. 512. 0. 1.72170386e+03 384. 0. 0. 1.</data></Kc>
 <kc type_id="opencv-matrix">
   <rows>5</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    -3.61238599e-01 -1.99978501e-01 1.33010617e-03 -3.11934878e-03
-    4.12492841e-01</data></kc>
+    -3.80073786e-01 -6.65011778e-02 2.51256861e-04 -5.38413355e-04
+    5.30454107e-02</data></kc>
 <Kp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    2.20646802e+03 0. 8.80179871e+02 0. 2.20646802e+03 1.16972083e+03 0.
+    2.19183569e+03 0. 8.81184509e+02 0. 2.19183569e+03 1.16716187e+03 0.
     0. 1.</data></Kp>
 <kp type_id="opencv-matrix">
   <rows>5</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    5.30547947e-02 -1.88761637e-01 -3.64977350e-05 -1.48360059e-03
-    9.63055491e-02</data></kp>
+    4.54267673e-02 -1.87380165e-01 -3.58262099e-03 -4.46699938e-04
+    1.07268170e-01</data></kp>
 <Rp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>3</cols>
   <dt>f</dt>
   <data>
-    9.99835610e-01 -5.31062670e-03 1.73370298e-02 5.38422540e-03
-    9.99976695e-01 -4.20125574e-03 -1.73143130e-02 4.29391162e-03
-    9.99840856e-01</data></Rp>
+    9.99823868e-01 -4.70916741e-03 1.81680433e-02 4.74291528e-03
+    9.99987125e-01 -1.81490544e-03 -1.81592628e-02 1.90075522e-03
+    9.99833286e-01</data></Rp>
 <Tp type_id="opencv-matrix">
   <rows>3</rows>
   <cols>1</cols>
   <dt>f</dt>
   <data>
-    -5.05002356e+00 -1.13483849e+02 -2.04236694e+02</data></Tp>
-<cam_error>1.5618018982396284e-01</cam_error>
-<proj_error>3.1471776993665035e-01</proj_error>
-<stereo_error>3.6930917344729791e-01</stereo_error>
+    -5.65015078e+00 -1.14432762e+02 -2.03937347e+02</data></Tp>
+<cam_error>1.6276004001626115e-01</cam_error>
+<proj_error>0.</proj_error>
+<stereo_error>4.1019844074231943e-01</stereo_error>
 <frameWidth>1024</frameWidth>
 <frameHeight>768</frameHeight>
 <screenResX>912</screenResX>
