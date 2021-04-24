@@ -714,11 +714,10 @@ void SLStudio::on_startProjector_clicked() {
   projector_ptr->load_param("is_in_calibration_mode",
                             void_is_in_calibration_mode);
 
-  /**
   auto is_2_plus_1_mode = std::make_shared<bool>(
       (patternMode == "CodecPhaseShift2p1Tpu") ? true : false);
-  **/
-  auto is_2_plus_1_mode = std::make_shared<bool>(true);
+
+  // auto is_2_plus_1_mode = std::make_shared<bool>(true);
   auto void_is_2_plus_1_mode = std::static_pointer_cast<void>(is_2_plus_1_mode);
   projector_ptr->load_param("is_2_plus_1_mode", void_is_2_plus_1_mode);
 

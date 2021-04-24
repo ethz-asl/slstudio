@@ -50,10 +50,10 @@ class CameraROS : public Camera {
   // const std::string m_camera_time_topic = "/versavis/cam1/image_time" ;
   const std::string m_camera_image_topic = "/versavis/cam1/image_raw";
   const std::string m_ros_node_name = "SLStudio_ROS_camera";
-  // const size_t m_frame_width = 1024;  // Grasshopper mode 1
-  // const size_t m_frame_height = 768;  // Grasshopper mode 1
-  const size_t m_frame_width = 720;   // Blackfly
-  const size_t m_frame_height = 540;  //
+  const size_t m_frame_width = 1024;  // Grasshopper mode 1
+  const size_t m_frame_height = 768;  // Grasshopper mode 1
+  // const size_t m_frame_width = 720;   // Blackfly
+  // const size_t m_frame_height = 540;  //
   const unsigned int m_exposure_time_us = 8333;
   boost::mutex m_mutex;
   Esoftware_trigger_state m_sw_trig_state = Esoftware_trigger_state::idle;

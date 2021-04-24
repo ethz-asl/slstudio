@@ -378,6 +378,40 @@ void SLCalibrationDialog::on_pushButton_clicked() {
 
   recalibrator->reset();
 
+  std::string directory = "/home/ltf/Desktop/horz5_redo/cal pics/";
+  int number_patterns = 12;
+  int starting_indice = 0;
+
+  int number_sequences = 75;
+  std::unordered_set<int> seq_to_exclude = {};
+
+  for (int s = starting_indice; s <= number_sequences; s++) {
+    if (seq_to_exclude.find(s) == seq_to_exclude.end()) {
+      std::vector<cv::Mat> frame_sequence = {};
+      for (int p = 0; p < number_patterns; p++) {
+        std::string image_path = directory + "calib_frame_seq_" +
+                                 std::to_string(p) + "_" + std::to_string(s) +
+                                 ".bmp";
+        // std::cout << "Trying to read " << image_path << std::endl;
+        cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+
+        if (img.empty()) {
+          std::cout << "Could not read the image: " << image_path << std::endl;
+          // return;
+        } else {
+          // std::cout << "Successfully read image " << image_path << std::endl;
+          frame_sequence.push_back(img);
+        }
+      }
+      if (frame_sequence.size() == number_patterns) {
+        recalibrator->addFrameSequence(frame_sequence);
+      }
+    } else {
+      std::cout << "Excluded frame seq no: " << s << std::endl;
+    }
+  }
+
+  /**
   std::string directory = "/home/ltf/Desktop/horz5 cal pics/";
   int number_patterns = 12;
   int starting_indice = 0;
@@ -410,6 +444,7 @@ void SLCalibrationDialog::on_pushButton_clicked() {
       std::cout << "Excluded frame seq no: " << s << std::endl;
     }
   }
+  **/
 
   /**
 std::string directory = "/home/ltf/Desktop/horz4_2_cal_pics/";
