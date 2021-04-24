@@ -351,7 +351,7 @@ void SLStudio::imshow(const char *windowName, cv::Mat im, unsigned int x,
   cvtools::imshow(windowName, im, x, y);
 }
 
-void SLStudio::on_linearityTest_clicked() {
+void SLStudio::onLinearityTestClicked() {
   unsigned int image_indices[] = {7, 49};
   // unsigned int image_indices[] = {7, 7};
   int num_photos = 3;
@@ -446,7 +446,7 @@ void SLStudio::on_linearityTest_clicked() {
   projector.displayBlack();
 }
 
-void SLStudio::on_generatePatterns_clicked() {
+void SLStudio::onGeneratePatternsClicked() {
   QSettings settings("SLStudio");
 
   // Initialize encoder
@@ -503,7 +503,7 @@ void SLStudio::on_generatePatterns_clicked() {
   }
 }
 
-void SLStudio::on_startProjector_clicked() {
+void SLStudio::onStartProjectorClicked() {
   QSettings settings("SLStudio");
 
   CameraTriggerMode triggerMode = triggerModeHardware;
@@ -560,7 +560,7 @@ void SLStudio::on_startProjector_clicked() {
   projector_ptr->start_projection();
 }
 
-void SLStudio::on_stopProjector_clicked() {
+void SLStudio::onStopProjectorClicked() {
   if (projector_ptr) {
     projector_ptr->displayBlack();
     projector_ptr.reset();
