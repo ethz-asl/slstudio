@@ -139,26 +139,6 @@ size_t CameraROS::getFrameWidth() { return m_frame_width; }
 size_t CameraROS::getFrameHeight() { return m_frame_height; }
 
 void CameraROS::image_cb(const sensor_msgs::Image& image) {
-  /**
-  cout << "[CameraROS] Image recevied" << endl;
-  cout << "Capturing: " << capturing << endl;
-  cout << "Trigger mode: "
-       << ((triggerMode == triggerModeSoftware)
-               ? "Software"
-               : (triggerMode == triggerModeHardware) ? "Hardware" : "Unknown")
-       << endl;
-  cout << "Software trigger state: "
-       << ((m_sw_trig_state == Esoftware_trigger_state::awaiting_image)
-               ? "Awaiting image"
-               : (m_sw_trig_state == Esoftware_trigger_state::idle)
-                     ? "Idle"
-                     : (m_sw_trig_state ==
-                        Esoftware_trigger_state::received_image)
-                           ? "Received image"
-                           : "Unknown")
-       << endl;
-  **/
-
   if (capturing) {
     if (triggerMode == triggerModeSoftware &&
         m_sw_trig_state == Esoftware_trigger_state::awaiting_image) {

@@ -92,93 +92,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
 
   // If Grasshopper, we set 2 x 2 binning to halve resolution to 1024 x 768
   try {
-    /**
-    if (m_camera_type == Ecamera_type::grasshopper) {
-      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
-          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
-        m_cam_ptr->BinningHorizontal.SetValue(2);
-        cout << "Set horizontal binning to 2" << endl;
-      } else {
-        cout << "Failed to set horizontal binning to 2" << endl;
-      }
-
-      if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontal) &&
-          Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontal)) {
-        m_cam_ptr->BinningHorizontal.SetValue(2);
-        cout << "Set horizontal binning to 2" << endl;
-      } else {
-        cout << "Failed to set horizontal binning to 2" << endl;
-      }
-      **/
-
-    /**
-  if (m_camera_type == Ecamera_type::grasshopper) {
-    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->DecimationHorizontal) &&
-        Spinnaker::GenApi::IsWritable(m_cam_ptr->DecimationHorizontal)) {
-      m_cam_ptr->DecimationHorizontal.SetValue(2);
-      cout << "Set horizontal decimation to 2" << endl;
-    } else {
-      cout << "Failed to set horizontal decimation to 2" << endl;
-    }
-
-    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVertical) &&
-        Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVertical)) {
-      m_cam_ptr->BinningVertical.SetValue(2);
-      cout << "Set vertical binning to 2" << endl;
-    } else {
-      cout << "Failed to set vertical binning to 2" << endl;
-    } **/
-
-    /**
-    // Retrieve GenICam nodemap
-    // Set Video Mode 2 (2x2 Subsampling)
-    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
-    Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
-        nodeMap.GetNode("VideoMode");
-    if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
-        !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
-      cout << "Unable to access Video Mode. "
-              "Aborting..."
-           << endl;
-      throw;
-    }
-
-    Spinnaker::GenApi::CEnumEntryPtr ptrMode2 =
-        ptrVideoMode->GetEntryByName("Mode2");
-    if (!Spinnaker::GenApi::IsAvailable(ptrMode2) ||
-        !Spinnaker::GenApi::IsReadable(ptrMode2)) {
-      cout << "Video Mode 2 is not available. Aborting... " << endl;
-      throw;
-    }
-
-    ptrVideoMode->SetIntValue(ptrMode2->GetValue());
-    cout << "Set video mode to 2" << endl;
-    **/
-
-    // Retrieve GenICam nodemap
-    // Set Video Mode 0 (Full Resolution)
-
-    /**
-    Spinnaker::GenApi::INodeMap& nodeMap = m_cam_ptr->GetNodeMap();
-    Spinnaker::GenApi::CEnumerationPtr ptrVideoMode =
-        nodeMap.GetNode("VideoMode");
-    if (!Spinnaker::GenApi::IsAvailable(ptrVideoMode) ||
-        !Spinnaker::GenApi::IsWritable(ptrVideoMode)) {
-      cout << "Unable to access Video Mode. "
-              "Aborting..."
-           << endl;
-      throw;
-    }
-
-    Spinnaker::GenApi::CEnumEntryPtr ptrMode1 =
-        ptrVideoMode->GetEntryByName("Mode0");
-    if (!Spinnaker::GenApi::IsAvailable(ptrMode1) ||
-        !Spinnaker::GenApi::IsReadable(ptrMode1)) {
-      cout << "Video Mode 0 is not available. Aborting... " << endl;
-      throw;
-    }
-    **/
-
     // Retrieve GenICam nodemap
     // Set Video Mode 1 (2x2 Average Binning)
 
@@ -225,27 +138,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
     ptrBinningControl->SetIntValue(ptrAverage->GetValue());
     cout << "Set to Average binning" << endl;
 
-    /**
-  if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningHorizontalMode) &&
-      Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningHorizontalMode)) {
-    m_cam_ptr->BinningHorizontalMode.SetValue(
-        Spinnaker::BinningHorizontalMode_Average);
-    cout << "Set average horizontal binning" << endl;
-  } else {
-    cout << "Failed to set average horizontal binning" << endl;
-    // throw;
-  }
-
-  if (Spinnaker::GenApi::IsReadable(m_cam_ptr->BinningVerticalMode) &&
-      Spinnaker::GenApi::IsWritable(m_cam_ptr->BinningVerticalMode)) {
-    m_cam_ptr->BinningVerticalMode.SetValue(
-        Spinnaker::BinningVerticalMode_Average);
-    cout << "Set average vertical binning" << endl;
-  } else {
-    cout << "Failed to set average vertical binning" << endl;
-    // throw;
-  }
-  **/
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
@@ -266,24 +158,6 @@ CameraSpinnaker::CameraSpinnaker(unsigned int camNum,
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-
-  // Set pixel format to be RGB8
-  /**
-  try {
-    if (Spinnaker::GenApi::IsReadable(m_cam_ptr->PixelFormat) &&
-        Spinnaker::GenApi::IsWritable(m_cam_ptr->PixelFormat)) {
-      m_cam_ptr->PixelFormat.SetValue(Spinnaker::PixelFormat_RGB8);
-      cout << "Pixel format set to "
-           << m_cam_ptr->PixelFormat.GetCurrentEntry()->GetSymbolic() << "..."
-           << endl;
-    } else {
-      cout << "Pixel format not available..." << endl;
-      // throw;
-    }
-  } catch (Spinnaker::Exception& e) {
-    cout << "Error: " << e.what() << endl;
-  }
-  **/
 
   // Set no pixel color filter
   try {
@@ -735,28 +609,6 @@ void CameraSpinnaker::startCapture() {
   } catch (Spinnaker::Exception& e) {
     cout << "Error: " << e.what() << endl;
   }
-
-  // For grasshopper, we set TriggerOverlap to ReadOut (for some reason
-  // without this, camera images are only sent out at 30Hz when 60Hz is
-  // desired)
-  // ALSO, this setting can on only be changed when tigger mode is turned on
-  /**
-  if (m_camera_type == Ecamera_type::grasshopper &&
-      triggerMode == triggerModeHardware) {
-    try {
-      if (m_cam_ptr->TriggerOverlap == NULL ||
-          m_cam_ptr->TriggerOverlap.GetAccessMode() != Spinnaker::GenApi::RW)
-  { cout << "Unable to set trigger overlap to ReadOut. Aborting..." << endl;
-        throw;
-      }
-      m_cam_ptr->TriggerOverlap.SetValue(
-          Spinnaker::TriggerOverlapEnums::TriggerOverlap_ReadOut);
-      cout << "Set trigger overlap to ReadOut" << endl;
-    } catch (Spinnaker::Exception& e) {
-      cout << "Error: " << e.what() << endl;
-    }
-  }
-  **/
 
   // Set acquisition mode to continuous
   try {
