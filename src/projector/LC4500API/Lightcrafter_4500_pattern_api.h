@@ -37,7 +37,7 @@ class Lightcrafter_4500_pattern_api {
   void print_projector_info();
   int set_pattern_mode();
   int set_video_mode();
-  void show_error(const std::string& err);
+  void showError(const std::string& err);
   int set_pat_seq_start();
   int set_pat_seq_pause();
   int set_pat_seq_stop();

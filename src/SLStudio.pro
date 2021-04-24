@@ -73,7 +73,7 @@ HEADERS  += SLStudio.h \
         tracker/TrackerPCL.h \
         tracker/PoseFilter.h \
         cvtools.h \
-        projector/ProjectorLC4500_versavis.h \
+        projector/ProjectorLC4500Versavis.h \
     codec/CodecPhaseShift2p1Tpu.h
 
 SOURCES += main.cpp \
@@ -123,7 +123,7 @@ SOURCES += main.cpp \
         tracker/CorrRejectOrgBoundFast.cpp \
         tracker/TrackerPCL.cpp \
         tracker/PoseFilter.cpp \
-        projector/ProjectorLC4500_versavis.cpp \
+        projector/ProjectorLC4500Versavis.cpp \
     codec/CodecPhaseShift2p1Tpu.cpp
 
 INCLUDEPATH += camera/ projector/ codec/ triangulator/ calibrator/ tracker/

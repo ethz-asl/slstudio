@@ -23,7 +23,7 @@
 #include "CodecPhaseShift2x3.h"
 #include "ProjectorLC3000.h"
 #include "ProjectorLC4500.h"
-#include "ProjectorLC4500_versavis.h"
+#include "ProjectorLC4500Versavis.h"
 //#include "ProjectorOpenGL.h"
 
 #include "SLCameraVirtual.h"
@@ -395,18 +395,18 @@ void SLStudio::onLinearityTestClicked() {
 
   // Initialize projector (just set to versavis for now, only displays patterns
   // stored in flash)
-  ProjectorLC4500_versavis projector{0};
+  ProjectorLC4500Versavis projector{0};
 
   // Init projector
   auto is_hardware_triggered = std::make_shared<bool>(false);
   auto void_is_hardware_triggered =
       std::static_pointer_cast<void>(is_hardware_triggered);
-  projector.load_param("is_hardware_triggered", void_is_hardware_triggered);
+  projector.loadParam("is_hardware_triggered", void_is_hardware_triggered);
 
   auto is_in_calibration_mode = std::make_shared<bool>(false);
   auto void_is_in_calibration_mode =
       std::static_pointer_cast<void>(is_in_calibration_mode);
-  projector.load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+  projector.loadParam("is_in_calibration_mode", void_is_in_calibration_mode);
 
   projector.init();
 
@@ -456,7 +456,7 @@ void SLStudio::onGeneratePatternsClicked() {
   CodecDir dir =
       (CodecDir)settings.value("pattern/direction", CodecDirHorizontal).toInt();
 
-  ProjectorLC4500_versavis projector{0};
+  ProjectorLC4500Versavis projector{0};
 
   unsigned int screenResX, screenResY;
   projector.getScreenRes(&screenResX, &screenResY);
@@ -507,7 +507,7 @@ void SLStudio::onStartProjectorClicked() {
   QSettings settings("SLStudio");
 
   CameraTriggerMode triggerMode = triggerModeHardware;
-  projector_ptr = std::make_unique<ProjectorLC4500_versavis>(0);
+  projector_ptr = std::make_unique<ProjectorLC4500Versavis>(0);
 
   /**
  CodecDir dir_init =
@@ -530,34 +530,33 @@ void SLStudio::onStartProjectorClicked() {
       (triggerMode == triggerModeHardware) ? true : false);
   auto void_is_hardware_triggered =
       std::static_pointer_cast<void>(is_hardware_triggered);
-  projector_ptr->load_param("is_hardware_triggered",
-                            void_is_hardware_triggered);
+  projector_ptr->loadParam("is_hardware_triggered", void_is_hardware_triggered);
 
   auto is_in_calibration_mode = std::make_shared<bool>(false);
   auto void_is_in_calibration_mode =
       std::static_pointer_cast<void>(is_in_calibration_mode);
-  projector_ptr->load_param("is_in_calibration_mode",
-                            void_is_in_calibration_mode);
+  projector_ptr->loadParam("is_in_calibration_mode",
+                           void_is_in_calibration_mode);
 
   auto is_2_plus_1_mode = std::make_shared<bool>(
       (patternMode == "CodecPhaseShift2p1Tpu") ? true : false);
 
   // auto is_2_plus_1_mode = std::make_shared<bool>(true);
   auto void_is_2_plus_1_mode = std::static_pointer_cast<void>(is_2_plus_1_mode);
-  projector_ptr->load_param("is_2_plus_1_mode", void_is_2_plus_1_mode);
+  projector_ptr->loadParam("is_2_plus_1_mode", void_is_2_plus_1_mode);
 
   auto void_display_vertical_pattern =
       std::static_pointer_cast<void>(display_vertical_pattern);
-  projector_ptr->load_param("display_vertical_pattern",
-                            void_display_vertical_pattern);
+  projector_ptr->loadParam("display_vertical_pattern",
+                           void_display_vertical_pattern);
 
   auto void_display_horizontal_pattern =
       std::static_pointer_cast<void>(display_horizontal_pattern);
-  projector_ptr->load_param("display_horizontal_pattern",
-                            void_display_horizontal_pattern);
+  projector_ptr->loadParam("display_horizontal_pattern",
+                           void_display_horizontal_pattern);
 
   projector_ptr->init();
-  projector_ptr->start_projection();
+  projector_ptr->startProjection();
 }
 
 void SLStudio::onStopProjectorClicked() {

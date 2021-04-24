@@ -23,12 +23,12 @@ class Projector {
   virtual void displayWhite() = 0;
   virtual void getScreenRes(unsigned int *nx, unsigned int *ny) = 0;
   virtual ~Projector() {}
-  virtual void load_param(const std::string &param_name,
+  virtual void loadParam(const std::string &param_name,
                           std::shared_ptr<void> param_ptr) {}
   virtual void init() {
   }  // Allows for additional configurations after load_params is called
 
-  virtual std::shared_ptr<void> get_output(const std::string &output_name) {}
+  virtual std::shared_ptr<void> getOutput(const std::string &output_name) {}
 };
 
 #endif

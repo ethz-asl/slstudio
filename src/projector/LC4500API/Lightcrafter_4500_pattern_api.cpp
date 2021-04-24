@@ -16,19 +16,19 @@ Lightcrafter_4500_pattern_api::~Lightcrafter_4500_pattern_api() {
   this->close();
 }
 
-void Lightcrafter_4500_pattern_api::show_error(const std::string& err) {
+void Lightcrafter_4500_pattern_api::showError(const std::string& err) {
   std::cerr << "Lightcrafter Error: " << err << std::endl;
 }
 
 int Lightcrafter_4500_pattern_api::init() {
   // Initialize usb connection
   if (DLPC350_USB_Init() < 0) {
-    show_error("Could not init USB!");
+    showError("Could not init USB!");
     return -1;
   }
 
   if (DLPC350_USB_Open() < 0) {
-    show_error("Could not connect!");
+    showError("Could not connect!");
     return -1;
   }
 
@@ -73,12 +73,12 @@ int Lightcrafter_4500_pattern_api::close() {
     }
 
     if (DLPC350_USB_Close() < 0) {
-      show_error("Could not close!");
+      showError("Could not close!");
       return -1;
     }
 
     if (DLPC350_USB_Exit() < 0) {
-      show_error("Could not exit!");
+      showError("Could not exit!");
       return -1;
     }
   }
@@ -102,7 +102,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
   // Pattern store cannot be empty
   if (m_pattern_store.size() == 0) {
-    show_error("Pattern sequence is empty, cannnot send to Lightcrafter");
+    showError("Pattern sequence is empty, cannnot send to Lightcrafter");
     return -1;
   }
 
@@ -114,7 +114,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
   // Pattern Exposure > Pattern Period not a valid settings
   if (exposure_period_us > frame_period_us) {
-    show_error(
+    showError(
         "Pattern exposure setting voilation, it should be, Pattern Exposure = "
         "Pattern Period or (Pattern Period - Pattern Exposure) > 230us");
     return -1;
@@ -124,7 +124,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
   // Exposure) > 230us
   if ((exposure_period_us != frame_period_us) &&
       ((frame_period_us - exposure_period_us) <= 230)) {
-    show_error(
+    showError(
         "Pattern exposure setting voilation, it should be, Pattern Exposure = "
         "Pattern Period or (Pattern Period - Pattern Exposure) > 230us");
     return -1;
@@ -140,7 +140,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
     // If first pattern, it is an invalid pattern sequence if it has no trigger
     if (i == 0 && curr_pattern.trigger_type == 3) {
-      show_error(
+      showError(
           "First Item must be triggered. Please select a Trigger_In_Type "
           "other than No Trigger");
       return -1;
@@ -158,7 +158,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
               "Exposure time %d < Minimum Exposure time %d for bit depth %d",
               exposure_period_us / num_pats_in_exposure,
               min_pat_exposure[worst_case_bit_depth], worst_case_bit_depth + 1);
-          show_error(error_str);
+          showError(error_str);
           return -1;
         }
       }
@@ -196,7 +196,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
             curr_pattern.bit_depth, curr_pattern.led_select,
             curr_pattern.invert_pattern, curr_pattern.insert_black_frame,
             curr_pattern.buffer_swap, curr_pattern.trigger_out_prev) < 0) {
-      show_error("Error Updating LUT");
+      showError("Error Updating LUT");
       return -1;
     }
 
@@ -204,7 +204,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
     // to be changed for this pattern)
     if (curr_pattern.buffer_swap || num_splash_lut_entries == 0) {
       if (num_splash_lut_entries >= 64) {
-        show_error(
+        showError(
             "Image LUT entries(64) reached maximum. Will not add anymore "
             "entries\n");
       } else
@@ -225,7 +225,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
               "Exposure time %d < Minimum Exposure time %d for bit depth %d",
               exposure_period_us / num_pats_in_exposure,
               min_pat_exposure[worst_case_bit_depth], worst_case_bit_depth + 1);
-      show_error(error_str);
+      showError(error_str);
       return -1;
     }
   }
@@ -240,27 +240,27 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
   if (DLPC350_SetPatternConfig(num_lut_entries, repeat_mode,
                                num_patterns_trigout2,
                                num_splash_lut_entries) < 0) {
-    show_error("Error Sending Pattern Config");
+    showError("Error Sending Pattern Config");
     return -1;
   }
 
   // Set exposure and fram period
   if (DLPC350_SetExposure_FramePeriod(exposure_period_us, frame_period_us) <
       0) {
-    show_error("Error Sending Exposure period");
+    showError("Error Sending Exposure period");
     return -1;
   }
 
   trig_mode = 1;  // Internal trigger
   // Configure Trigger Mode - 0 or 1
   if (DLPC350_SetPatternTriggerMode(trig_mode) < 0) {
-    show_error("Error Sending trigger Mode");
+    showError("Error Sending trigger Mode");
     return -1;
   }
 
   // Send Pattern LUT
   if (DLPC350_SendPatLut() < 0) {
-    show_error("Error Sending Pattern LUT");
+    showError("Error Sending Pattern LUT");
     return -1;
   }
 
@@ -278,7 +278,7 @@ int Lightcrafter_4500_pattern_api::send_pattern_sequence(
 
   // Send Image LUT
   if (DLPC350_SendImageLut(&splash_lut[0], num_splash_lut_entries) < 0) {
-    show_error("Error Sending Image LUT");
+    showError("Error Sending Image LUT");
     return -1;
   }
 
@@ -432,7 +432,7 @@ int Lightcrafter_4500_pattern_api::set_pat_seq_mode(unsigned int desired_mode) {
     }
   } else {
     // If not in pattern mode, we display error message
-    show_error(
+    showError(
         "Warning: Attempted to set pattern sequence (Start/Stop/Pause) mode "
         "when projector is not in Pattern mode. Ignoring command.");
   }
@@ -479,7 +479,7 @@ int Lightcrafter_4500_pattern_api::validate_pattern() {
   DLPC350_GetMode(&is_pattern_mode);
 
   if (!is_pattern_mode) {
-    show_error(
+    showError(
         "Please change operating mode to Pattern Sequence before validating "
         "sequence");
     return -1;
@@ -489,13 +489,13 @@ int Lightcrafter_4500_pattern_api::validate_pattern() {
   set_pat_seq_stop();
 
   if (DLPC350_StartPatLutValidate()) {
-    show_error("Error validating LUT data");
+    showError("Error validating LUT data");
     return -1;
   }
 
   do {
     if (DLPC350_CheckPatLutValidate(&ready, &status) < 0) {
-      show_error("Error validating LUT data");
+      showError("Error validating LUT data");
       return -1;
     }
 
@@ -510,34 +510,34 @@ int Lightcrafter_4500_pattern_api::validate_pattern() {
 
   // Print out any possible warnings and errors
   if (status & BIT0) {
-    show_error("Selected exposure or frame period settings are invalid");
+    showError("Selected exposure or frame period settings are invalid");
   }
 
   if (status & BIT1) {
-    show_error("Selected pattern numbers in LUT are invalid");
+    showError("Selected pattern numbers in LUT are invalid");
   }
 
   if (status & BIT2) {
-    show_error(
+    showError(
         "Warning, continuous Trigger Out1 request or overlapping black "
         "sectors (Not critical)");
   }
 
   if (status & BIT3) {
-    show_error(
+    showError(
         "Warning, post vector was not inserted prior to external triggered "
         "vector (Not critical)");
   }
 
   if (status & BIT4) {
-    show_error(
+    showError(
         "Warning, frame period or exposure difference is less than 230usec "
         "(Not critical)");
   }
 
   // If bit 0 or bit 1 are value 1, validation is unsuccessful
   if ((status & BIT0) || (status & BIT1)) {
-    show_error("Pattern validation unsuccessful!");
+    showError("Pattern validation unsuccessful!");
 
     return -1;
   }

@@ -22,7 +22,7 @@
 #include "Camera.h"
 #include "Codec.h"
 #include "Projector.h"
-#include "ProjectorLC4500_versavis.h"
+#include "ProjectorLC4500Versavis.h"
 
 #include <memory>
 
@@ -89,7 +89,7 @@ class SLStudio : public QMainWindow {
       *decoderUpDialog, *decoderVpDialog;
   SLTrackerDialog *trackerDialog;
 
-  std::unique_ptr<ProjectorLC4500_versavis> projector_ptr;
+  std::unique_ptr<ProjectorLC4500Versavis> projector_ptr;
 
  public:
 };

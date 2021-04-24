@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "ProjectorLC3000.h"
 #include "ProjectorLC4500.h"
-#include "ProjectorLC4500_versavis.h"
+#include "ProjectorLC4500Versavis.h"
 #include "ProjectorOpenGL.h"
 #include "SLProjectorVirtual.h"
 
@@ -69,7 +69,7 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
   else if (screenNum == -3)
     projector = new ProjectorLC4500(0);
   else if (screenNum == -4)
-    projector = new ProjectorLC4500_versavis(0);
+    projector = new ProjectorLC4500Versavis(0);
   else
     std::cerr << "SLCalibrationDialog: invalid projector id " << screenNum
               << std::endl;
@@ -77,12 +77,12 @@ SLCalibrationDialog::SLCalibrationDialog(SLStudio *parent)
   auto is_hardware_triggered = std::make_shared<bool>(false);
   auto void_is_hardware_triggered =
       std::static_pointer_cast<void>(is_hardware_triggered);
-  projector->load_param("is_hardware_triggered", void_is_hardware_triggered);
+  projector->loadParam("is_hardware_triggered", void_is_hardware_triggered);
 
   auto is_in_calibration_mode = std::make_shared<bool>(true);
   auto void_is_in_calibration_mode =
       std::static_pointer_cast<void>(is_in_calibration_mode);
-  projector->load_param("is_in_calibration_mode", void_is_in_calibration_mode);
+  projector->loadParam("is_in_calibration_mode", void_is_in_calibration_mode);
 
   projector->init();
 

@@ -1,4 +1,4 @@
-#include "ProjectorLC4500_versavis.h"
+#include "ProjectorLC4500Versavis.h"
 
 #include <QThread>
 #include <iostream>
@@ -8,22 +8,22 @@
 
 #include <thread>
 
-ProjectorLC4500_versavis::ProjectorLC4500_versavis(unsigned int)
+ProjectorLC4500Versavis::ProjectorLC4500Versavis(unsigned int)
     : nPatterns(0), isRunning(false), m_projector() {}
 
-void ProjectorLC4500_versavis::init() {
+void ProjectorLC4500Versavis::init() {
   if (m_is_in_calibration_mode && m_is_hardware_triggered) {
-    show_error(
+    showError(
         "Warning: Hardware trigger is enabled for calibration mode. This is "
         "not a possible combination. Configuring to be software triggered");
     m_is_hardware_triggered = false;
   }
 
-  lc4500_init();
+  lc4500Iinit();
 
   if (m_is_hardware_triggered) {
     // Ros initialisation
-    ros_init();
+    rosInit();
 
     // Load entire pattern sequence instructions onto projector
     m_projector.set_pattern_sequence(m_pattern_sequence);
@@ -32,16 +32,16 @@ void ProjectorLC4500_versavis::init() {
   }
 }
 
-void ProjectorLC4500_versavis::start_projection() {
+void ProjectorLC4500Versavis::startProjection() {
   m_projector.set_pat_seq_start();
 }
 
-void ProjectorLC4500_versavis::setPattern(unsigned int patternNumber,
+void ProjectorLC4500Versavis::setPattern(unsigned int patternNumber,
                                           const unsigned char *tex,
                                           unsigned int texWidth,
                                           unsigned int texHeight) {}
 
-void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
+void ProjectorLC4500Versavis::displayPattern(unsigned int pattern_no) {
   m_pattern_no = pattern_no;
 
   // If it is the first pattern being triggered for the first time, we detect
@@ -113,11 +113,11 @@ void ProjectorLC4500_versavis::displayPattern(unsigned int pattern_no) {
   }
 }
 
-void ProjectorLC4500_versavis::displayTexture(const unsigned char *tex,
+void ProjectorLC4500Versavis::displayTexture(const unsigned char *tex,
                                               unsigned int texWidth,
                                               unsigned int texHeight) {}
 
-void ProjectorLC4500_versavis::displayBlack() {
+void ProjectorLC4500Versavis::displayBlack() {
   std::vector<single_pattern> pattern_vec = {};
 
   // Settings for black pattern (pattern number 24, bit depth 1)
@@ -145,7 +145,7 @@ void ProjectorLC4500_versavis::displayBlack() {
   m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
 }
 
-void ProjectorLC4500_versavis::display_8_bit_image(int image_indice,
+void ProjectorLC4500Versavis::display_8_bit_image(int image_indice,
                                                    int pattern_number) {
   std::vector<single_pattern> pattern_vec = {};
 
@@ -174,7 +174,7 @@ void ProjectorLC4500_versavis::display_8_bit_image(int image_indice,
   m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
 }
 
-void ProjectorLC4500_versavis::displayWhite() {
+void ProjectorLC4500Versavis::displayWhite() {
   std::vector<single_pattern> pattern_vec = {};
 
   // Settings for white pattern (pattern number 24, bit depth 1, invert pattern)
@@ -204,15 +204,15 @@ void ProjectorLC4500_versavis::displayWhite() {
   m_projector.play_pattern_sequence(pattern_vec, exposure_period, frame_period);
 }
 
-void ProjectorLC4500_versavis::getScreenRes(unsigned int *nx,
+void ProjectorLC4500Versavis::getScreenRes(unsigned int *nx,
                                             unsigned int *ny) {
   // Native resolution of Lightcrafter 4500
   *nx = 912;
   *ny = 1140;
 }
 
-ProjectorLC4500_versavis::~ProjectorLC4500_versavis() {
-  std::cout << "ProjectorLC4500_versavis destructor called" << std::endl;
+ProjectorLC4500Versavis::~ProjectorLC4500Versavis() {
+  std::cout << "ProjectorLC4500Versavis destructor called" << std::endl;
   this->displayBlack();
   m_projector.close();
   if (m_is_hardware_triggered) {
@@ -220,10 +220,10 @@ ProjectorLC4500_versavis::~ProjectorLC4500_versavis() {
     m_spinner_ptr->stop();
     ros::shutdown();
   }
-  std::cout << "ProjectorLC4500_versavis destructor completed" << std::endl;
+  std::cout << "ProjectorLC4500Versavis destructor completed" << std::endl;
 }
 
-void ProjectorLC4500_versavis::sub_cb(
+void ProjectorLC4500Versavis::sub_cb(
     const versavis::TimeNumberedConstPtr &time_numbered_ptr) {
   // std::cout << "Message received!" << std::endl;
 
@@ -235,7 +235,7 @@ void ProjectorLC4500_versavis::sub_cb(
   // std::cout << "Versavis counter: " << m_counter << std::endl;
 }
 
-void ProjectorLC4500_versavis::ros_init() {
+void ProjectorLC4500Versavis::rosInit() {
   // Init ros node
   ros::M_string empty_args = {};
   ros::init(empty_args, m_ros_node_name);
@@ -243,7 +243,7 @@ void ProjectorLC4500_versavis::ros_init() {
 
   // Set up subscriber
   m_sub = m_nh_ptr->subscribe(m_projector_trigger_topic, 5,
-                              &ProjectorLC4500_versavis::sub_cb, this);
+                              &ProjectorLC4500Versavis::sub_cb, this);
 
   // We use an Asyncrhonous Spinner since we dont have access to the main
   // loop Spinning is required or else subscriber will never receive
@@ -252,7 +252,7 @@ void ProjectorLC4500_versavis::ros_init() {
   m_spinner_ptr->start();
 }
 
-void ProjectorLC4500_versavis::lc4500_init() {
+void ProjectorLC4500Versavis::lc4500Iinit() {
   if (m_projector.init() < 0) {
     std::cout << "Error, failed to initialise projector" << std::endl;
     throw;
@@ -262,14 +262,14 @@ void ProjectorLC4500_versavis::lc4500_init() {
   m_projector.set_led_currents(m_rgb_white[0], m_rgb_white[1], m_rgb_white[2]);
 
   // Load which pattern sequence to display (calibration or scanning)
-  load_pattern_sequence();
+  loadPatternSequence();
 }
 
-void ProjectorLC4500_versavis::show_error(const std::string &err) {
+void ProjectorLC4500Versavis::showError(const std::string &err) {
   std::cerr << "Lightcrafter-Versavis Projectror: " << err.c_str() << std::endl;
 }
 
-void ProjectorLC4500_versavis::load_param(const std::string &param_name,
+void ProjectorLC4500Versavis::loadParam(const std::string &param_name,
                                           std::shared_ptr<void> param_ptr) {
   if (param_name == "is_hardware_triggered") {
     std::shared_ptr<bool> temp_ptr;
@@ -299,7 +299,7 @@ void ProjectorLC4500_versavis::load_param(const std::string &param_name,
 }
 
 std::vector<single_pattern>
-ProjectorLC4500_versavis::get_calibration_pattern_sequence() {
+ProjectorLC4500Versavis::getCalibrationPatternSequence() {
   std::vector<single_pattern> pattern_vec = {};
 
   for (int i = 0; i < m_calibration_image_indices.size(); i++) {
@@ -328,7 +328,7 @@ ProjectorLC4500_versavis::get_calibration_pattern_sequence() {
 //                          3 = No Input Trigger
 
 std::vector<single_pattern>
-ProjectorLC4500_versavis::get_scanning_pattern_sequence_software() {
+ProjectorLC4500Versavis::getScanningPatternSequenceSoftware() {
   std::vector<single_pattern> pattern_vec = {};
 
   std::vector<int> images_indices_to_display;
@@ -363,7 +363,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_sequence_software() {
 }
 
 std::vector<single_pattern>
-ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
+ProjectorLC4500Versavis::getScanningPaternSequenceHardware() {
   std::vector<single_pattern> pattern_vec = {};
 
   std::vector<int> images_indices_to_display;
@@ -425,20 +425,20 @@ ProjectorLC4500_versavis::get_scanning_pattern_sequence_hardware() {
   return pattern_vec;
 }
 
-void ProjectorLC4500_versavis::load_pattern_sequence() {
+void ProjectorLC4500Versavis::loadPatternSequence() {
   m_pattern_sequence =
       (m_is_in_calibration_mode)
-          ? get_calibration_pattern_sequence()
+          ? getCalibrationPatternSequence()
           : (m_is_2_plus_1_mode)
                 ? ((m_is_hardware_triggered)
-                       ? get_scanning_pattern_2_plus_1_hardware()
-                       : get_scanning_pattern_2_plus_1_software())
+                       ? getScanningPattern2Plus1Hardware()
+                       : getScanningPattern2Plus1Software())
                 : (m_is_hardware_triggered)
-                      ? get_scanning_pattern_sequence_hardware()
-                      : get_scanning_pattern_sequence_software();
+                      ? getScanningPaternSequenceHardware()
+                      : getScanningPatternSequenceSoftware();
 }
 
-std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
+std::shared_ptr<void> ProjectorLC4500Versavis::getOutput(
     const std::string &output_name) {
   if (output_name == "expected_image_time") {
     boost::mutex::scoped_lock mutex_lock(m_mutex);
@@ -455,7 +455,7 @@ std::shared_ptr<void> ProjectorLC4500_versavis::get_output(
 }
 
 std::vector<single_pattern>
-ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_software() {
+ProjectorLC4500Versavis::getScanningPattern2Plus1Software() {
   std::vector<single_pattern> pattern_vec = {};
 
   std::vector<int> images_indices_to_display;
@@ -493,7 +493,7 @@ ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_software() {
 }
 
 std::vector<single_pattern>
-ProjectorLC4500_versavis::get_scanning_pattern_2_plus_1_hardware() {
+ProjectorLC4500Versavis::getScanningPattern2Plus1Hardware() {
   std::vector<single_pattern> pattern_vec = {};
 
   std::vector<int> images_indices_to_display;
