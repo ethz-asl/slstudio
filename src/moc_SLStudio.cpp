@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_SLStudio_t {
     QByteArrayData data[34];
-    char stringdata0[502];
+    char stringdata0[510];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -61,10 +61,10 @@ QT_MOC_LITERAL(26, 351, 8), // "frameSeq"
 QT_MOC_LITERAL(27, 360, 15), // "onShowDecoderUp"
 QT_MOC_LITERAL(28, 376, 15), // "onShowDecoderVp"
 QT_MOC_LITERAL(29, 392, 13), // "onActionAbout"
-QT_MOC_LITERAL(30, 406, 22), // "onStopProjectorClicked"
-QT_MOC_LITERAL(31, 429, 23), // "onStartProjectorClicked"
-QT_MOC_LITERAL(32, 453, 25), // "onGeneratePatternsClicked"
-QT_MOC_LITERAL(33, 479, 22) // "onLinearityTestClicked"
+QT_MOC_LITERAL(30, 406, 24), // "on_linearityTest_clicked"
+QT_MOC_LITERAL(31, 431, 27), // "on_generatePatterns_clicked"
+QT_MOC_LITERAL(32, 459, 25), // "on_startProjector_clicked"
+QT_MOC_LITERAL(33, 485, 24) // "on_stopProjector_clicked"
 
     },
     "SLStudio\0newPointCloud\0\0PointCloudConstPtr\0"
@@ -77,10 +77,10 @@ QT_MOC_LITERAL(33, 479, 22) // "onLinearityTestClicked"
     "onShowHistogram\0onShowShading\0"
     "onShowCameraFrames\0std::vector<cv::Mat>\0"
     "frameSeq\0onShowDecoderUp\0onShowDecoderVp\0"
-    "onActionAbout\0onStopProjectorClicked\0"
-    "onStartProjectorClicked\0"
-    "onGeneratePatternsClicked\0"
-    "onLinearityTestClicked"
+    "onActionAbout\0on_linearityTest_clicked\0"
+    "on_generatePatterns_clicked\0"
+    "on_startProjector_clicked\0"
+    "on_stopProjector_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -176,10 +176,10 @@ void SLStudio::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 15: _t->onShowDecoderUp((*reinterpret_cast< cv::Mat(*)>(_a[1]))); break;
         case 16: _t->onShowDecoderVp((*reinterpret_cast< cv::Mat(*)>(_a[1]))); break;
         case 17: _t->onActionAbout(); break;
-        case 18: _t->onStopProjectorClicked(); break;
-        case 19: _t->onStartProjectorClicked(); break;
-        case 20: _t->onGeneratePatternsClicked(); break;
-        case 21: _t->onLinearityTestClicked(); break;
+        case 18: _t->on_linearityTest_clicked(); break;
+        case 19: _t->on_generatePatterns_clicked(); break;
+        case 20: _t->on_startProjector_clicked(); break;
+        case 21: _t->on_stopProjector_clicked(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {

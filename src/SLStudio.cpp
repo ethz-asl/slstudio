@@ -19,6 +19,7 @@
 
 #include "CameraROS.h"
 #include "CameraSpinnaker.h"
+#include "Codec.h"
 #include "CodecPhaseShift2p1Tpu.h"
 #include "CodecPhaseShift2x3.h"
 #include "ProjectorLC3000.h"
@@ -30,6 +31,7 @@
 #include "SLProjectorVirtual.h"
 
 #include <chrono>
+#include <memory>
 #include <thread>
 
 using namespace std;
@@ -351,7 +353,7 @@ void SLStudio::imshow(const char *windowName, cv::Mat im, unsigned int x,
   cvtools::imshow(windowName, im, x, y);
 }
 
-void SLStudio::onLinearityTestClicked() {
+void SLStudio::on_linearityTest_clicked() {
   unsigned int image_indices[] = {7, 49};
   // unsigned int image_indices[] = {7, 7};
   int num_photos = 3;
@@ -446,48 +448,13 @@ void SLStudio::onLinearityTestClicked() {
   projector.displayBlack();
 }
 
-void SLStudio::onGeneratePatternsClicked() {
-  QSettings settings("SLStudio");
-
-  // Initialize encoder
-  bool diamondPattern =
-      settings.value("projector/diamondPattern", false).toBool();
-
-  CodecDir dir =
-      (CodecDir)settings.value("pattern/direction", CodecDirHorizontal).toInt();
-
-  ProjectorLC4500Versavis projector{0};
-
-  unsigned int screenResX, screenResY;
-  projector.getScreenRes(&screenResX, &screenResY);
-
-  // Unique number of rows and columns
-  unsigned int screenCols, screenRows;
-  if (diamondPattern) {
-    screenCols = 2 * screenResX;
-    screenRows = screenResY;
-  } else {
-    screenCols = screenResX;
-    screenRows = screenResY;
-  }
-
-  EncoderPhaseShift2p1Tpu encoder(screenCols, screenRows, dir);
-
-  // Lens correction and upload patterns to projector/GPU
-  CalibrationData calibration;
-  calibration.load("calibration.xml");
-
-  cv::Mat map1, map2;
-  cv::Size mapSize = cv::Size(screenCols, screenRows);
-  cvtools::initDistortMap(calibration.Kp, calibration.kp, mapSize, map1, map2);
-
-  std::cout << calibration.Kp << std::endl;
-
-  std::cout << calibration.kp << std::endl;
-
+static void writePatterns(std::shared_ptr<Encoder> encoder_ptr,
+                          std::string title, bool diamondPattern,
+                          unsigned int screenRows, unsigned int screenCols,
+                          cv::Mat map1, cv::Mat map2) {
   // Generate patterns and save
-  for (unsigned int i = 0; i < encoder.getNPatterns(); i++) {
-    cv::Mat pattern = encoder.getEncodingPattern(i);
+  for (unsigned int i = 0; i < encoder_ptr->getNPatterns(); i++) {
+    cv::Mat pattern = encoder_ptr->getEncodingPattern(i);
 
     // general repmat
     pattern = cv::repeat(pattern, screenRows / pattern.rows + 1,
@@ -499,11 +466,59 @@ void SLStudio::onGeneratePatternsClicked() {
 
     if (diamondPattern) pattern = cvtools::diamondDownsample(pattern);
 
-    cv::imwrite(cv::format("scan_pat_%d.bmp", i), pattern);
+    std::string filename = title + "_" + std::to_string(i) + ".bmp";
+
+    cv::imwrite(filename, pattern);
   }
 }
 
-void SLStudio::onStartProjectorClicked() {
+void SLStudio::on_generatePatterns_clicked() {
+  // Setup projector
+  bool diamondPattern = true;
+  unsigned int screenResX, screenResY;
+  ProjectorLC4500Versavis::getLC4500ScreenRes(screenResX, screenResY);
+
+  // Get number of rows and columns
+  unsigned int screenCols, screenRows;
+  if (diamondPattern) {
+    screenCols = 2 * screenResX;
+    screenRows = screenResY;
+  } else {
+    screenCols = screenResX;
+    screenRows = screenResY;
+  }
+
+  // Lens correction and upload patterns to projector/GPU
+  CalibrationData calibration;
+  calibration.load("calibration.xml");
+  cv::Mat map1, map2;
+  cv::Size mapSize = cv::Size(screenCols, screenRows);
+  cvtools::initDistortMap(calibration.Kp, calibration.kp, mapSize, map1, map2);
+
+  // Create encoders
+  auto encoder_2p1_horz_ptr = std::make_shared<EncoderPhaseShift2p1Tpu>(
+      screenCols, screenRows, CodecDirHorizontal);
+  auto encoder_2x3_horz_ptr = std::make_shared<EncoderPhaseShift2x3>(
+      screenCols, screenRows, CodecDirHorizontal);
+  auto encoder_2p1_vert_ptr = std::make_shared<EncoderPhaseShift2p1Tpu>(
+      screenCols, screenRows, CodecDirVertical);
+  auto encoder_2x3_vert_ptr = std::make_shared<EncoderPhaseShift2x3>(
+      screenCols, screenRows, CodecDirVertical);
+
+  // Write Patterns
+  writePatterns(encoder_2p1_horz_ptr, "2p1_tpu_h", diamondPattern, screenRows,
+                screenCols, map1, map2);
+  writePatterns(encoder_2p1_vert_ptr, "2p1_tpu_v", diamondPattern, screenRows,
+                screenCols, map1, map2);
+  writePatterns(encoder_2x3_horz_ptr, "psp_tpu_h", diamondPattern, screenRows,
+                screenCols, map1, map2);
+  writePatterns(encoder_2x3_vert_ptr, "psp_tpu_v", diamondPattern, screenRows,
+                screenCols, map1, map2);
+
+  std::cout << "Generated patterns successfully" << std::endl;
+}
+
+void SLStudio::on_startProjector_clicked() {
   QSettings settings("SLStudio");
 
   CameraTriggerMode triggerMode = triggerModeHardware;
@@ -559,7 +574,7 @@ void SLStudio::onStartProjectorClicked() {
   projector_ptr->startProjection();
 }
 
-void SLStudio::onStopProjectorClicked() {
+void SLStudio::on_stopProjector_clicked() {
   if (projector_ptr) {
     projector_ptr->displayBlack();
     projector_ptr.reset();

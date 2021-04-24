@@ -61,10 +61,11 @@ class SLStudio : public QMainWindow {
   void onShowDecoderUp(cv::Mat im);
   void onShowDecoderVp(cv::Mat im);
   void onActionAbout();
-  void onStopProjectorClicked();
-  void onStartProjectorClicked();
-  void onGeneratePatternsClicked();
-  void onLinearityTestClicked();
+
+  void on_linearityTest_clicked();
+  void on_generatePatterns_clicked();
+  void on_startProjector_clicked();
+  void on_stopProjector_clicked();
 
  signals:
   void newPointCloud(PointCloudConstPtr pointCloud);

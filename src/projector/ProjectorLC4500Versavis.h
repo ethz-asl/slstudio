@@ -37,6 +37,12 @@ class ProjectorLC4500Versavis : public Projector {
 
   void getScreenRes(unsigned int *nx, unsigned int *ny);
 
+  static void getLC4500ScreenRes(unsigned int &nx, unsigned int &ny) {
+    // Native resolution of Lightcrafter 4500
+    nx = 912;
+    ny = 1140;
+  }
+
   ~ProjectorLC4500Versavis();
 
   void sub_cb(const versavis::TimeNumberedConstPtr &time_numbered_ptr);
