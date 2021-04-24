@@ -15,7 +15,6 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
@@ -46,8 +45,6 @@ public:
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     SLPointCloudWidget *pointCloudWidget;
-    QPushButton *grabImage;
-    QLineEdit *lineEdit;
     QPushButton *linearityTest;
     QPushButton *generatePatterns;
     QPushButton *startProjector;
@@ -115,24 +112,18 @@ public:
         pointCloudWidget->setEnabled(true);
         pointCloudWidget->setLayoutDirection(Qt::LeftToRight);
         pointCloudWidget->setAutoFillBackground(false);
-        grabImage = new QPushButton(pointCloudWidget);
-        grabImage->setObjectName(QStringLiteral("grabImage"));
-        grabImage->setGeometry(QRect(0, 420, 89, 25));
-        lineEdit = new QLineEdit(pointCloudWidget);
-        lineEdit->setObjectName(QStringLiteral("lineEdit"));
-        lineEdit->setGeometry(QRect(100, 420, 113, 25));
         linearityTest = new QPushButton(pointCloudWidget);
         linearityTest->setObjectName(QStringLiteral("linearityTest"));
-        linearityTest->setGeometry(QRect(220, 420, 111, 25));
+        linearityTest->setGeometry(QRect(0, 420, 111, 25));
         generatePatterns = new QPushButton(pointCloudWidget);
         generatePatterns->setObjectName(QStringLiteral("generatePatterns"));
-        generatePatterns->setGeometry(QRect(340, 420, 141, 25));
+        generatePatterns->setGeometry(QRect(120, 420, 141, 25));
         startProjector = new QPushButton(pointCloudWidget);
         startProjector->setObjectName(QStringLiteral("startProjector"));
-        startProjector->setGeometry(QRect(490, 420, 121, 25));
+        startProjector->setGeometry(QRect(270, 420, 121, 25));
         stopProjector = new QPushButton(pointCloudWidget);
         stopProjector->setObjectName(QStringLiteral("stopProjector"));
-        stopProjector->setGeometry(QRect(620, 420, 121, 25));
+        stopProjector->setGeometry(QRect(400, 420, 121, 25));
 
         gridLayout->addWidget(pointCloudWidget, 0, 1, 1, 1);
 
@@ -217,7 +208,6 @@ public:
         actionAbout->setText(QApplication::translate("SLStudio", "About", Q_NULLPTR));
         actionTracker->setText(QApplication::translate("SLStudio", "Tracker", Q_NULLPTR));
         actionUpdatePointClouds->setText(QApplication::translate("SLStudio", "Update Point Clouds", Q_NULLPTR));
-        grabImage->setText(QApplication::translate("SLStudio", "Grab Image", Q_NULLPTR));
         linearityTest->setText(QApplication::translate("SLStudio", "Linearity Test", Q_NULLPTR));
         generatePatterns->setText(QApplication::translate("SLStudio", "Generate Patterns", Q_NULLPTR));
         startProjector->setText(QApplication::translate("SLStudio", "Start Projector", Q_NULLPTR));

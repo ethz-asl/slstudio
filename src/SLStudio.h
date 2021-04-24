@@ -71,8 +71,6 @@ class SLStudio : public QMainWindow {
 
   void on_linearityTest_clicked();
 
-  void on_grabImage_clicked();
-
  signals:
   void newPointCloud(PointCloudConstPtr pointCloud);
 
